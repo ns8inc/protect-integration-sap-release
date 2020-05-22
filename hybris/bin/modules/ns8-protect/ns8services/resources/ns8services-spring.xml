@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="spring/ns8services-services-spring.xml"/>
+    <import resource="spring/ns8services-converters-spring.xml"/>
+
+    <alias name="defaultNs8UserIpStrategy" alias="ns8UserIpStrategy"/>
+    <bean id="defaultNs8UserIpStrategy" class="com.ns8.hybris.core.strategies.impl.DefaultNs8UserIpStrategy"/>
+
+    <alias name="defaultNs8PopulateSessionVarsPlaceOrderMethodHook" alias="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
+    <bean id="defaultNs8PopulateSessionVarsPlaceOrderMethodHook" class="com.ns8.hybris.core.order.hook.impl.DefaultNs8PopulateSessionVarsPlaceOrderMethodHook"/>
+    <bean id="ns8PopulateSessionVarsPlaceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+        <property name="add" ref="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
+    </bean>
+
+    <alias name="defaultNs8FetchQueueMessagesJob" alias="ns8FetchQueueMessagesJob"/>
+    <bean id="defaultNs8FetchQueueMessagesJob" parent="abstractJobPerformable"
+          class="com.ns8.hybris.core.jobs.Ns8FetchQueueMessagesJob">
+        <constructor-arg name="ns8QueueService" ref="ns8QueueService"/>
+    </bean>
+</beans>

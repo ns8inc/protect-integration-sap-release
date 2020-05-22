@@ -1,0 +1,4 @@
+div#ns8-protect-order-wrapper iframe {
+    overflow: scroll !important;
+    width:100%;
+}

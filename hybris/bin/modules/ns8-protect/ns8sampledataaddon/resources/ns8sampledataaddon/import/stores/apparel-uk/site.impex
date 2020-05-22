@@ -1,0 +1,10 @@
+$productCatalog = apparelProductCatalog
+$contentCatalog = apparel-ukContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$defaultLanguage = en
+$storeUid = apparel-uk
+$siteUid = apparel-uk
+$webServiceSiteUid = $siteUidWS
+
+INSERT_UPDATE Ns8FetchQueueMessagesCronJob; code[unique = true]                   ; job(code)                ; site(uid); maxBatchSize; sessionLanguage(isocode)[default = $defaultLanguage];
+                                          ; $siteUid-Ns8FetchQueueMessagesCronJob ; ns8FetchQueueMessagesJob ; $siteUid ; 1000

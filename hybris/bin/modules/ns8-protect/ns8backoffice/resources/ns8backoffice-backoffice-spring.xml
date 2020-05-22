@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="ns8backofficeLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator"
+          scope="singleton" init-method="init" lazy-init="false">
+        <property name="location" value="/ns8backoffice-backoffice-labels/"/>
+        <property name="name" value="labels"/>
+    </bean>
+
+    <alias name="defaultNS8ActivationAction" alias="nS8ActivationAction"/>
+    <bean id="defaultNS8ActivationAction"
+          class=" com.ns8.hybris.backoffice.actions.site.merchant.activate.NS8MerchantActivationAction"/>
+
+    <alias name="defaultNS8AccessOrderAction" alias="nS8AccessOrderAction"/>
+    <bean id="defaultNS8AccessOrderAction"
+          class=" com.ns8.hybris.backoffice.actions.order.NS8AccessOrderAction"/>
+
+</beans>

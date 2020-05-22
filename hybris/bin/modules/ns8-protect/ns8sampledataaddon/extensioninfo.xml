@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        
+    <extension abstractclassprefix="Generated" classprefix="Ns8sampledataaddon" description="ns8sampledataaddon extension" managername="Ns8sampledataaddonManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="ns8sampledataaddon">
+                
+        <requires-extension name="addonsupport"/>
+                
+        <coremodule generated="true" manager="com.ns8.hybris.sampledataaddon.jalo.Ns8sampledataaddonManager" packageroot="com.ns8.hybris.sampledataaddon"/>
+                
+        <meta key="classpathgen" value="false"/>
+            
+    </extension>
+    
+</extensioninfo>

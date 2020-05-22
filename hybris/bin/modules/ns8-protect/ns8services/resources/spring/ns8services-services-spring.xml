@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultNS8RestTemplate" alias="ns8RestTemplate"/>
+    <bean id="defaultNS8RestTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.BufferingClientHttpRequestFactory">
+                <constructor-arg name="requestFactory" ref="ns8RequestFactory"/>
+            </bean>
+        </constructor-arg>
+        <property name="uriTemplateHandler" ref="ns8UriTemplateHandlerFactory"/>
+        <property name="interceptors">
+            <list>
+                <ref bean="ns8RequestResponseLoggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultNs8RequestFactory" alias="ns8RequestFactory"/>
+    <bean id="defaultNs8RequestFactory" class="com.ns8.hybris.core.factories.Ns8RequestFactory" />
+
+    <alias name="defaultNs8UriTemplateHandlerFactory" alias="ns8UriTemplateHandlerFactory"/>
+    <bean id="defaultNs8UriTemplateHandlerFactory" class="com.ns8.hybris.core.factories.Ns8UriTemplateHandlerFactory" />
+
+    <alias name="defaultNs8RequestResponseLoggingInterceptor" alias="ns8RequestResponseLoggingInterceptor"/>
+    <bean id="defaultNs8RequestResponseLoggingInterceptor" class="com.ns8.hybris.core.interceptors.RequestResponseLoggingInterceptor"/>
+
+    <alias name="defaultNS8APIService" alias="ns8APIService"/>
+    <bean id="defaultNS8APIService" class="com.ns8.hybris.core.services.api.impl.DefaultNS8APIService">
+        <constructor-arg name="configurationService" ref="configurationService"/>
+        <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
+        <constructor-arg name="ns8MerchantModelNS8MerchantDataConverter" ref="ns8MerchantModelNS8MerchantDataConverter"/>
+        <constructor-arg name="ns8OrderDataConverter" ref="ns8OrderDataConverter"/>
+        <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
+        <constructor-arg name="modelService" ref="modelService"/>
+    </bean>
+
+    <alias name="defaultNs8QueueService" alias="ns8QueueService"/>
+    <bean id="defaultNs8QueueService" class="com.ns8.hybris.core.services.impl.DefaultNs8QueueService">
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
+        <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
+    </bean>
+
+    <alias name="defaultNS8EndpointService" alias="ns8EndpointService"/>
+    <bean id="defaultNS8EndpointService" class="com.ns8.hybris.core.services.api.impl.DefaultNS8EndpointService">
+        <constructor-arg name="configurationService" ref="configurationService"/>
+    </bean>
+
+    <alias name="defaultNS8MerchantService" alias="ns8MerchantService"/>
+    <bean id="defaultNS8MerchantService" class="com.ns8.hybris.core.merchant.services.impl.DefaultNS8MerchantService">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+    </bean>
+
+    <alias name="defaultNS8FraudService" alias="ns8FraudService"/>
+    <bean id="defaultNS8FraudService" class="com.ns8.hybris.core.services.impl.DefaultNS8FraudService"/>
+
+    <alias name="defaultNS8PaymentTransactionService" alias="ns8PaymentTransactionService"/>
+    <bean id="defaultNS8PaymentTransactionService" class="com.ns8.hybris.core.services.impl.DefaultNS8PaymentTransactionService"/>
+
+</beans>

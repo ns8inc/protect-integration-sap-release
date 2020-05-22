@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+                   id="com.ns8.hybris.backoffice.cmssite.widgets.ns8merchantactivation">
+
+    <name>NS8 Activate Merchant Widget</name>
+    <description>NS8 Activate Merchant Widget</description>
+    <defaultTitle>NS8 Activate Merchant Widget</defaultTitle>
+    <author>ns8</author>
+    <version>1.0</version>
+
+    <view src="ns8merchantactivation.zul"/>
+
+    <sockets>
+        <input id="baseSiteInput" type="de.hybris.platform.basecommerce.model.site.BaseSiteModel"/>
+        <output id="cancel" type="java.lang.Object"/>
+        <output id="merchantActivated" type="java.lang.Object"/>
+    </sockets>
+
+    <controller
+            class="com.ns8.hybris.backoffice.widgets.controllers.ns8merchantactivation.NS8MerchantActivationController"/>
+
+</widget-definition>

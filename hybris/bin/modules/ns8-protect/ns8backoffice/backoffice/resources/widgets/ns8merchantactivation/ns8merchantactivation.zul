@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd "
+        height="100%">
+
+    <div id="mainCnt" width="100%" style="position: relative;" height="100%">
+        <div height="100%" style="background: white;overflow: auto;">
+            <vlayout spacing="30px" sclass="yrb-modal-content">
+                <div id="headerContainer" sclass="header-container">
+                    <label id="headerLabel" value="${c:l('action.activate.ns8.form.header')}"/>
+                </div>
+                <div id="activateNs8">
+                    <label value="${c:l('action.activate.ns8.form.email')}" sclass="y-general-textinput"/>
+                    <textbox id="email" onCreate="self.focus()">
+                        <custom-attributes ytestid="email"/>
+                    </textbox>
+                    <label value="${c:l('action.activate.ns8.form.storeurl')}" sclass="y-general-textinput"/>
+                    <textbox id="storeUrl">
+                        <custom-attributes ytestid="storeUrl"/>
+                    </textbox>
+                    <label value="${c:l('action.activate.ns8.form.merchantfirstname')}" sclass="y-general-textinput"/>
+                    <textbox id="merchantFirstName">
+                        <custom-attributes ytestid="merchantFirstName"/>
+                    </textbox>
+                    <label value="${c:l('action.activate.ns8.form.merchantlastname')}" sclass="y-general-textinput"/>
+                    <textbox id="merchantLastName">
+                        <custom-attributes ytestid="merchantLastName"/>
+                    </textbox>
+                    <label value="${c:l('action.activate.ns8.form.phonenumber')}" sclass="y-general-textinput"/>
+                    <textbox id="phoneNumber">
+                        <custom-attributes ytestid="phoneNumber"/>
+                    </textbox>
+                </div>
+                <hlayout sclass="yrb-modal-controls yw-wizard-navigation">
+                    <div sclass="yw-component-wrapper">
+                        <button id="ns8MerchantActivationCancel" label="${c:l('action.activate.ns8.form.cancel')}">
+                            <custom-attributes ytestid="ns8MerchantActivationCancelBtn"/>
+                        </button>
+                    </div>
+                    <div sclass="yw-component-wrapper">
+                        <button id="ns8MerchantActivate" label="${c:l('action.activate.ns8.form.activate')}"
+                                sclass="yw-btn-primary">
+                            <custom-attributes ytestid="ns8MerchantActivateBtn"/>
+                        </button>
+                    </div>
+                </hlayout>
+            </vlayout>
+        </div>
+    </div>
+</widget>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <bean id="ns8addonCoreDataImportedEventListener" parent="abstractCoreDataImportedEventListener">
+        <property name="supportedChannels">
+            <list value-type="de.hybris.platform.commerceservices.enums.SiteChannel">
+                <value>B2C</value>
+            </list>
+        </property>
+        <property name="addonExtensionMetadata">
+            <bean class="de.hybris.platform.addonsupport.data.AddonExtensionMetadata">
+                <property name="suffixChannel" value="false"/>
+                <property name="baseExtensionName" value="ns8addon"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="ns8addonSampleDataEventListener" parent="abstractGenericAddOnSampleDataEventListener">
+        <property name="extensionName" value="ns8addon"/>
+    </bean>
+
+    <alias name="defaultNS8TrueStatsServices" alias="ns8TrueStatsService"/>
+    <bean id="defaultNS8TrueStatsServices" class="com.ns8.hybris.addon.services.impl.DefaultNS8TrueStatsService">
+        <constructor-arg name="cmsSiteService" ref="cmsSiteService"/>
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+    </bean>
+
+    <alias name="defaultNS8TrueStatsFacade" alias="ns8TrueStatsFacade"/>
+    <bean id="defaultNS8TrueStatsFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNS8TrueStatsFacade">
+        <constructor-arg name="ns8TrueStatsService" ref="ns8TrueStatsService"/>
+    </bean>
+
+    <alias name="defaultNS8TrueStatsCacheService" alias="ns8TrueStatsCacheService"/>
+    <bean id="defaultNS8TrueStatsCacheService"
+          class="com.ns8.hybris.addon.services.impl.DefaultNS8TrueStatsCacheService">
+        <constructor-arg name="cacheController" ref="cacheController"/>
+        <constructor-arg name="cacheKeyProvider" ref="ns8TrueStatsCacheKeyProvider"/>
+        <constructor-arg name="configurationService" ref="configurationService"/>
+    </bean>
+
+    <alias name="defaultNS8TrueStatsCacheKeyProvider" alias="ns8TrueStatsCacheKeyProvider"/>
+    <bean id="defaultNS8TrueStatsCacheKeyProvider"
+          class="com.ns8.hybris.addon.cache.impl.DefaultNS8TrueStatsCacheKeyProvider"/>
+
+</beans>

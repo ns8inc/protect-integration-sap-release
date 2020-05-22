@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+                   id="com.hybris.backoffice.widgets.ns8.ns8showorder">
+
+    <name>NS8 Show Order Widget</name>
+    <description>NS8 Show Order Widget</description>
+    <defaultTitle>NS8 Show Order Widget</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <view src="ns8showorder.zul"/>
+
+    <sockets>
+        <input id="currentOrderInput" type="de.hybris.platform.core.model.order.OrderModel"/>
+    </sockets>
+
+    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8showorder.NS8ShowOrderController"/>
+
+</widget-definition>
