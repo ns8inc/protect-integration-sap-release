@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
+
+    <widget-extension widgetId="backofficeMainSlot">
+        <widget id="ns8BackofficePerspective" widgetDefinitionId="com.hybris.cockpitng.borderlayout"
+                slotId="perspectives" title="ns8backoffice.ns8.perspective" template="false">
+
+            <widget id="ns8LeftContainer" widgetDefinitionId="com.hybris.cockpitng.collapsiblecontainer"
+                    slotId="leftSlot"
+                    template="false">
+
+                <widget id="ns8NavigationContext"
+                        widgetDefinitionId="com.hybris.backoffice.widgets.ns8.ns8navigationcontext"
+                        slotId="center" template="false">
+                    <setting key="widgetStyleClass" type="String" value="yas-ns8navigation-context"/>
+                    <virtual-sockets/>
+                </widget>
+
+                <widget id="ns8ExplorerTree" widgetDefinitionId="com.hybris.cockpitng.widgets.common.explorertree"
+                        slotId="bottom" template="false">
+
+                    <widget id="ns8TreeSelectionConditionEvaluator"
+                            widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                            slotId="cockpitWidgetChildrenInvisible" template="false">
+                        <widget id="ns8TypeNodeNameExtractor"
+                                widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+                                slotId="cockpitWidgetChildrenInvisible" template="false">
+                            <setting key="widgetStyleClass" type="String"></setting>
+                            <setting key="socketDataType_$T" type="String">java.lang.String</setting>
+                            <setting key="expression" type="String">name</setting>
+                            <setting key="widgetStyleAttribute" type="String"></setting>
+                            <virtual-sockets/>
+                        </widget>
+
+                        <setting key="expression" type="String">#root instanceof
+                            T(com.hybris.cockpitng.tree.node.TypeNode) and #root.id NE 'ns8tree.main.dashboard.view' and
+                            #root.id NE 'ns8tree.suspicious.orders.view' and #root.id NE 'ns8tree.order.rules.view'
+                        </setting>
+                        <setting key="socketDataType_$T" type="String">java.lang.Object</setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <virtual-sockets/>
+                    </widget>
+
+                    <!--
+                        Evaluators that are triggered by selecting the Ns8 Perspective and trying to select the the tree Nodes.
+                        -->
+                    <widget id="ns8MainDashboardViewConditionEvaluator"
+                            widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                            slotId="cockpitWidgetChildrenInvisible" template="false">
+                        <setting key="expression" type="String">#root.id EQ 'ns8tree.main.dashboard.view'</setting>
+                        <setting key="socketDataType_$T" type="String">com.hybris.cockpitng.tree.node.TypeNode</setting>
+                        <virtual-sockets/>
+                    </widget>
+
+                    <widget id="ns8SuspiciousOrdersViewConditionEvaluator"
+                            widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                            slotId="cockpitWidgetChildrenInvisible" template="false">
+                        <setting key="expression" type="String">#root.id EQ 'ns8tree.suspicious.orders.view'</setting>
+                        <setting key="socketDataType_$T" type="String">com.hybris.cockpitng.tree.node.TypeNode</setting>
+                        <virtual-sockets/>
+                    </widget>
+
+                    <widget id="ns8OrderRulesViewConditionEvaluator"
+                            widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                            slotId="cockpitWidgetChildrenInvisible" template="false">
+                        <setting key="expression" type="String">#root.id EQ 'ns8tree.order.rules.view'</setting>
+                        <setting key="socketDataType_$T" type="String">com.hybris.cockpitng.tree.node.TypeNode</setting>
+                        <virtual-sockets/>
+                    </widget>
+
+                    <widget id="ns8ContextPopulator"
+                            widgetDefinitionId="com.hybris.backoffice.widgets.ns8.ns8contextpopulator"
+                            slotId="cockpitWidgetChildrenInvisible" template="false">
+                        <virtual-sockets/>
+                    </widget>
+
+                    <setting key="explorerTreeConfigCtx" type="String">ns8-explorer-tree</setting>
+                    <setting key="widgetStyleAttribute" type="String"></setting>
+                    <setting key="widgetStyleClass" type="String"></setting>
+                    <setting key="allowFilteringEntries" type="Boolean">false</setting>
+                    <virtual-sockets/>
+                </widget>
+
+                <setting key="topCaption" type="String" value="ns8backoffice.navigationContext"/>
+                <setting key="bottomCaption" type="String" value="ns8backoffice.navigationTree"/>
+                <setting key="allowLockingCenterPanel" type="Boolean" value="false"/>
+                <setting key="thirdSectionDisabled" type="Boolean" value="true"/>
+                <setting key="centerHeight" value="20%"/>
+                <setting key="widgetStyleClass" type="String" value="yas-left-container"/>
+            </widget>
+
+            <widget id="ns8ContentContainer" widgetDefinitionId="com.hybris.backoffice.perspectiveContainer"
+                    slotId="centerSlot" template="false">
+
+                <widget id="ns8ProtectView"
+                        widgetDefinitionId="com.hybris.backoffice.widgets.ns8.ns8protectview"
+                        slotId="perspectives" template="false" title="ns8backoffice.ns8.main.area">
+                    <virtual-sockets>
+                        <output id="com.hybris.cockpitng.action.misc.refresh.success" type="java.lang.Object"
+                                visibility="external"/>
+                        <output id="com.hybris.cockpitng.action.run.gc.success" type="java.lang.Object"
+                                visibility="external"/>
+                    </virtual-sockets>
+                    <setting key="_height" type="String">auto</setting>
+                </widget>
+
+                <virtual-sockets>
+                    <input id="selectTypeNodePerspective" type="java.lang.Object" visibility="external"/>
+                </virtual-sockets>
+                <setting key="_height" type="String">auto</setting>
+            </widget>
+
+            <setting key="northHeight" type="String">50px</setting>
+            <setting key="northBorder" type="String">none</setting>
+            <setting key="broadcastHorizontalResize" type="Boolean">true</setting>
+            <setting key="eastDisabled" type="Boolean">true</setting>
+            <setting key="eastBorder" type="String">none</setting>
+            <setting key="westCollapsible" type="Boolean">true</setting>
+            <setting key="northCollapsible" type="Boolean">true</setting>
+            <setting key="border" type="String">none</setting>
+            <setting key="centerBorder" type="String">none</setting>
+            <setting key="westDisabled" type="Boolean">false</setting>
+            <setting key="opaqueBG" type="String">true</setting>
+            <setting key="southHeight" type="String">50px</setting>
+            <setting key="centerDisabled" type="Boolean" value="false"/>
+            <setting key="westBorder" type="String">none</setting>
+            <setting key="southBorder" type="String">none</setting>
+            <setting key="southDisabled" type="Boolean">true</setting>
+            <setting key="eastWidth" type="String">25%</setting>
+            <setting key="northDisabled" type="Boolean">true</setting>
+            <setting key="autoCloseWest" type="Boolean">true</setting>
+            <setting key="southCollapsible" type="Boolean">true</setting>
+            <setting key="westWidth" type="String">300px</setting>
+            <setting key="eastCollapsible" type="Boolean">true</setting>
+            <virtual-sockets/>
+        </widget>
+
+    </widget-extension>
+
+
+    <widget-extension widgetId="backofficePerspectiveChooser">
+        <widget id="ns8ActivationSiteWidget"
+                widgetDefinitionId="com.ns8.hybris.backoffice.cmssite.widgets.ns8merchantactivation"
+                slotId="cockpitWidgetChildrenInvisible" title="NS8 Merchant Activation" template="true">
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <outgoing-events>
+                        <socket-event id="cancel"/>
+                        <socket-event id="merchantActivated"/>
+                    </outgoing-events>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+            <setting key="_width" type="String">950px</setting>
+            <setting key="_height" type="String">auto</setting>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="ns8ShowOrderWidget"
+                widgetDefinitionId="com.hybris.backoffice.widgets.ns8.ns8showorder"
+                slotId="cockpitWidgetChildrenInvisible" title="NS8 Show Order" template="true">
+            <setting key="_width" type="String">1344px</setting>
+            <setting key="_height" type="String">auto</setting>
+            <virtual-sockets/>
+        </widget>
+    </widget-extension>
+
+    <!-- widget connections-->
+
+    <widget-connection sourceWidgetId="ns8ExplorerTree" outputId="nodeSelected"
+                       targetWidgetId="ns8TreeSelectionConditionEvaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="ns8NavigationContext" outputId="clearNs8Tree"
+                       targetWidgetId="ns8ExplorerTree" inputId="clear"/>
+    <widget-connection sourceWidgetId="ns8TreeSelectionConditionEvaluator" outputId="true"
+                       targetWidgetId="ns8TypeNodeNameExtractor" inputId="genericInput"/>
+
+    <widget-connection sourceWidgetId="ns8ExplorerTree" outputId="nodeSelected"
+                       targetWidgetId="ns8MainDashboardViewConditionEvaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="ns8MainDashboardViewConditionEvaluator" outputId="true"
+                       targetWidgetId="csCollapsibleContainer" inputId="selectDefaultContainer"/>
+    <widget-connection sourceWidgetId="ns8MainDashboardViewConditionEvaluator" outputId="result"
+                       targetWidgetId="ns8ContextPopulator" inputId="mainDashboardSelected"/>
+
+    <widget-connection sourceWidgetId="ns8ExplorerTree" outputId="nodeSelected"
+                       targetWidgetId="ns8SuspiciousOrdersViewConditionEvaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="ns8SuspiciousOrdersViewConditionEvaluator" outputId="true"
+                       targetWidgetId="csCollapsibleContainer" inputId="selectDefaultContainer"/>
+    <widget-connection sourceWidgetId="ns8SuspiciousOrdersViewConditionEvaluator" outputId="result"
+                       targetWidgetId="ns8ContextPopulator" inputId="suspiciousOrdersSelected"/>
+
+    <widget-connection sourceWidgetId="ns8ExplorerTree" outputId="nodeSelected"
+                       targetWidgetId="ns8OrderRulesViewConditionEvaluator" inputId="input"/>
+    <widget-connection sourceWidgetId="ns8OrderRulesViewConditionEvaluator" outputId="true"
+                       targetWidgetId="csCollapsibleContainer" inputId="selectDefaultContainer"/>
+    <widget-connection sourceWidgetId="ns8OrderRulesViewConditionEvaluator" outputId="result"
+                       targetWidgetId="ns8ContextPopulator" inputId="orderRulesViewSelected"/>
+
+    <widget-connection sourceWidgetId="ns8NavigationContext" outputId="cmsSiteUId"
+                       targetWidgetId="ns8ContextPopulator"
+                       inputId="cmsSiteUId"/>
+
+    <widget-connection sourceWidgetId="ns8ContextPopulator" outputId="ns8NavigationContextData"
+                       targetWidgetId="ns8ProtectView"
+                       inputId="ns8NavigationContextData"/>
+
+    <widget-connection sourceWidgetId="STUB_com.ns8.hybris.backoffice.basesite.activatens8merchantaction"
+                       outputId="currentSiteOutput"
+                       targetWidgetId="ns8ActivationSiteWidget" inputId="baseSiteInput"/>
+
+    <widget-connection sourceWidgetId="STUB_com.ns8.hybris.backoffice.order.accessns8orderaction"
+                       outputId="currentOrderOutput"
+                       targetWidgetId="ns8ShowOrderWidget" inputId="currentOrderInput"/>
+
+</widgets>

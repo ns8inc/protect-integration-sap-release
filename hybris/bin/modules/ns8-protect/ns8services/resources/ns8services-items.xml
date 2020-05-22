@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <itemtypes>
+
+        <itemtype code="NS8Merchant">
+            <deployment table="ns8merchant" typecode="12000"/>
+            <attributes>
+                <attribute qualifier="email" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="storeUrl" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="firstName" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="lastName" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="phone" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="apiKey" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="queueId" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="enabled" type="java.lang.Boolean">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+            </attributes>
+            <indexes>
+                <index name="ns8MerchantIdx" unique="true">
+                    <key attribute="email"/>
+                    <key attribute="storeUrl"/>
+                </index>
+            </indexes>
+        </itemtype>
+
+        <itemtype code="BaseSite" autocreate="false" generate="false">
+            <attributes>
+                <attribute qualifier="ns8Merchant" type="NS8Merchant">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="AbstractOrder" autocreate="false" generate="false">
+            <attributes>
+                <attribute qualifier="customerIp" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="customerUserAgent" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="Ns8FetchQueueMessagesCronJob" extends="CronJob">
+            <attributes>
+                <attribute qualifier="site" type="BaseSite">
+                    <description>Site to fetch messages for</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="maxBatchSize" type="int">
+                    <description>Max number of messages the job will fetch pr. execution</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="Ns8QueueMessage">
+            <deployment table="Ns8QueueMessages" typecode="12001"/>
+            <attributes>
+                <attribute qualifier="action" type="java.lang.String">
+                    <description>Merchant to fetch messages from</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="orderId" type="java.lang.String">
+                    <description>Id of the order the message relates to</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="body" type="java.lang.String">
+                    <description>The body of the message</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property">
+                        <columntype>
+                            <value>HYBRIS.JSON</value>
+                        </columntype>
+                    </persistence>
+                </attribute>
+            </attributes>
+        </itemtype>
+    </itemtypes>
+
+
+</items>

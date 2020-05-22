@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+                   id="com.hybris.backoffice.widgets.ns8.ns8contextpopulator">
+
+    <name>NS8 context populator</name>
+    <description>Receives the information about the selected website and node and sends the data to the view widget</description>
+    <defaultTitle>NS8 context populator</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <sockets>
+        <input id="mainDashboardSelected" type="java.lang.Boolean"/>
+        <input id="suspiciousOrdersSelected" type="java.lang.Boolean"/>
+        <input id="orderRulesViewSelected" type="java.lang.Boolean"/>
+        <input id="cmsSiteUId" type="java.lang.String"/>
+        <output id="ns8NavigationContextData" type="com.ns8.hybris.backoffice.data.context.Ns8NavigationContextData"/>
+    </sockets>
+
+    <view src="none"/>
+
+    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8contextpopulator.Ns8ContextPopulatorController"/>
+
+    <keywords>
+        <keyword>_hidden</keyword>
+    </keywords>
+
+</widget-definition>

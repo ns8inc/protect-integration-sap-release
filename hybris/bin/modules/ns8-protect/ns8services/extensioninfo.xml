@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        
+    <extension abstractclassprefix="Generated" classprefix="Ns8services" jaloLogicFree="true" managername="Ns8servicesManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="ns8services" usemaven="false">
+                
+        <requires-extension name="acceleratorservices"/>
+                
+        <coremodule generated="true" manager="com.ns8.hybris.core.jalo.Ns8servicesManager" packageroot="com.ns8.hybris.core"/>
+            
+    </extension>
+    
+</extensioninfo>

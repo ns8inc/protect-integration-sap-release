@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <alias name="defaultTrueStatsCacheRegion" alias="trueStatsCacheRegion"/>
+    <bean name="defaultTrueStatsCacheRegion" class="de.hybris.platform.regioncache.region.impl.EHCacheRegion">
+        <constructor-arg name="name" value="trueStatsCacheRegion"/>
+        <constructor-arg name="maxEntries" value="${regioncache.ns8.trueStatsRegion.size}"/>
+        <constructor-arg name="evictionPolicy" value="${regioncache.ns8.trueStatsRegion.evictionpolicy}"/>
+        <constructor-arg name="statsEnabled" value="${regioncache.stats.enabled}"/>
+        <constructor-arg name="exclusiveComputation" value="${regioncache.exclusivecomputation}"/>
+        <constructor-arg name="ttlSeconds" value="${regioncache.ns8.trueStatsRegion.ttl}"/>
+        <property name="handledTypes">
+            <array>
+                <value>__NS8_TRUESTATS_CACHE__</value>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="trueStatsCacheRegionRegistrar" class="de.hybris.platform.regioncache.region.CacheRegionRegistrar"
+          c:region-ref="trueStatsCacheRegion"/>
+</beans>

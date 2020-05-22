@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.ns8.hybris.addon.controllers"/>
+
+    <!-- Expose /acceleratoraddon/web/webroot/WEB-INF/messages/base.js.properties  resource bundle as javascript variables -->
+    <bean id="defaultNs8addonJavaScriptMessageResourceAccessor" parent="abstractJavaScriptMessageResourceAccessor">
+        <property name="addOnName" value="ns8addon"/>
+    </bean>
+
+    <bean id="defaultNs8addonBeforeViewJsPropsHandlerAdaptee" parent="abstractBeforeViewJsPropsHandlerAdaptee"
+          class="de.hybris.platform.addonsupport.interceptors.ExportJsPropertiesBeforeViewHandler">
+        <property name="messageSource" ref="defaultNs8addonJavaScriptMessageResourceAccessor"/>
+    </bean>
+
+    <bean id="getNs8addonBeforeViewHandler" parent="beforeViewHandlerAdapter">
+        <property name="adaptee">
+            <ref bean="defaultNs8addonBeforeViewJsPropsHandlerAdaptee"/>
+        </property>
+    </bean>
+
+    <bean id="Ns8addonBeforeViewHandlerListMergeDirective" depends-on="beforeViewHandlersList"
+          parent="listMergeDirective">
+        <property name="add" ref="getNs8addonBeforeViewHandler"/>
+    </bean>
+
+    <alias name="defaultUserSessionDataFilter" alias="userSessionDataFilter"/>
+    <bean id="defaultUserSessionDataFilter" class="com.ns8.hybris.addon.filter.UserSessionDataFilter">
+        <constructor-arg name="sessionService" ref="sessionService" />
+        <constructor-arg name="ns8UserIpStrategy" ref="ns8UserIpStrategy" />
+    </bean>
+
+    <bean depends-on="storefrontTenantDefaultFilterChainList" parent="listMergeDirective">
+        <property name="add" ref="userSessionDataFilter" />
+        <property name="afterBeanNames">
+            <list value-type="java.lang.String">
+                <value>cartRestorationFilter</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>

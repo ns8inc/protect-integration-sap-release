@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+                   id="com.hybris.backoffice.widgets.ns8.ns8protectview">
+
+    <name>NS8 Protect View Widget</name>
+    <description>NS8 Protect View Iframe Container</description>
+    <defaultTitle>NS8 Protect</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <view src="ns8protectview.zul"/>
+
+    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8protectview.Ns8ProtectViewController"/>
+
+    <sockets>
+        <input id="ns8NavigationContextData" type="com.ns8.hybris.backoffice.data.context.Ns8NavigationContextData"/>
+    </sockets>
+
+</widget-definition>

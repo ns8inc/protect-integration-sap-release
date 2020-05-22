@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.ns8.hybris.backoffice.order.accessns8orderaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>ns8order.action</name>
+    <description>Access NS8 Order Action</description>
+    <defaultTitle>Access NS8 Order</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <actionClassName>com.ns8.hybris.backoffice.actions.order.NS8AccessOrderAction</actionClassName>
+
+    <iconUri>icons/icon-action-accessNS8order.png</iconUri>
+    <iconDisabledUri>icons/icon-action-accessNS8order-disabled.png</iconDisabledUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+
+    <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
+    <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
+    <sockets>
+        <output id="currentOrderOutput"/>
+    </sockets>
+
+</action-definition>

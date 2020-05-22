@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget xmlns="http://www.zkoss.org/2005/zul"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:x="http://www.w3.org/1999/xhtml"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd">
+
+    <style src="${wr}/ns8protectview.css"/>
+
+    <div id="mainCnt" width="100%" style="position: relative;" height="100%">
+        <div height="100%" style="background: white;">
+
+            <if test="${widgetModel.ns8ProtectViewVisible}">
+                <vlayout sclass="yrb-modal-content" style="width: 100%; height: 100%;">
+
+                    <script type="text/javascript"
+                            src="https://d3hfiwqcryy9cp.cloudfront.net/assets/js/protect.min.js"></script>
+
+                    <script type="text/javascript" defer="true">
+                        zk.afterMount(function () {
+                            var containerElId = 'ns8-protect-dashboard-wrapper';
+
+                            var viewName = '${widgetModel.viewName}';
+                            var accessToken = '${widgetModel.accessToken}';
+                            if (viewName === '') {
+                                viewName = Protect.ClientPage.DASHBOARD;
+                            }
+
+                            var eventBinding = {};
+                            var clientConfig = new Protect.ClientConfig({
+                                accessToken: accessToken,
+                                protectClientUrl: '${widgetController.getClientApiUrl()}',
+                                eventBinding: eventBinding,
+                                iFrameConfig: {
+                                    attachToId: containerElId,
+                                    classNames: ['ns8-protect-client-iframe'],
+                                },
+                            });
+                            var protectClient = Protect.createClient(clientConfig);
+                            //DASHBOARD, ORDER_RULES, SUSPICIOUS_ORDERS
+                            protectClient.render(viewName, '');
+                        }, 600);
+                    </script>
+
+                    <x:div id="ns8-protect-dashboard-wrapper">
+                    </x:div>
+                </vlayout>
+            </if>
+        </div>
+    </div>
+</widget>

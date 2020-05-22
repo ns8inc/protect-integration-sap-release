@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget-definition id="com.hybris.backoffice.widgets.ns8.ns8navigationcontext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+    <name>NS8 Navigation Context Widget</name>
+    <description>NS8 Navigation that allows the user to select specifications for the view</description>
+    <defaultTitle>NS8 Navigation Context</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <view src="ns8navigationcontext.zul"/>
+
+    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8navigationcontext.Ns8NavigationContextController"/>
+
+    <sockets>
+        <output id="cmsSiteUId" type="java.lang.String"/>
+        <output id="clearNs8Tree" type="java.lang.Object"/>
+    </sockets>
+
+</widget-definition>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        
+    <extension abstractclassprefix="Generated" classprefix="Ns8addon" description="ns8addon extension" managername="Ns8addonManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="ns8addon">
+                
+        <requires-extension name="addonsupport"/>
+                
+        <requires-extension name="ns8services"/>
+                
+        <coremodule generated="true" manager="com.ns8.hybris.addon.jalo.Ns8addonManager" packageroot="com.ns8.hybris.addon"/>
+                
+        <meta key="classpathgen" value="false"/>
+            
+    </extension>
+    
+</extensioninfo>

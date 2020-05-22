@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <bean class="com.ns8.hybris.backoffice.data.context.Ns8NavigationContextData">
+        <property name="cmsSite" type="String"/>
+        <property name="viewName" type="String"/>
+        <property name="accessToken" type="String"/>
+    </bean>
+
+</beans>
