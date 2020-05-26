@@ -5,6 +5,13 @@ ACC.ns8addon = {
 
     ns8Load: function () {
         var ns8ScriptUrl = ACC.config.encodedContextPath + "/ns8/truestats";
-        $.getScript(ns8ScriptUrl);
+        $.ajax({
+            url: ns8ScriptUrl,
+            dataType: "script",
+            headers: {
+                "NS8-Screen-Height" : window.innerHeight,
+                "NS8-Screen-Width" : window.innerWidth
+            }
+        });
     }
 };

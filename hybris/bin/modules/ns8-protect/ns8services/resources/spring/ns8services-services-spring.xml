@@ -21,29 +21,24 @@
     </bean>
 
     <alias name="defaultNs8RequestFactory" alias="ns8RequestFactory"/>
-    <bean id="defaultNs8RequestFactory" class="com.ns8.hybris.core.factories.Ns8RequestFactory" />
+    <bean id="defaultNs8RequestFactory" class="com.ns8.hybris.core.factories.Ns8RequestFactory"/>
 
     <alias name="defaultNs8UriTemplateHandlerFactory" alias="ns8UriTemplateHandlerFactory"/>
-    <bean id="defaultNs8UriTemplateHandlerFactory" class="com.ns8.hybris.core.factories.Ns8UriTemplateHandlerFactory" />
+    <bean id="defaultNs8UriTemplateHandlerFactory" class="com.ns8.hybris.core.factories.Ns8UriTemplateHandlerFactory"/>
 
     <alias name="defaultNs8RequestResponseLoggingInterceptor" alias="ns8RequestResponseLoggingInterceptor"/>
-    <bean id="defaultNs8RequestResponseLoggingInterceptor" class="com.ns8.hybris.core.interceptors.RequestResponseLoggingInterceptor"/>
+    <bean id="defaultNs8RequestResponseLoggingInterceptor"
+          class="com.ns8.hybris.core.interceptors.RequestResponseLoggingInterceptor"/>
 
     <alias name="defaultNS8APIService" alias="ns8APIService"/>
     <bean id="defaultNS8APIService" class="com.ns8.hybris.core.services.api.impl.DefaultNS8APIService">
         <constructor-arg name="configurationService" ref="configurationService"/>
         <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
-        <constructor-arg name="ns8MerchantModelNS8MerchantDataConverter" ref="ns8MerchantModelNS8MerchantDataConverter"/>
+        <constructor-arg name="ns8MerchantDataConverter" ref="ns8MerchantDataConverter"/>
         <constructor-arg name="ns8OrderDataConverter" ref="ns8OrderDataConverter"/>
+        <constructor-arg name="ns8PlatformOrderUpdateStatusConverter" ref="ns8PlatformOrderUpdateStatusConverter"/>
         <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
         <constructor-arg name="modelService" ref="modelService"/>
-    </bean>
-
-    <alias name="defaultNs8QueueService" alias="ns8QueueService"/>
-    <bean id="defaultNs8QueueService" class="com.ns8.hybris.core.services.impl.DefaultNs8QueueService">
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
-        <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
-        <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
     </bean>
 
     <alias name="defaultNS8EndpointService" alias="ns8EndpointService"/>
@@ -61,6 +56,29 @@
     <bean id="defaultNS8FraudService" class="com.ns8.hybris.core.services.impl.DefaultNS8FraudService"/>
 
     <alias name="defaultNS8PaymentTransactionService" alias="ns8PaymentTransactionService"/>
-    <bean id="defaultNS8PaymentTransactionService" class="com.ns8.hybris.core.services.impl.DefaultNS8PaymentTransactionService"/>
+    <bean id="defaultNS8PaymentTransactionService"
+          class="com.ns8.hybris.core.services.impl.DefaultNS8PaymentTransactionService"/>
+
+    <bean id="defaultOrderAfterSaveListener" class="com.ns8.hybris.core.listeners.OrderAfterSaveListener">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="orderStatuses">
+            <list value-type="de.hybris.platform.core.enums.OrderStatus">
+                <value>CANCELLED</value>
+                <value>COMPLETED</value>
+                <value>PAYMENT_NOT_CAPTURED</value>
+                <value>PAYMENT_CAPTURED</value>
+                <value>CANCELLING</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <alias name="defaultNs8PopulateSessionVarsPlaceOrderMethodHook" alias="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
+    <bean id="defaultNs8PopulateSessionVarsPlaceOrderMethodHook"
+          class="com.ns8.hybris.core.order.hook.impl.DefaultNs8PopulateSessionVarsPlaceOrderMethodHook"/>
+    <bean id="ns8PopulateSessionVarsPlaceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks"
+          parent="listMergeDirective">
+        <property name="add" ref="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
+    </bean>
 
 </beans>

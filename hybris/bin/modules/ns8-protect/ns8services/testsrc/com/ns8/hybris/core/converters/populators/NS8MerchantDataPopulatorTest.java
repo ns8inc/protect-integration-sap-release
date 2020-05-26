@@ -1,6 +1,6 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8MerchantData;
+import com.ns8.hybris.core.data.Ns8MerchantData;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import de.hybris.bootstrap.annotations.UnitTest;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class NS8MerchantDataPopulatorTest {
+public class Ns8MerchantDataPopulatorTest {
 
     private static final String EMAIL = "email";
     private static final String FIRST_NAME = "firstName";
@@ -23,14 +23,14 @@ public class NS8MerchantDataPopulatorTest {
     private static final String STORE_URL = "storeURL";
 
     @InjectMocks
-    private NS8MerchantDataPopulator testObj;
+    private Ns8MerchantDataPopulator testObj;
 
     @Mock
     private NS8MerchantModel ns8MerchantModelMock;
 
     @Test
     public void populate_shouldFillMerchantDataDetails() {
-        var ns8MerchantData = new NS8MerchantData();
+        var ns8MerchantData = new Ns8MerchantData();
 
         when(ns8MerchantModelMock.getEmail()).thenReturn(EMAIL);
         when(ns8MerchantModelMock.getFirstName()).thenReturn(FIRST_NAME);

@@ -38,16 +38,23 @@ public class DefaultNs8PopulateSessionVarsPlaceOrderMethodHook implements Commer
 
     /**
      * {@inheritDoc}
-     * populates the order about to be submitted with the users ip and user-agent captured from the session
+     * populates the order about to be submitted with the users ip, user-agent, session language, screen height and
+     * screen width captured from the session
      */
     @Override
     public void beforeSubmitOrder(final CommerceCheckoutParameter parameter, final CommerceOrderResult result) {
         final OrderModel order = result.getOrder();
         final String userAgent = sessionService.getAttribute(Ns8servicesConstants.USER_AGENT_SESSION_ATTR);
         final String customerIp = sessionService.getAttribute(Ns8servicesConstants.USER_IP_SESSION_ATTR);
+        final String acceptLanguage = sessionService.getAttribute(Ns8servicesConstants.ACCEPT_LANGUAGE_SESSION_ATTR);
+        final Long screenHeight = sessionService.getAttribute(Ns8servicesConstants.SCREEN_HEIGHT_SESSION_ATTR);
+        final Long screenWidth = sessionService.getAttribute(Ns8servicesConstants.SCREEN_WIDTH_SESSION_ATTR);
         logIfEmpty(userAgent, customerIp);
         order.setCustomerUserAgent(userAgent);
         order.setCustomerIp(customerIp);
+        order.setAcceptLanguage(acceptLanguage);
+        order.setScreenHeight(screenHeight);
+        order.setScreenWidth(screenWidth);
         modelService.save(order);
     }
 

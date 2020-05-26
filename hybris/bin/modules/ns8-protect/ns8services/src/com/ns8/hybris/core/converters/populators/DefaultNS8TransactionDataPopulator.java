@@ -1,9 +1,9 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CreditCardData;
-import com.ns8.hybris.core.data.NS8TransactionData;
-import com.ns8.hybris.core.data.NS8TransactionMethod;
-import com.ns8.hybris.core.data.NS8TransactionStatus;
+import com.ns8.hybris.core.data.Ns8CreditCardData;
+import com.ns8.hybris.core.data.Ns8TransactionData;
+import com.ns8.hybris.core.data.Ns8TransactionMethod;
+import com.ns8.hybris.core.data.Ns8TransactionStatus;
 import com.ns8.hybris.core.services.NS8PaymentTransactionService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
@@ -16,17 +16,17 @@ import org.springframework.util.Assert;
 import java.util.Map;
 
 /**
- * Populates the information of the {@link PaymentTransactionModel} into a {@link NS8TransactionData}
+ * Populates the information of the {@link PaymentTransactionModel} into a {@link Ns8TransactionData}
  */
-public class DefaultNS8TransactionDataPopulator implements Populator<PaymentTransactionModel, NS8TransactionData> {
+public class DefaultNs8TransactionDataPopulator implements Populator<PaymentTransactionModel, Ns8TransactionData> {
 
-    protected final Converter<PaymentTransactionModel, NS8CreditCardData> ns8CreditCardDataConverter;
+    protected final Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter;
     protected final NS8PaymentTransactionService ns8PaymentTransactionService;
-    protected Map<String, NS8TransactionStatus> transactionStatusMapping;
+    protected Map<String, Ns8TransactionStatus> transactionStatusMapping;
 
-    public DefaultNS8TransactionDataPopulator(final Converter<PaymentTransactionModel, NS8CreditCardData> ns8CreditCardDataConverter,
+    public DefaultNs8TransactionDataPopulator(final Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter,
                                               final NS8PaymentTransactionService ns8PaymentTransactionService,
-                                              final Map<String, NS8TransactionStatus> transactionStatusMapping) {
+                                              final Map<String, Ns8TransactionStatus> transactionStatusMapping) {
         this.ns8CreditCardDataConverter = ns8CreditCardDataConverter;
         this.ns8PaymentTransactionService = ns8PaymentTransactionService;
         this.transactionStatusMapping = transactionStatusMapping;
@@ -36,11 +36,11 @@ public class DefaultNS8TransactionDataPopulator implements Populator<PaymentTran
      * {@inheritDoc}
      */
     @Override
-    public void populate(final PaymentTransactionModel source, final NS8TransactionData target) throws ConversionException {
+    public void populate(final PaymentTransactionModel source, final Ns8TransactionData target) throws ConversionException {
 
         target.setAmount(getAmount(source));
         target.setCreditCard(ns8CreditCardDataConverter.convert(source));
-        target.setMethod(NS8TransactionMethod.CC);
+        target.setMethod(Ns8TransactionMethod.CC);
         target.setPlatformId(source.getCode());
         target.setProcessedAt(source.getCreationtime());
 
@@ -62,7 +62,7 @@ public class DefaultNS8TransactionDataPopulator implements Populator<PaymentTran
         return source.getPlannedAmount().doubleValue();
     }
 
-    public void setTransactionStatusMapping(final Map<String, NS8TransactionStatus> transactionStatusMapping) {
+    public void setTransactionStatusMapping(final Map<String, Ns8TransactionStatus> transactionStatusMapping) {
         this.transactionStatusMapping = transactionStatusMapping;
     }
 }

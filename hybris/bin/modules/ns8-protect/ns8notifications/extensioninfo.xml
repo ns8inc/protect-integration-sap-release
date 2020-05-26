@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
- Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
---><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
         
     <extension abstractclassprefix="Generated" classprefix="Ns8notifications" jaloLogicFree="true" managername="Ns8notificationsManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="ns8notifications" usemaven="false">
+                
+        <requires-extension name="ns8services"/>
                 
         <coremodule generated="true" manager="com.ns8.hybris.notifications.jalo.Ns8notificationsManager" packageroot="com.ns8.hybris.notifications"/>
             

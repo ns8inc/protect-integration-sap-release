@@ -50,4 +50,11 @@
     <bean id="defaultNS8TrueStatsCacheKeyProvider"
           class="com.ns8.hybris.addon.cache.impl.DefaultNS8TrueStatsCacheKeyProvider"/>
 
+    <alias name="defaultNs8OrderVerificationTemplateFacade" alias="ns8OrderVerificationTemplateFacade"/>
+    <bean id="defaultNs8OrderVerificationTemplateFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNs8OrderVerificationTemplateFacade">
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="baseSiteService" ref="baseSiteService"/>
+        <constructor-arg name="ns8OrderVerificationRequestConverter" ref="ns8OrderVerificationRequestConverter"/>
+    </bean>
+
 </beans>

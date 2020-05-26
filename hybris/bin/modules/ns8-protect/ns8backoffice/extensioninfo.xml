@@ -5,6 +5,10 @@
                 
         <requires-extension name="backoffice"/>
                 
+        <requires-extension name="basecommercebackoffice"/>
+                
+        <requires-extension name="customersupportbackoffice"/>
+                
         <requires-extension name="ns8services"/>
                 
         <coremodule generated="true" manager="com.ns8.hybris.backoffice.jalo.Ns8backofficeManager" packageroot="com.ns8.hybris.backoffice"/>

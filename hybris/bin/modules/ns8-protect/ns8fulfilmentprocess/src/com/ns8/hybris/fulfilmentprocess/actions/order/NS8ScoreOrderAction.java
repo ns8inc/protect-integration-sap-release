@@ -18,6 +18,9 @@ import java.util.Set;
 public class NS8ScoreOrderAction extends AbstractOrderAction<OrderProcessModel> {
 
     protected static final Logger LOG = LogManager.getLogger(NS8ScoreOrderAction.class);
+    protected static final String WAIT = "WAIT";
+    protected static final String OK = "OK";
+    protected static final String NOK = "NOK";
 
     protected final NS8FraudService ns8FraudService;
     protected final NS8APIService ns8APIService;
@@ -34,21 +37,21 @@ public class NS8ScoreOrderAction extends AbstractOrderAction<OrderProcessModel> 
     public String execute(final OrderProcessModel process) {
         final OrderModel order = process.getOrder();
         if (ns8FraudService.hasOrderBeenScored(order)) {
-            return "OK";
+            return OK;
         }
         try {
             ns8APIService.triggerCreateOrderActionEvent(order);
-        } catch (NS8IntegrationException e) {
+        } catch (final NS8IntegrationException e) {
             if (e.getHttpStatus().is5xxServerError()) {
                 LOG.error("Failed to send order with code [{}] to NS8 due to a server error. Retrying.", order::getCode);
                 throw new RetryLaterException("Server error while sending order to ns8 - will retry", e);
             } else {
                 LOG.error("Failed to send order with code [{}] to NS8 due to a client error [{}]. Failing process.",
                         order::getCode, () -> e.getCause().getMessage());
-                return "NOK";
+                return NOK;
             }
         }
-        return "WAIT";
+        return WAIT;
     }
 
     /**
@@ -56,7 +59,7 @@ public class NS8ScoreOrderAction extends AbstractOrderAction<OrderProcessModel> 
      */
     @Override
     public Set<String> getTransitions() {
-        return AbstractAction.createTransitions("WAIT", "OK", "NOK");
+        return AbstractAction.createTransitions(WAIT, OK, NOK);
     }
 
 }

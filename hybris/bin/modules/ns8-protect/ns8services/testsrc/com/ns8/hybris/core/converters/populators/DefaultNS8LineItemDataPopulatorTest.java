@@ -1,6 +1,6 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8LineItemData;
+import com.ns8.hybris.core.data.Ns8LineItemData;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8LineItemDataPopulatorTest {
+public class DefaultNs8LineItemDataPopulatorTest {
 
     private static final String EAN = "ean13perhaps";
     private static final String MANUFACTURER_NAME = "name of the manufacturer";
@@ -35,7 +35,7 @@ public class DefaultNS8LineItemDataPopulatorTest {
     private static final double DISCOUNT_1_VALUE = 12.3d;
     private static final double DISCOUNT_2_VALUE = 2.5d;
 
-    private DefaultNS8LineItemDataPopulator testObj = new DefaultNS8LineItemDataPopulator();
+    private DefaultNs8LineItemDataPopulator testObj = new DefaultNs8LineItemDataPopulator();
 
     @Mock(answer = RETURNS_DEEP_STUBS)
     private OrderEntryModel orderEntryMock;
@@ -44,12 +44,12 @@ public class DefaultNS8LineItemDataPopulatorTest {
     @Mock
     private DiscountValue discountValue1Mock, discountValue2Mock;
 
-    private NS8LineItemData ns8LineItemData;
+    private Ns8LineItemData ns8LineItemData;
 
 
     @Before
     public void setUp() {
-        ns8LineItemData = new NS8LineItemData();
+        ns8LineItemData = new Ns8LineItemData();
 
         when(orderEntryMock.getProduct()).thenReturn(productMock);
         when(orderEntryMock.getOrder().getCode()).thenReturn(ORDER_CODE);

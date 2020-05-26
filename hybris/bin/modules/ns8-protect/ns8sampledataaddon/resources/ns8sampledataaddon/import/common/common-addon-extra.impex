@@ -1,2 +1,23 @@
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+$enableTriggers = $config-ns8.enable.triggers
+
 INSERT_UPDATE ServicelayerJob; code[unique = true]      ; springId
                              ; ns8FetchQueueMessagesJob ; ns8FetchQueueMessagesJob
+                             ; ns8ProcessMessagesJob    ; ns8ProcessMessagesJob
+
+INSERT_UPDATE Ns8ProcessMessagesCronJob; code[unique = true]       ; job(code)             ; sessionLanguage(isoCode)[default = en]
+                                       ; ns8ProcessMessagesCronJob ; ns8ProcessMessagesJob ;
+
+INSERT_UPDATE Trigger; cronJob(code)[unique = true]; cronExpression    ; active[default = true]
+                     ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+
+# If the property does not exist or it's value is false, triggers will be disabled, otherwise enabled
+INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]; cronExpression    ; active[default = false]
+"#% if: ""$enableTriggers"".equals(""false"")"
+                                                ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+#% endif:
+
+INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]; cronExpression    ; active[default = true]
+"#% if: !""$enableTriggers"".equals(""false"")"
+                                                ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+#% endif:

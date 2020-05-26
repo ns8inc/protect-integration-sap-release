@@ -14,29 +14,28 @@
                 <textbox readonly="true" id="orderNumber" style="display:none"/>
                 <textbox readonly="true" id="accessToken" style="display:none"/>
 
-                <script type="text/javascript"
-                        src="https://d3hfiwqcryy9cp.cloudfront.net/assets/js/protect.min.js"></script>
-
                 <script type="text/javascript" defer="true">
                     zk.afterMount(function () {
-                        var containerElId = 'ns8-protect-order-wrapper';
+                        jQuery.getScript('https://d3hfiwqcryy9cp.cloudfront.net/assets/js/protect.min.js', function () {
+                            var containerElId = 'ns8-protect-order-wrapper';
 
-                        var hybrisOrderNumber = zk.Widget.$("$orderNumber").getValue();
-                        var hybrisAccessToken = zk.Widget.$("$accessToken").getValue();
+                            var hybrisOrderNumber = zk.Widget.$("$orderNumber").getValue();
+                            var hybrisAccessToken = zk.Widget.$("$accessToken").getValue();
 
-                        var eventBinding = {};
-                        var clientConfig = new Protect.ClientConfig({
-                            accessToken: hybrisAccessToken,
-                            protectClientUrl: '${widgetController.getClientApiUrl()}',
-                            eventBinding: eventBinding,
-                            iFrameConfig: {
-                                attachToId: containerElId,
-                                classNames: ['ns8-protect-client-iframe'],
-                            },
+                            var eventBinding = {};
+                            var clientConfig = new Protect.ClientConfig({
+                                accessToken: hybrisAccessToken,
+                                protectClientUrl: '${widgetController.getClientApiUrl()}',
+                                eventBinding: eventBinding,
+                                iFrameConfig: {
+                                    attachToId: containerElId,
+                                    classNames: ['ns8-protect-client-iframe'],
+                                },
+                            });
+                            var protectClient = Protect.createClient(clientConfig);
+                            protectClient.render('ORDER_DETAILS', hybrisOrderNumber);
                         });
-                        var protectClient = Protect.createClient(clientConfig);
-                        protectClient.render('ORDER_DETAILS', hybrisOrderNumber);
-                    }, 500);
+                    });
                 </script>
 
                 <x:div id="ns8-protect-order-wrapper">

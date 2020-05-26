@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <enumtypes>
+        <enumtype code="Ns8MessageActionType">
+            <value code="UPDATE_ORDER_RISK_EVENT"/>
+            <value code="UPDATE_ORDER_STATUS_EVENT"/>
+            <value code="UPDATE_EQ8_SCORE_EVENT"/>
+        </enumtype>
+
+        <enumtype code="Ns8MessageStatus">
+            <value code="PENDING"/>
+            <value code="COMPLETED"/>
+            <value code="FAILED"/>
+        </enumtype>
+    </enumtypes>
+
+    <relations>
+        <relation code="Ns8FetchQueueMessagesCronJob2Ns8MessageActionType" localized="false">
+            <deployment table="FetQMsgJob2MsgActTypeRel" typecode="12002"/>
+            <sourceElement type="Ns8FetchQueueMessagesCronJob" cardinality="many" navigable="false"/>
+            <targetElement qualifier="ns8MessageActionTypes" type="Ns8MessageActionType"
+                           cardinality="many"
+                           collectiontype="set"/>
+        </relation>
+    </relations>
+
+    <itemtypes>
+        <itemtype code="Ns8FetchQueueMessagesCronJob" extends="CronJob">
+            <attributes>
+                <attribute qualifier="site" type="BaseSite">
+                    <description>Site to fetch messages for</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="maxBatchSize" type="int">
+                    <description>Max number of messages the job will fetch pr. execution</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="Ns8ProcessMessagesCronJob" extends="CronJob"/>
+
+        <itemtype code="Ns8QueueMessage">
+            <deployment table="Ns8QueueMessages" typecode="12001"/>
+            <attributes>
+                <attribute qualifier="action" type="Ns8MessageActionType">
+                    <description>The message action type.</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="orderId" type="java.lang.String">
+                    <description>Id of the order the message relates to</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="messageId" type="java.lang.String">
+                    <description>Id of the message</description>
+                    <modifiers optional="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="status" type="Ns8MessageStatus">
+                    <persistence type="property"/>
+                    <description>The message processing status.</description>
+                </attribute>
+                <attribute qualifier="body" type="java.lang.String">
+                    <description>The body of the message</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>MEDIUMTEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype>
+                            <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                    </persistence>
+                </attribute>
+                <attribute qualifier="failReason" type="java.lang.String">
+                    <description>The the reason why the message processing failed if it fails.</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>MEDIUMTEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype>
+                            <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                    </persistence>
+                </attribute>
+            </attributes>
+            <indexes>
+                <index name="messageIdIDX" unique="true">
+                    <key attribute="messageId"/>
+                </index>
+            </indexes>
+        </itemtype>
+    </itemtypes>
+</items>

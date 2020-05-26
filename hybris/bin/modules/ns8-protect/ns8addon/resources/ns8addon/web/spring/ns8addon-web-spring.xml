@@ -31,14 +31,14 @@
         <property name="add" ref="getNs8addonBeforeViewHandler"/>
     </bean>
 
-    <alias name="defaultUserSessionDataFilter" alias="userSessionDataFilter"/>
-    <bean id="defaultUserSessionDataFilter" class="com.ns8.hybris.addon.filter.UserSessionDataFilter">
+    <alias name="defaultNs8UserSessionDataFilter" alias="ns8UserSessionDataFilter"/>
+    <bean id="defaultNs8UserSessionDataFilter" class="com.ns8.hybris.addon.filter.Ns8UserSessionDataFilter">
         <constructor-arg name="sessionService" ref="sessionService" />
         <constructor-arg name="ns8UserIpStrategy" ref="ns8UserIpStrategy" />
     </bean>
 
     <bean depends-on="storefrontTenantDefaultFilterChainList" parent="listMergeDirective">
-        <property name="add" ref="userSessionDataFilter" />
+        <property name="add" ref="ns8UserSessionDataFilter" />
         <property name="afterBeanNames">
             <list value-type="java.lang.String">
                 <value>cartRestorationFilter</value>
@@ -46,4 +46,17 @@
         </property>
     </bean>
 
+    <alias name="defaultNs8OrderVerificationDataPopulator" alias="ns8OrderVerificationDataPopulator"/>
+    <bean id="defaultNs8OrderVerificationDataPopulator"
+          class="com.ns8.hybris.addon.converters.populators.DefaultNs8OrderVerificationDataPopulator"/>
+
+    <alias name="defaultNs8OrderVerificationDataConverter" alias="ns8OrderVerificationDataConverter"/>
+    <bean id="defaultNs8OrderVerificationDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.addon.data.Ns8OrderVerificationData"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="ns8OrderVerificationDataPopulator"/>
+            </list>
+        </property>
+    </bean>
 </beans>

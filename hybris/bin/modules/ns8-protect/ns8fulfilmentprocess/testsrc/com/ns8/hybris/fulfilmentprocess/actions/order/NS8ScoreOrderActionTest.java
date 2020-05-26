@@ -16,6 +16,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.*;
@@ -23,6 +26,10 @@ import static org.mockito.Mockito.*;
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
 public class NS8ScoreOrderActionTest {
+
+    private static final String WAIT = "WAIT";
+    private static final String OK = "OK";
+    private static final String NOK = "NOK";
 
     @InjectMocks
     private NS8ScoreOrderAction testObj;
@@ -43,17 +50,17 @@ public class NS8ScoreOrderActionTest {
     }
 
     @Test
-    public void execute_orderNotScored_shouldSendOrderAndWait() {
+    public void execute_WhenOrderNotScored_ShouldSendOrderAndWait() {
         when(ns8FraudServiceMock.hasOrderBeenScored(orderMock)).thenReturn(false);
 
         final String result = testObj.execute(orderProcessMock);
 
         verify(ns8APIServiceMock).triggerCreateOrderActionEvent(orderMock);
-        assertThat(result).isEqualTo("WAIT");
+        assertThat(result).isEqualTo(WAIT);
     }
 
     @Test
-    public void execute_500ErrorWhenSendingOrder_shouldThrowRetryLaterException() {
+    public void execute_When500ErrorWhenSendingOrder_ShouldThrowRetryLaterException() {
         final NS8IntegrationException ns8IntegrationException = new NS8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR);
         doThrow(ns8IntegrationException).when(ns8APIServiceMock).triggerCreateOrderActionEvent(orderMock);
 
@@ -65,23 +72,30 @@ public class NS8ScoreOrderActionTest {
     }
 
     @Test
-    public void execute_400ErrorWhenSendingOrder_shouldReturnNok() {
+    public void execute_When400ErrorWhenSendingOrder_ShouldReturnNok() {
         final HttpClientErrorException clientErrorException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
         final NS8IntegrationException ns8IntegrationException = new NS8IntegrationException("message", HttpStatus.I_AM_A_TEAPOT, clientErrorException);
         doThrow(ns8IntegrationException).when(ns8APIServiceMock).triggerCreateOrderActionEvent(orderMock);
 
         final String result = testObj.execute(orderProcessMock);
 
-        assertThat(result).isEqualTo("NOK");
+        assertThat(result).isEqualTo(NOK);
     }
 
     @Test
-    public void execute_orderScored_shouldNotSendOrder() {
+    public void execute_WhenOrderScored_ShouldNotSendOrder() {
         when(ns8FraudServiceMock.hasOrderBeenScored(orderMock)).thenReturn(true);
 
         final String result = testObj.execute(orderProcessMock);
 
         verifyZeroInteractions(ns8APIServiceMock);
-        assertThat(result).isEqualTo("OK");
+        assertThat(result).isEqualTo(OK);
+    }
+
+    @Test
+    public void getTransitions_ShouldGetAllTransactions() {
+        final Set<String> results = testObj.getTransitions();
+
+        assertThat(results.containsAll(Arrays.asList(WAIT, OK, NOK))).isTrue();
     }
 }

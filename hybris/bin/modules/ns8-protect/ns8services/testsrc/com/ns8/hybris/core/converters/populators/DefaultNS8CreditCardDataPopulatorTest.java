@@ -1,7 +1,7 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CreditCardData;
-import com.ns8.hybris.core.data.NS8CreditCardTransactionType;
+import com.ns8.hybris.core.data.Ns8CreditCardData;
+import com.ns8.hybris.core.data.Ns8CreditCardTransactionType;
 import com.ns8.hybris.core.services.NS8PaymentTransactionService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.enums.CreditCardType;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8CreditCardDataPopulatorTest {
+public class DefaultNs8CreditCardDataPopulatorTest {
 
     private static final String VALID_TO_MONTH = "11";
     private static final String VALID_TO_YEAR = "23";
@@ -38,7 +38,7 @@ public class DefaultNS8CreditCardDataPopulatorTest {
     private static final String LAST_NAME = "hansen";
 
     @InjectMocks
-    private DefaultNS8CreditCardDataPopulator testObj;
+    private DefaultNs8CreditCardDataPopulator testObj;
 
     @Mock
     protected NS8PaymentTransactionService NS8PaymentTransactionServiceMock;
@@ -51,14 +51,14 @@ public class DefaultNS8CreditCardDataPopulatorTest {
     @Mock
     private PaymentTransactionEntryModel transactionEntryMock;
 
-    private NS8CreditCardData ns8CreditCardData;
+    private Ns8CreditCardData ns8CreditCardData;
 
     @Before
     public void setUp() {
         testObj.setTransactionTypeMapping(Map.of(
-                PaymentTransactionType.AUTHORIZATION, NS8CreditCardTransactionType.AUTHORIZATION,
-                PaymentTransactionType.CAPTURE, NS8CreditCardTransactionType.CAPTURE));
-        ns8CreditCardData = new NS8CreditCardData();
+                PaymentTransactionType.AUTHORIZATION, Ns8CreditCardTransactionType.AUTHORIZATION,
+                PaymentTransactionType.CAPTURE, Ns8CreditCardTransactionType.CAPTURE));
+        ns8CreditCardData = new Ns8CreditCardData();
 
         when(NS8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
         when(paymentTransactionMock.getInfo()).thenReturn(ccPaymentInfoMock);
@@ -82,7 +82,7 @@ public class DefaultNS8CreditCardDataPopulatorTest {
         assertThat(ns8CreditCardData.getCardHolder()).isEqualTo(FIRST_NAME + " " + LAST_NAME);
         assertThat(ns8CreditCardData.getCreditCardCompany()).isEqualTo(CREDIT_CARD_TYPE.toString());
         assertThat(ns8CreditCardData.getCreditCardNumber()).isEqualTo(CREDIT_CARD_NUMBER);
-        assertThat(ns8CreditCardData.getTransactionType()).isEqualTo(NS8CreditCardTransactionType.AUTHORIZATION);
+        assertThat(ns8CreditCardData.getTransactionType()).isEqualTo(Ns8CreditCardTransactionType.AUTHORIZATION);
         assertThat(ns8CreditCardData.getCvvResultCode()).isNull();
         assertThat(ns8CreditCardData.getAvsResultCode()).isNull();
         assertThat(ns8CreditCardData.getCreditCardBin()).isNull();

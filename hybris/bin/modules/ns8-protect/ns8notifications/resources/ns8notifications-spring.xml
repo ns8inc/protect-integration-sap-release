@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
--->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd">	
-		   
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="spring/ns8notifications-services-spring.xml"/>
+    <import resource="spring/ns8notifications-jobs-spring.xml"/>
+    <import resource="spring/ns8notifications-daos-spring.xml"/>
+    <import resource="spring/ns8notifications-strategies-spring.xml"/>
+
 </beans>

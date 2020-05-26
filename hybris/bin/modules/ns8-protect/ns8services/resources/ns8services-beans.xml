@@ -1,6 +1,6 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
 
-    <bean class="com.ns8.hybris.core.data.NS8MerchantData">
+    <bean class="com.ns8.hybris.core.data.Ns8MerchantData">
         <property name="email" type="java.lang.String"/>
         <property name="storeUrl" type="java.lang.String"/>
         <property name="firstName" type="java.lang.String"/>
@@ -12,26 +12,26 @@
         <property name="queueId" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8OrderData">
-        <property name="addresses" type="java.util.List&lt;com.ns8.hybris.core.data.NS8AddressData>"/>
+    <bean class="com.ns8.hybris.core.data.Ns8OrderData">
+        <property name="addresses" type="java.util.List&lt;com.ns8.hybris.core.data.Ns8AddressData>"/>
         <property name="createdAt" type="java.util.Date"/>
         <property name="currency" type="java.lang.String"/>
-        <property name="customer" type="com.ns8.hybris.core.data.NS8CustomerData"/>
+        <property name="customer" type="com.ns8.hybris.core.data.Ns8CustomerData"/>
         <property name="hasGiftCard" type="java.lang.Boolean"/>
-        <property name="lineItems" type="java.util.List&lt;com.ns8.hybris.core.data.NS8LineItemData>"/>
+        <property name="lineItems" type="java.util.List&lt;com.ns8.hybris.core.data.Ns8LineItemData>"/>
         <property name="merchantId" type="java.lang.String"/>
         <property name="name" type="java.lang.String"/>
         <property name="platformCreatedAt" type="java.util.Date"/>
         <property name="platformId" type="java.lang.String"/>
-        <property name="platformStatus" type="com.ns8.hybris.core.data.NS8PlatformOrderStatus"/>
-        <property name="session" type="com.ns8.hybris.core.data.NS8SessionData"/>
-        <property name="status" type="com.ns8.hybris.core.data.NS8Status"/>
+        <property name="platformStatus" type="com.ns8.hybris.core.data.Ns8PlatformOrderStatus"/>
+        <property name="session" type="com.ns8.hybris.core.data.Ns8SessionData"/>
+        <property name="status" type="com.ns8.hybris.core.data.Ns8Status"/>
         <property name="totalPrice" type="java.lang.Double"/>
-        <property name="transactions" type="java.util.List&lt;com.ns8.hybris.core.data.NS8TransactionData>"/>
+        <property name="transactions" type="java.util.List&lt;com.ns8.hybris.core.data.Ns8TransactionData>"/>
         <property name="updatedAt" type="java.util.Date"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8LineItemData">
+    <bean class="com.ns8.hybris.core.data.Ns8LineItemData">
         <property name="ean13" type="java.lang.String"/>
         <property name="isbn" type="java.lang.String"/>
         <property name="isGiftCard" type="java.lang.Boolean"/>
@@ -50,7 +50,7 @@
         <property name="vendor" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8AddressData">
+    <bean class="com.ns8.hybris.core.data.Ns8AddressData">
         <property name="address1" type="java.lang.String"/>
         <property name="address2" type="java.lang.String"/>
         <property name="city" type="java.lang.String"/>
@@ -62,11 +62,11 @@
         <property name="name" type="java.lang.String"/>
         <property name="region" type="java.lang.String"/>
         <property name="regionCode" type="java.lang.String"/>
-        <property name="type" type="com.ns8.hybris.core.data.NS8AddressType"/>
+        <property name="type" type="com.ns8.hybris.core.data.Ns8AddressType"/>
         <property name="zip" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8CustomerData">
+    <bean class="com.ns8.hybris.core.data.Ns8CustomerData">
         <property name="birthday" type="java.util.Date"/>
         <property name="company" type="java.lang.String"/>
         <property name="email" type="java.lang.String"/>
@@ -81,7 +81,7 @@
         <property name="totalSpent" type="java.lang.Double"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8SessionData">
+    <bean class="com.ns8.hybris.core.data.Ns8SessionData">
         <property name="acceptLanguage" type="java.lang.String"/>
         <property name="ip" type="java.lang.String"/>
         <property name="screenHeight" type="java.lang.Long"/>
@@ -89,18 +89,18 @@
         <property name="userAgent" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8TransactionData">
+    <bean class="com.ns8.hybris.core.data.Ns8TransactionData">
         <property name="amount" type="java.lang.Double"/>
-        <property name="creditCard" type="com.ns8.hybris.core.data.NS8CreditCardData"/>
+        <property name="creditCard" type="com.ns8.hybris.core.data.Ns8CreditCardData"/>
         <property name="currency" type="java.lang.String"/>
-        <property name="method" type="com.ns8.hybris.core.data.NS8TransactionMethod"/>
+        <property name="method" type="com.ns8.hybris.core.data.Ns8TransactionMethod"/>
         <property name="platformId" type="java.lang.String"/>
         <property name="processedAt" type="java.util.Date"/>
-        <property name="status" type="com.ns8.hybris.core.data.NS8TransactionStatus"/>
+        <property name="status" type="com.ns8.hybris.core.data.Ns8TransactionStatus"/>
         <property name="statusDetails" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.NS8CreditCardData">
+    <bean class="com.ns8.hybris.core.data.Ns8CreditCardData">
         <property name="avsResultCode" type="java.lang.Integer"/>
         <property name="cardExpiration" type="java.lang.String"/>
         <property name="cardHolder" type="java.lang.String"/>
@@ -109,16 +109,37 @@
         <property name="creditCardNumber" type="java.lang.String"/>
         <property name="cvvResultCode" type="java.lang.Integer"/>
         <property name="gateway" type="java.lang.String"/>
-        <property name="transactionType" type="com.ns8.hybris.core.data.NS8CreditCardTransactionType"/>
+        <property name="transactionType" type="com.ns8.hybris.core.data.Ns8CreditCardTransactionType"/>
     </bean>
 
-    <enum class="com.ns8.hybris.core.data.NS8AddressType">
+    <bean class="com.ns8.hybris.core.data.Ns8PlatformOrderUpdateStatus">
+        <property name="name" type="java.lang.String"/>
+        <property name="status" type="com.ns8.hybris.core.data.Ns8PlatformOrderStatus"/>
+        <property name="platformStatus" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.ns8.hybris.core.data.Ns8OrderVerificationRequest">
+        <property name="orderId" type="java.lang.String"/>
+        <property name="token" type="java.lang.String"/>
+        <property name="verificationId" type="java.lang.String"/>
+        <property name="phone" type="java.lang.String"/>
+        <property name="code" type="java.lang.String"/>
+        <property name="view" type="java.lang.String"/>
+        <property name="returnURI" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.ns8.hybris.core.data.Ns8OrderVerificationResponse">
+        <property name="html" type="java.lang.String"/>
+        <property name="location" type="java.lang.String"/>
+    </bean>
+
+    <enum class="com.ns8.hybris.core.data.Ns8AddressType">
         <value>BILLING</value>
         <value>SHIPPING</value>
         <value>DEVICE</value>
     </enum>
 
-    <enum class="com.ns8.hybris.core.data.NS8CreditCardTransactionType">
+    <enum class="com.ns8.hybris.core.data.Ns8CreditCardTransactionType">
         <value>AUTHORIZATION</value>
         <value>SALE</value>
         <value>CAPTURE</value>
@@ -126,20 +147,20 @@
         <value>VOID</value>
     </enum>
 
-    <enum class="com.ns8.hybris.core.data.NS8PlatformOrderStatus">
+    <enum class="com.ns8.hybris.core.data.Ns8PlatformOrderStatus">
         <value>CANCELED</value>
         <value>REFUNDED</value>
         <value>ACTIVE</value>
         <value>COMPLETED</value>
     </enum>
 
-    <enum class="com.ns8.hybris.core.data.NS8Status">
+    <enum class="com.ns8.hybris.core.data.Ns8Status">
         <value>APPROVED</value>
         <value>MERCHANT_REVIEW</value>
         <value>CANCELLED</value>
     </enum>
 
-    <enum class="com.ns8.hybris.core.data.NS8TransactionMethod">
+    <enum class="com.ns8.hybris.core.data.Ns8TransactionMethod">
         <value>CC</value>
         <value>COD</value>
         <value>CHECK</value>
@@ -147,51 +168,11 @@
         <value>OTHER</value>
     </enum>
 
-    <enum class="com.ns8.hybris.core.data.NS8TransactionStatus">
+    <enum class="com.ns8.hybris.core.data.Ns8TransactionStatus">
         <value>PENDING</value>
         <value>FAILURE</value>
         <value>SUCCESS</value>
         <value>ERROR</value>
     </enum>
-
-    <bean class="com.ns8.hybris.core.data.queue.Ns8ReceiveMessageWrapper">
-        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-        <property name="receiveMessageResponse" type="com.ns8.hybris.core.data.queue.Ns8ReceiveMessageResponse">
-            <annotations scope="member">@JsonProperty(value="ReceiveMessageResponse")</annotations>
-        </property>
-    </bean>
-
-    <bean class="com.ns8.hybris.core.data.queue.Ns8ReceiveMessageResponse">
-        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-        <property name="receiveMessageResult" type="com.ns8.hybris.core.data.queue.Ns8ReceiveMessageResult">
-            <annotations scope="member">@JsonProperty(value="ReceiveMessageResult")</annotations>
-        </property>
-        <property name="responseMetadata" type="com.ns8.hybris.core.data.queue.Ns8ResponseMetadata">
-            <annotations scope="member">@JsonProperty(value="ResponseMetadata")</annotations>
-        </property>
-    </bean>
-
-    <bean class="com.ns8.hybris.core.data.queue.Ns8ResponseMetadata">
-        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-        <property name="requestId" type="java.lang.String">
-            <annotations scope="member">@JsonProperty(value="RequestId")</annotations>
-        </property>
-    </bean>
-    <bean class="com.ns8.hybris.core.data.queue.Ns8ReceiveMessageResult">
-        <property name="messages" type="java.util.List&lt;com.ns8.hybris.core.data.queue.Ns8QueueMessage&gt;"/>
-    </bean>
-
-    <bean class="com.ns8.hybris.core.data.queue.Ns8QueueMessage">
-        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-        <property name="messageId" type="java.lang.String">
-            <annotations scope="member">@JsonProperty(value="MessageId")</annotations>
-        </property>
-        <property name="receiptHandle" type="java.lang.String">
-            <annotations scope="member">@JsonProperty(value="ReceiptHandle")</annotations>
-        </property>
-        <property name="body" type="java.lang.String">
-            <annotations scope="member">@JsonProperty(value="Body")</annotations>
-        </property>
-    </bean>
 
 </beans>

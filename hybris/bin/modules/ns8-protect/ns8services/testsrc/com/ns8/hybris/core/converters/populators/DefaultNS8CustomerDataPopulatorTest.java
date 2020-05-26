@@ -1,6 +1,6 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CustomerData;
+import com.ns8.hybris.core.data.Ns8CustomerData;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8CustomerDataPopulatorTest {
+public class DefaultNs8CustomerDataPopulatorTest {
 
     private static final String CUSTOMER_EMAIL = "customer@lol.com";
     private static final String CUSTOMER_UID = "customer uid";
@@ -31,7 +31,7 @@ public class DefaultNS8CustomerDataPopulatorTest {
     private static final String PHONE_1 = "phone 1";
     private static final String PHONE_2 = "phone 2";
 
-    private DefaultNS8CustomerDataPopulator testObj = new DefaultNS8CustomerDataPopulator();
+    private DefaultNs8CustomerDataPopulator testObj = new DefaultNs8CustomerDataPopulator();
 
     @Mock
     private CustomerModel customerMock;
@@ -40,14 +40,14 @@ public class DefaultNS8CustomerDataPopulatorTest {
     @Mock
     private AddressModel paymentAddressMock;
 
-    private NS8CustomerData ns8Customer;
+    private Ns8CustomerData ns8Customer;
     private Date creationTime;
 
 
     @Before
     public void setUp() {
         creationTime = new Date();
-        ns8Customer = new NS8CustomerData();
+        ns8Customer = new Ns8CustomerData();
 
         when(orderMock.getUser()).thenReturn(customerMock);
         when(orderMock.getPaymentAddress()).thenReturn(paymentAddressMock);

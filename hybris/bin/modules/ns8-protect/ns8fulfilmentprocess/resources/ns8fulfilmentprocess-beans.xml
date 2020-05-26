@@ -1,0 +1,15 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <enum class="com.ns8.hybris.fulfilmentprocess.enums.Ns8FraudReportRisk">
+        <value>LOW</value>
+        <value>MEDIUM</value>
+        <value>HIGH</value>
+    </enum>
+
+    <enum class="com.ns8.hybris.fulfilmentprocess.enums.Ns8FraudReportStatus">
+        <value>APPROVED</value>
+        <value>MERCHANT_REVIEW</value>
+        <value>CANCELLED</value>
+    </enum>
+
+</beans>

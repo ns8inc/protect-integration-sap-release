@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultNs8ProcessUpdateOrderRiskMessagesStrategy" alias="ns8ProcessUpdateOrderRiskMessagesStrategy"/>
+    <bean id="defaultNs8ProcessUpdateOrderRiskMessagesStrategy"
+          class="com.ns8.hybris.notifications.messages.processing.strategies.impl.Ns8ProcessUpdateOrderRiskMessagesStrategy">
+        <constructor-arg name="orderDao" ref="orderDao"/>
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="businessProcessService" ref="businessProcessService"/>
+    </bean>
+
+</beans>

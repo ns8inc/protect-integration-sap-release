@@ -1,10 +1,9 @@
 package com.ns8.hybris.core.services.api.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ns8.hybris.core.data.NS8MerchantData;
-import com.ns8.hybris.core.data.NS8OrderData;
-import com.ns8.hybris.core.data.PluginInstallResponseData;
+import com.ns8.hybris.core.data.*;
 import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import com.ns8.hybris.core.services.api.NS8APIService;
@@ -24,13 +23,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
 import java.util.Map;
 
+import static com.ns8.hybris.core.constants.Ns8servicesConstants.*;
 import static java.util.Collections.singletonList;
 
 /**
@@ -41,26 +41,27 @@ public class DefaultNS8APIService implements NS8APIService {
     protected static final Logger LOG = LogManager.getLogger(DefaultNS8APIService.class);
 
     protected static final String NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY = "ns8services.platform.name";
-    protected static final String PROTECT_PLATFORM_INSTALL_URL = "/protect/platform/install/";
-    protected static final String API_SWITCH_EXECUTOR = "/api/switch/executor";
-    protected static final String CREATE_ORDER_ACTION = "CREATE_ORDER_ACTION";
     protected static final String ERROR_KEY = "error";
+    protected static final String BEARER = "Bearer ";
 
     protected final RestTemplate restTemplate;
-    protected final Converter<NS8MerchantModel, NS8MerchantData> ns8MerchantModelNS8MerchantDataConverter;
-    protected final Converter<OrderModel, NS8OrderData> ns8OrderDataConverter;
+    protected final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter;
+    protected final Converter<OrderModel, Ns8PlatformOrderUpdateStatus> ns8PlatformOrderUpdateStatusConverter;
+    protected final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter;
     protected final ConfigurationService configurationService;
     protected final NS8EndpointService ns8EndpointService;
     protected final ModelService modelService;
 
     public DefaultNS8APIService(final RestTemplate restTemplate,
-                                final Converter<NS8MerchantModel, NS8MerchantData> ns8MerchantModelNS8MerchantDataConverter,
-                                final Converter<OrderModel, NS8OrderData> ns8OrderDataConverter,
+                                final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter,
+                                final Converter<OrderModel, Ns8PlatformOrderUpdateStatus> ns8PlatformOrderUpdateStatusConverter,
+                                final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter,
                                 final ConfigurationService configurationService,
                                 final NS8EndpointService ns8EndpointService,
                                 final ModelService modelService) {
         this.restTemplate = restTemplate;
-        this.ns8MerchantModelNS8MerchantDataConverter = ns8MerchantModelNS8MerchantDataConverter;
+        this.ns8MerchantDataConverter = ns8MerchantDataConverter;
+        this.ns8PlatformOrderUpdateStatusConverter = ns8PlatformOrderUpdateStatusConverter;
         this.ns8OrderDataConverter = ns8OrderDataConverter;
         this.configurationService = configurationService;
         this.ns8EndpointService = ns8EndpointService;
@@ -75,7 +76,7 @@ public class DefaultNS8APIService implements NS8APIService {
         final String platform = configurationService.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY);
         final String backendAPIURL = ns8EndpointService.getBaseBackendURL();
 
-        final NS8MerchantData ns8MerchantData = ns8MerchantModelNS8MerchantDataConverter.convert(ns8Merchant);
+        final Ns8MerchantData ns8MerchantData = ns8MerchantDataConverter.convert(ns8Merchant);
         final String requestUrl = backendAPIURL + PROTECT_PLATFORM_INSTALL_URL + platform;
 
         final ResponseEntity<PluginInstallResponseData> responseEntity;
@@ -86,7 +87,7 @@ public class DefaultNS8APIService implements NS8APIService {
             LOG.error("Installation of NS8 Merchant failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", () -> requestUrl, () -> prettyPrint(ns8MerchantData), e::getStatusCode, e::getResponseBodyAsString);
             final String errorDetails = getErrorDetails(e);
             throw new NS8IntegrationException("Installation of NS8 Merchant failed. " + errorDetails, e.getStatusCode(), e);
-        } catch (final Exception e) {
+        } catch (final ResourceAccessException e) {
             LOG.error("Installation of NS8 Merchant failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
                     () -> requestUrl, () -> prettyPrint(ns8MerchantData), () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
             throw new NS8IntegrationException("Installation of NS8 Merchant failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
@@ -101,9 +102,7 @@ public class DefaultNS8APIService implements NS8APIService {
     @Override
     public String fetchTrueStatsScript(final NS8MerchantModel ns8Merchant) {
         final String clientAPIURL = ns8EndpointService.getBaseClientURL();
-
-        final HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList("Bearer " + ns8Merchant.getApiKey()));
+        final HttpHeaders headers = buildHeadersWithAuthorization(ns8Merchant.getApiKey());
         final HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -112,7 +111,7 @@ public class DefaultNS8APIService implements NS8APIService {
         } catch (final HttpStatusCodeException e) {
             LOG.error("Fetching true stats failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
             throw new NS8IntegrationException("Fetching true stats failed.", e.getStatusCode(), e);
-        } catch (final Exception ex) {
+        } catch (final ResourceAccessException ex) {
             LOG.error("Fetching true stats failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
             throw new NS8IntegrationException("Fetching true stats failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
@@ -123,25 +122,21 @@ public class DefaultNS8APIService implements NS8APIService {
      */
     @Override
     public void triggerCreateOrderActionEvent(final OrderModel order) {
-        final String clientAPIURL = ns8EndpointService.getBaseClientURL();
+        final UriComponents uri = buildUriComponents(CREATE_ORDER_ACTION);
+        final Ns8OrderData ns8OrderData = ns8OrderDataConverter.convert(order);
 
-        final NS8OrderData ns8OrderData = ns8OrderDataConverter.convert(order);
-        final HttpHeaders headers = createHttpHeadersForOrder(order);
+        Preconditions.checkArgument(order.getSite() != null && order.getSite().getNs8Merchant() != null
+                && StringUtils.isNotBlank(order.getSite().getNs8Merchant().getApiKey()), "The merchant api key is mandatory to trigger the order creation.");
+        final HttpEntity<Object> request = buildHttpEntity(order.getSite().getNs8Merchant().getApiKey(), ns8OrderData);
 
-        final HttpEntity<NS8OrderData> request = new HttpEntity<>(ns8OrderData, headers);
-        final UriComponents uri = UriComponentsBuilder.fromUriString(clientAPIURL)
-                .path(API_SWITCH_EXECUTOR)
-                .queryParam("action", CREATE_ORDER_ACTION)
-                .build();
         try {
             LOG.info("Sending order [{}] to NS8 for fraud check", order::getCode);
             final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(uri.toString(), request, Void.class);
-
             LOG.debug("Order [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
             LOG.error("Sending order to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8OrderData), e::getStatusCode, e::getResponseBodyAsString);
             throw new NS8IntegrationException("Installation of NS8 Merchant failed.", e.getStatusCode(), e);
-        } catch (final Exception ex) {
+        } catch (final ResourceAccessException ex) {
             LOG.error("Sending order to NS8 failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
                     uri::toString, () -> prettyPrint(ns8OrderData), () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
             throw new NS8IntegrationException("Sending order to NS8 failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
@@ -149,16 +144,102 @@ public class DefaultNS8APIService implements NS8APIService {
     }
 
     /**
-     * Created {@link HttpHeaders} for the order model
-     *
-     * @param order the order model
-     * @return the http headers
+     * {@inheritDoc}
      */
-    protected HttpHeaders createHttpHeadersForOrder(final OrderModel order) {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + order.getSite().getNs8Merchant().getApiKey()));
-        headers.put(HttpHeaders.CONTENT_TYPE, singletonList(ContentType.APPLICATION_JSON.toString()));
-        return headers;
+    @Override
+    public void triggerUpdateOrderStatusAction(final OrderModel order) {
+        final UriComponents uri = buildUriComponents(UPDATE_ORDER_STATUS_ACTION);
+        final Ns8PlatformOrderUpdateStatus ns8PlatformOrderUpdateStatus = ns8PlatformOrderUpdateStatusConverter.convert(order);
+
+        Preconditions.checkArgument(order.getSite() != null && order.getSite().getNs8Merchant() != null
+                && StringUtils.isNotBlank(order.getSite().getNs8Merchant().getApiKey()), "The merchant api key is mandatory to trigger the update order status.");
+        final HttpEntity<Object> request = buildHttpEntity(order.getSite().getNs8Merchant().getApiKey(), ns8PlatformOrderUpdateStatus);
+
+        try {
+            LOG.info("Sending order status update [{}] to NS8 for fraud check", order::getCode);
+            LOG.debug("Payload: [{}]", () -> prettyPrint(ns8PlatformOrderUpdateStatus));
+            final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(uri.toString(), request, Void.class);
+            LOG.debug("Order status update [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8PlatformOrderUpdateStatus), e::getStatusCode, e::getResponseBodyAsString);
+            throw new NS8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
+        } catch (final ResourceAccessException ex) {
+            LOG.error("Update status event could not be completed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
+                    uri::toString, () -> prettyPrint(ns8PlatformOrderUpdateStatus), () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
+            throw new NS8IntegrationException("Update status event failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getVerificationTemplate(final Ns8OrderVerificationRequest orderVerificationRequest, final String apiKey) {
+        final UriComponents uri = getGetTemplateCallUriComponents(orderVerificationRequest);
+        final HttpHeaders headers = buildHeadersWithAuthorization(apiKey);
+
+        final String template = orderVerificationRequest.getView();
+        try {
+            LOG.debug("Getting verification template [{}] from NS8", template);
+            final ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri.toString(), String.class, headers);
+            return getNs8OrderVerificationContent(responseEntity);
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
+            throw new NS8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+        } catch (final ResourceAccessException ex) {
+            LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> template, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
+            throw new NS8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ns8OrderVerificationResponse sendVerification(final Ns8OrderVerificationRequest orderVerificationRequest, final String apiKey) {
+        final UriComponents uri = getPostTemplateCallUriComponents();
+        final HttpEntity<Object> request = buildHttpEntityForVerificationCall(orderVerificationRequest, apiKey);
+
+        final String template = orderVerificationRequest.getView();
+        try {
+            LOG.debug("Getting verification template [{}] from NS8", template);
+            final ResponseEntity<String> responseEntity = restTemplate.postForEntity(uri.toString(), request, String.class);
+            LOG.debug("Template [{}] retrieved successfully - Response code: [{}]", template, responseEntity.getStatusCode());
+            return new GsonBuilder().create().fromJson(responseEntity.getBody(), Ns8OrderVerificationResponse.class);
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
+            throw new NS8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+        } catch (final ResourceAccessException ex) {
+            LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> template, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
+            throw new NS8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+        }
+    }
+
+    /**
+     * Generates the URI components with a given set of parameters
+     *
+     * @param orderVerificationRequest the order verification request object
+     */
+    protected UriComponents getGetTemplateCallUriComponents(final Ns8OrderVerificationRequest orderVerificationRequest) {
+        return UriComponentsBuilder.fromUriString(ns8EndpointService.getBaseClientURL())
+                .path(API_TEMPLATE_URL)
+                .queryParam("orderId", orderVerificationRequest.getOrderId())
+                .queryParam("token", orderVerificationRequest.getToken())
+                .queryParam("verificationId", orderVerificationRequest.getVerificationId())
+                .queryParam("view", orderVerificationRequest.getView())
+                .queryParam("returnUri", orderVerificationRequest.getReturnURI())
+                .build();
+    }
+
+    /**
+     * Generates the URI components of a call
+     */
+    protected UriComponents getPostTemplateCallUriComponents() {
+        return UriComponentsBuilder.fromUriString(ns8EndpointService.getBaseClientURL())
+                .path(API_TEMPLATE_URL)
+                .build();
     }
 
     /**
@@ -173,7 +254,6 @@ public class DefaultNS8APIService implements NS8APIService {
         ns8Merchant.setEnabled(true);
         modelService.save(ns8Merchant);
     }
-
 
     /**
      * Checks if the exception contains an error details, and if found returns the error message
@@ -204,5 +284,61 @@ public class DefaultNS8APIService implements NS8APIService {
             sanitisedScript = sanitisedScript.substring(1, sanitisedScript.length() - 1);
         }
         return sanitisedScript;
+    }
+
+    /**
+     * Generates URI components for action event calls. Includes the action code
+     * of the operation that will be performed
+     *
+     * @param actionCode the action code of the operation
+     * @return the Uri components
+     */
+    protected UriComponents buildUriComponents(final String actionCode) {
+        final String clientAPIURL = ns8EndpointService.getBaseClientURL();
+        return UriComponentsBuilder.fromUriString(clientAPIURL)
+                .path(API_SWITCH_EXECUTOR_URL)
+                .queryParam("action", actionCode)
+                .build();
+    }
+
+    /**
+     * Creates an HTTP entity with the given merchant API Key
+     *
+     * @param apiKey the merchant api key
+     * @param object the object that is added to the HTTP entity model
+     * @return the http headers
+     */
+    protected HttpEntity<Object> buildHttpEntity(final String apiKey, final Object object) {
+        final HttpHeaders headers = buildHeadersWithAuthorization(apiKey);
+        headers.put(HttpHeaders.CONTENT_TYPE, singletonList(ContentType.APPLICATION_JSON.toString()));
+        return new HttpEntity<>(object, headers);
+    }
+
+    /**
+     * Creates an HTTP entity that holds a form and uses an order's merchant API Key
+     *
+     * @param orderVerificationRequest the order verification request object
+     * @param apiKey                   The API key for the header
+     * @return the http headers
+     */
+    protected HttpEntity<Object> buildHttpEntityForVerificationCall(final Ns8OrderVerificationRequest orderVerificationRequest, final String apiKey) {
+        final HttpHeaders headers = buildHeadersWithAuthorization(apiKey);
+
+        return new HttpEntity<>(orderVerificationRequest, headers);
+    }
+
+    /**
+     * Creates HTTP headers containing the authorization needed for an API key
+     *
+     * @param apiKey The API key of the merchant
+     */
+    protected HttpHeaders buildHeadersWithAuthorization(final String apiKey) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.AUTHORIZATION, singletonList(BEARER + apiKey));
+        return headers;
+    }
+
+    protected String getNs8OrderVerificationContent(final ResponseEntity<String> responseEntity) {
+        return new GsonBuilder().create().fromJson(responseEntity.getBody(), Ns8OrderVerificationResponse.class).getHtml();
     }
 }
