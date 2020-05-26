@@ -44,7 +44,7 @@ public class Ns8NavigationContextController extends DefaultWidgetController {
     @Wire
     protected Combobox cmsSiteSelector;
 
-    protected ListModelList<CMSSiteModel> cmsSiteModels = new ListModelList();
+    protected ListModelList<CMSSiteModel> cmsSiteModels = new ListModelList<>();
 
     /**
      * {@inheritDoc}

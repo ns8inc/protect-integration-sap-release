@@ -22,6 +22,9 @@ public class DefaultNs8PopulateSessionVarsPlaceOrderMethodHookTest {
 
     private static final String CUSTOMER_IP_FROM_SESSION = "customer ip from session";
     private static final String USER_AGENT_FROM_SESSION = "user agent from session";
+    private static final String LANGUAGE_VALUE_FROM_SESSION = "en";
+    private static final Long HEIGHT_VALUE_FROM_SESSION = 1700L;
+    private static final Long WIDTH_VALUE_FROM_SESSION = 2000L;
 
     @InjectMocks
     private DefaultNs8PopulateSessionVarsPlaceOrderMethodHook testObj;
@@ -43,14 +46,20 @@ public class DefaultNs8PopulateSessionVarsPlaceOrderMethodHookTest {
         when(commerceOrderResultMock.getOrder()).thenReturn(orderMock);
         when(sessionServiceMock.getAttribute(Ns8servicesConstants.USER_IP_SESSION_ATTR)).thenReturn(CUSTOMER_IP_FROM_SESSION);
         when(sessionServiceMock.getAttribute(Ns8servicesConstants.USER_AGENT_SESSION_ATTR)).thenReturn(USER_AGENT_FROM_SESSION);
+        when(sessionServiceMock.getAttribute(Ns8servicesConstants.ACCEPT_LANGUAGE_SESSION_ATTR)).thenReturn(LANGUAGE_VALUE_FROM_SESSION);
+        when(sessionServiceMock.getAttribute(Ns8servicesConstants.SCREEN_HEIGHT_SESSION_ATTR)).thenReturn(HEIGHT_VALUE_FROM_SESSION);
+        when(sessionServiceMock.getAttribute(Ns8servicesConstants.SCREEN_WIDTH_SESSION_ATTR)).thenReturn(WIDTH_VALUE_FROM_SESSION);
     }
 
     @Test
-    public void beforeSubmitOrder_shouldPopulateIpAndAgentFromSession() {
+    public void beforeSubmitOrder_ShouldPopulateIpAgentLanguageAndScreenHeightWidthFromSession() {
         testObj.beforeSubmitOrder(commerceCheckoutParameterMock, commerceOrderResultMock);
 
         verify(orderMock).setCustomerIp(CUSTOMER_IP_FROM_SESSION);
         verify(orderMock).setCustomerUserAgent(USER_AGENT_FROM_SESSION);
+        verify(orderMock).setAcceptLanguage(LANGUAGE_VALUE_FROM_SESSION);
+        verify(orderMock).setScreenHeight(HEIGHT_VALUE_FROM_SESSION);
+        verify(orderMock).setScreenWidth(WIDTH_VALUE_FROM_SESSION);
         verify(modelServiceMock).save(orderMock);
     }
 

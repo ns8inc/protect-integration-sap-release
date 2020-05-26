@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultNs8FetchQueueMessagesJob" alias="ns8FetchQueueMessagesJob"/>
+    <bean id="defaultNs8FetchQueueMessagesJob" parent="abstractJobPerformable"
+          class="com.ns8.hybris.notifications.jobs.Ns8FetchQueueMessagesJob">
+        <constructor-arg name="ns8QueueService" ref="ns8QueueService"/>
+        <constructor-arg name="ns8QueueMessageDao" ref="ns8QueueMessageDao"/>
+    </bean>
+
+    <alias name="defaultNs8ProcessMessagesJob" alias="ns8ProcessMessagesJob"/>
+    <bean name="defaultNs8ProcessMessagesJob" class="com.ns8.hybris.notifications.jobs.Ns8ProcessMessagesJob"
+          parent="abstractJobPerformable">
+        <constructor-arg name="messageStrategyMap">
+            <map key-type="com.ns8.hybris.notifications.enums.Ns8MessageActionType"
+                 value-type="com.ns8.hybris.notifications.messages.processing.strategies.Ns8ProcessMessagesStrategy">
+                <entry key="UPDATE_ORDER_RISK_EVENT" value-ref="ns8ProcessUpdateOrderRiskMessagesStrategy"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg name="ns8QueueMessageDao" ref="ns8QueueMessageDao"/>
+    </bean>
+
+</beans>

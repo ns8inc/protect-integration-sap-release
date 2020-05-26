@@ -1,7 +1,7 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8AddressData;
-import com.ns8.hybris.core.data.NS8AddressType;
+import com.ns8.hybris.core.data.Ns8AddressData;
+import com.ns8.hybris.core.data.Ns8AddressType;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8AddressDatasPopulatorTest {
+public class DefaultNs8AddressDatasPopulatorTest {
 
     private static final String PAYMENT_LINE_1 = "payment line 1";
     private static final String PAYMENT_LINE_2 = "payment Line 2";
@@ -48,7 +48,7 @@ public class DefaultNS8AddressDatasPopulatorTest {
     private static final String DELIVERY_FIRST_NAME = "otto";
     private static final String DELIVERY_LAST_NAME = "jensen";
 
-    private DefaultNS8AddressDatasPopulator testObj = new DefaultNS8AddressDatasPopulator();
+    private DefaultNs8AddressDatasPopulator testObj = new DefaultNs8AddressDatasPopulator();
 
     @Mock
     private OrderModel orderMock;
@@ -57,7 +57,7 @@ public class DefaultNS8AddressDatasPopulatorTest {
     @Mock
     private UserModel customerMock;
 
-    private List<NS8AddressData> target;
+    private List<Ns8AddressData> target;
 
     @Before
     public void setUp() {
@@ -94,11 +94,11 @@ public class DefaultNS8AddressDatasPopulatorTest {
     public void populate() {
         testObj.populate(orderMock, target);
 
-        final Optional<NS8AddressData> billingAddressOpt = target.stream().filter(address -> address.getType().equals(NS8AddressType.BILLING)).findFirst();
-        final Optional<NS8AddressData> deliveryAddressOpt = target.stream().filter(address -> address.getType().equals(NS8AddressType.SHIPPING)).findFirst();
+        final Optional<Ns8AddressData> billingAddressOpt = target.stream().filter(address -> address.getType().equals(Ns8AddressType.BILLING)).findFirst();
+        final Optional<Ns8AddressData> deliveryAddressOpt = target.stream().filter(address -> address.getType().equals(Ns8AddressType.SHIPPING)).findFirst();
 
         assertThat(billingAddressOpt).isPresent();
-        final NS8AddressData billingAddress = billingAddressOpt.get();
+        final Ns8AddressData billingAddress = billingAddressOpt.get();
         assertThat(billingAddress.getAddress1()).isEqualTo(PAYMENT_LINE_1);
         assertThat(billingAddress.getAddress2()).isEqualTo(PAYMENT_LINE_2);
         assertThat(billingAddress.getCity()).isEqualTo(PAYMENT_TOWN);
@@ -113,7 +113,7 @@ public class DefaultNS8AddressDatasPopulatorTest {
         assertThat(billingAddress.getLongitude()).isNull();
 
         assertThat(deliveryAddressOpt).isPresent();
-        final NS8AddressData deliveryAddress = deliveryAddressOpt.get();
+        final Ns8AddressData deliveryAddress = deliveryAddressOpt.get();
         assertThat(deliveryAddress.getAddress1()).isEqualTo(DELIVERY_LINE_1);
         assertThat(deliveryAddress.getAddress2()).isEqualTo(DELIVERY_LINE_2);
         assertThat(deliveryAddress.getCity()).isEqualTo(DELIVERY_TOWN);

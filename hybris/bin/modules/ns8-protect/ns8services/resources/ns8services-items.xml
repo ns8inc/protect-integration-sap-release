@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
 
+    <enumtypes>
+        <enumtype code="Ns8RiskType" autocreate="true" generate="true">
+            <value code="LOW"/>
+            <value code="MEDIUM"/>
+            <value code="HIGH"/>
+        </enumtype>
+    </enumtypes>
+
+    <relations>
+        <relation code="FraudSymptomScoring2Ns8FraudFactor" localized="false">
+            <sourceElement qualifier="fraudSymptomScoring" type="FraudSymptomScoring" cardinality="one">
+                <modifiers read="true" initial="true" write="false"
+                           search="true" optional="false"/>
+            </sourceElement>
+            <targetElement qualifier="fraudFactors" type="Ns8FraudFactor"
+                           cardinality="many" collectiontype="list" ordered="false">
+                <modifiers read="true" write="true" search="true"
+                           optional="true" partof="true"/>
+            </targetElement>
+        </relation>
+    </relations>
+
     <itemtypes>
 
         <itemtype code="NS8Merchant">
@@ -67,49 +89,78 @@
                     <modifiers write="true" read="true" unique="false"/>
                     <persistence type="property"/>
                 </attribute>
-            </attributes>
-        </itemtype>
-
-        <itemtype code="Ns8FetchQueueMessagesCronJob" extends="CronJob">
-            <attributes>
-                <attribute qualifier="site" type="BaseSite">
-                    <description>Site to fetch messages for</description>
-                    <modifiers optional="false"/>
+                <attribute qualifier="acceptLanguage" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
                     <persistence type="property"/>
                 </attribute>
-                <attribute qualifier="maxBatchSize" type="int">
-                    <description>Max number of messages the job will fetch pr. execution</description>
-                    <modifiers optional="true"/>
+                <attribute qualifier="screenHeight" type="java.lang.Long">
+                    <modifiers write="true" read="true" unique="false"/>
                     <persistence type="property"/>
                 </attribute>
-            </attributes>
-        </itemtype>
-
-        <itemtype code="Ns8QueueMessage">
-            <deployment table="Ns8QueueMessages" typecode="12001"/>
-            <attributes>
-                <attribute qualifier="action" type="java.lang.String">
-                    <description>Merchant to fetch messages from</description>
-                    <modifiers optional="false"/>
+                <attribute qualifier="screenWidth" type="java.lang.Long">
+                    <modifiers write="true" read="true" unique="false"/>
                     <persistence type="property"/>
                 </attribute>
-                <attribute qualifier="orderId" type="java.lang.String">
-                    <description>Id of the order the message relates to</description>
-                    <modifiers optional="true"/>
-                    <persistence type="property"/>
-                </attribute>
-                <attribute qualifier="body" type="java.lang.String">
-                    <description>The body of the message</description>
+                <attribute qualifier="riskEventPayload" type="java.lang.String">
+                    <description>Risk event payload received from Ns8</description>
                     <modifiers optional="true"/>
                     <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>MEDIUMTEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
                         <columntype>
-                            <value>HYBRIS.JSON</value>
+                            <value>HYBRIS.LONG_STRING</value>
                         </columntype>
                     </persistence>
                 </attribute>
             </attributes>
         </itemtype>
-    </itemtypes>
 
+        <itemtype code="FraudReport" autocreate="false" generate="false">
+            <attributes>
+                <attribute qualifier="score" type="double">
+                    <modifiers initial="true" read="true" write="false"
+                               optional="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Double.valueOf(0)</defaultvalue>
+                </attribute>
+                <attribute qualifier="risk" type="Ns8RiskType">
+                    <modifiers read="true" write="true" optional="true"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="Ns8FraudFactor">
+            <deployment table="Ns8FraudFactor" typecode="12003"/>
+            <attributes>
+                <attribute qualifier="category" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="type" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="id" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="true"/>
+                    <persistence type="property"/>
+                </attribute>
+                <attribute qualifier="description" type="java.lang.String">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+    </itemtypes>
 
 </items>

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8OrderDataPopulatorTest {
+public class DefaultNs8OrderDataPopulatorTest {
 
     private static final String CURRENCY_ISO_CODE = "EN";
     private static final String ORDER_CODE = "order code";
@@ -37,18 +37,18 @@ public class DefaultNS8OrderDataPopulatorTest {
     private static final String ORDER_NAME = "order name";
 
     @InjectMocks
-    private DefaultNS8OrderDataPopulator testObj;
+    private DefaultNs8OrderDataPopulator testObj;
 
     @Mock
-    private Converter<OrderModel, List<NS8AddressData>> ns8AddressDatasConverterMock;
+    private Converter<OrderModel, List<Ns8AddressData>> ns8AddressDatasConverterMock;
     @Mock
-    private Converter<OrderModel, NS8CustomerData> ns8CustomerDataConverterMock;
+    private Converter<OrderModel, Ns8CustomerData> ns8CustomerDataConverterMock;
     @Mock
-    private Converter<OrderEntryModel, NS8LineItemData> ns8LineItemDataConverterMock;
+    private Converter<OrderEntryModel, Ns8LineItemData> ns8LineItemDataConverterMock;
     @Mock
-    private Converter<PaymentTransactionModel, NS8TransactionData> ns8TransactionDataConverterMock;
+    private Converter<PaymentTransactionModel, Ns8TransactionData> ns8TransactionDataConverterMock;
     @Mock
-    private Converter<OrderModel, NS8SessionData> ns8SessionDataConverterMock;
+    private Converter<OrderModel, Ns8SessionData> ns8SessionDataConverterMock;
 
     @Mock
     private OrderModel orderMock;
@@ -66,17 +66,17 @@ public class DefaultNS8OrderDataPopulatorTest {
     private NS8MerchantModel ns8MerchantMock;
 
     @Mock
-    private NS8AddressData ns8DeliveryAddressDataMock, ns8BillingAddressDataMock;
+    private Ns8AddressData ns8DeliveryAddressDataMock, ns8BillingAddressDataMock;
     @Mock
-    private NS8CustomerData ns8CustomerDataMock;
+    private Ns8CustomerData ns8CustomerDataMock;
     @Mock
-    private NS8LineItemData ns8LineItem1Mock, ns8LineItem2Mock;
+    private Ns8LineItemData ns8LineItem1Mock, ns8LineItem2Mock;
     @Mock
-    private NS8TransactionData ns8TransactionData1Mock, ns8TransactionData2Mock;
+    private Ns8TransactionData ns8TransactionData1Mock, ns8TransactionData2Mock;
     @Mock
-    private NS8SessionData ns8SessionDataMock;
+    private Ns8SessionData ns8SessionDataMock;
 
-    private NS8OrderData target;
+    private Ns8OrderData target;
     private Date creationTime, modifiedTime;
 
     @Before
@@ -86,7 +86,7 @@ public class DefaultNS8OrderDataPopulatorTest {
         Whitebox.setInternalState(testObj, "ns8LineItemDataConverter", ns8LineItemDataConverterMock);
         Whitebox.setInternalState(testObj, "ns8TransactionDataConverter", ns8TransactionDataConverterMock);
         Whitebox.setInternalState(testObj, "ns8SessionDataConverter", ns8SessionDataConverterMock);
-        target = new NS8OrderData();
+        target = new Ns8OrderData();
         creationTime = new Date();
         modifiedTime = new Date();
 
@@ -100,7 +100,6 @@ public class DefaultNS8OrderDataPopulatorTest {
         when(orderMock.getTotalPrice()).thenReturn(ORDER_TOTAL_PRICE);
         when(orderMock.getPaymentTransactions()).thenReturn(Arrays.asList(paymentTransaction1Mock, paymentTransaction2Mock));
         when(orderMock.getSite()).thenReturn(baseSiteMock);
-        when(orderMock.getName()).thenReturn(ORDER_NAME);
         when(baseSiteMock.getNs8Merchant()).thenReturn(ns8MerchantMock);
         when(ns8MerchantMock.getQueueId()).thenReturn(QUEUE_ID);
 
@@ -124,33 +123,14 @@ public class DefaultNS8OrderDataPopulatorTest {
         assertThat(target.getPlatformCreatedAt()).isEqualTo(creationTime);
         assertThat(target.getCurrency()).isEqualTo(CURRENCY_ISO_CODE);
         assertThat(target.getMerchantId()).isEqualTo(QUEUE_ID);
-        assertThat(target.getName()).isEqualTo(ORDER_NAME);
+        assertThat(target.getName()).isEqualTo(ORDER_CODE);
         assertThat(target.getPlatformId()).isEqualTo(ORDER_CODE);
         assertThat(target.getTotalPrice()).isEqualTo(ORDER_TOTAL_PRICE);
         assertThat(target.getTransactions()).containsExactlyInAnyOrder(ns8TransactionData1Mock, ns8TransactionData2Mock);
         assertThat(target.getUpdatedAt()).isEqualTo(modifiedTime);
-        assertThat(target.getPlatformStatus()).isNull();
         assertThat(target.getStatus()).isNull();
         assertThat(target.getHasGiftCard()).isNull();
         assertThat(target.getSession()).isEqualTo(ns8SessionDataMock);
-    }
-
-    @Test
-    public void populate_WhenOrderNameIsNotPresent_ShouldSetOrderCode() {
-        when(orderMock.getName()).thenReturn(null);
-
-        testObj.populate(orderMock, target);
-
-        assertThat(target.getName()).isEqualTo(ORDER_CODE);
-    }
-
-    @Test
-    public void populate_WhenOrderNameIsBlank_ShouldSetOrderCode() {
-        when(orderMock.getName()).thenReturn("");
-
-        testObj.populate(orderMock, target);
-
-        assertThat(target.getName()).isEqualTo(ORDER_CODE);
     }
 
 }

@@ -13,33 +13,32 @@
             <if test="${widgetModel.ns8ProtectViewVisible}">
                 <vlayout sclass="yrb-modal-content" style="width: 100%; height: 100%;">
 
-                    <script type="text/javascript"
-                            src="https://d3hfiwqcryy9cp.cloudfront.net/assets/js/protect.min.js"></script>
-
                     <script type="text/javascript" defer="true">
                         zk.afterMount(function () {
-                            var containerElId = 'ns8-protect-dashboard-wrapper';
+                            jQuery.getScript('https://d3hfiwqcryy9cp.cloudfront.net/assets/js/protect.min.js', function () {
+                                var containerElId = 'ns8-protect-dashboard-wrapper';
 
-                            var viewName = '${widgetModel.viewName}';
-                            var accessToken = '${widgetModel.accessToken}';
-                            if (viewName === '') {
-                                viewName = Protect.ClientPage.DASHBOARD;
-                            }
+                                var viewName = '${widgetModel.viewName}';
+                                var accessToken = '${widgetModel.accessToken}';
+                                if (viewName === '') {
+                                    viewName = Protect.ClientPage.DASHBOARD;
+                                }
 
-                            var eventBinding = {};
-                            var clientConfig = new Protect.ClientConfig({
-                                accessToken: accessToken,
-                                protectClientUrl: '${widgetController.getClientApiUrl()}',
-                                eventBinding: eventBinding,
-                                iFrameConfig: {
-                                    attachToId: containerElId,
-                                    classNames: ['ns8-protect-client-iframe'],
-                                },
+                                var eventBinding = {};
+                                var clientConfig = new Protect.ClientConfig({
+                                    accessToken: accessToken,
+                                    protectClientUrl: '${widgetController.getClientApiUrl()}',
+                                    eventBinding: eventBinding,
+                                    iFrameConfig: {
+                                        attachToId: containerElId,
+                                        classNames: ['ns8-protect-client-iframe'],
+                                    },
+                                });
+                                var protectClient = Protect.createClient(clientConfig);
+                                //DASHBOARD, ORDER_RULES, SUSPICIOUS_ORDERS
+                                protectClient.render(viewName, '');
                             });
-                            var protectClient = Protect.createClient(clientConfig);
-                            //DASHBOARD, ORDER_RULES, SUSPICIOUS_ORDERS
-                            protectClient.render(viewName, '');
-                        }, 600);
+                        });
                     </script>
 
                     <x:div id="ns8-protect-dashboard-wrapper">

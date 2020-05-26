@@ -1,0 +1,43 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <bean class="com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageWrapper">
+        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+        <property name="receiveMessageResponse" type="com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResponse">
+            <annotations scope="member">@JsonProperty(value="ReceiveMessageResponse")</annotations>
+        </property>
+    </bean>
+
+    <bean class="com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResponse">
+        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+        <property name="receiveMessageResult" type="com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResult">
+            <annotations scope="member">@JsonProperty(value="ReceiveMessageResult")</annotations>
+        </property>
+        <property name="responseMetadata" type="com.ns8.hybris.ns8notifications.data.queue.Ns8ResponseMetadata">
+            <annotations scope="member">@JsonProperty(value="ResponseMetadata")</annotations>
+        </property>
+    </bean>
+
+    <bean class="com.ns8.hybris.ns8notifications.data.queue.Ns8ResponseMetadata">
+        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+        <property name="requestId" type="java.lang.String">
+            <annotations scope="member">@JsonProperty(value="RequestId")</annotations>
+        </property>
+    </bean>
+    <bean class="com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResult">
+        <property name="messages" type="java.util.List&lt;com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage&gt;"/>
+    </bean>
+
+    <bean class="com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage">
+        <import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+        <property name="messageId" type="java.lang.String">
+            <annotations scope="member">@JsonProperty(value="MessageId")</annotations>
+        </property>
+        <property name="receiptHandle" type="java.lang.String">
+            <annotations scope="member">@JsonProperty(value="ReceiptHandle")</annotations>
+        </property>
+        <property name="body" type="java.lang.String">
+            <annotations scope="member">@JsonProperty(value="Body")</annotations>
+        </property>
+    </bean>
+
+</beans>

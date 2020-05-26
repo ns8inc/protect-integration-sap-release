@@ -6,5 +6,22 @@ $storeUid = apparel-uk
 $siteUid = apparel-uk
 $webServiceSiteUid = $siteUidWS
 
-INSERT_UPDATE Ns8FetchQueueMessagesCronJob; code[unique = true]                   ; job(code)                ; site(uid); maxBatchSize; sessionLanguage(isocode)[default = $defaultLanguage];
-                                          ; $siteUid-Ns8FetchQueueMessagesCronJob ; ns8FetchQueueMessagesJob ; $siteUid ; 1000
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+$enableTriggers = $config-ns8.enable.triggers
+
+INSERT_UPDATE Ns8FetchQueueMessagesCronJob; code[unique = true]                   ; job(code)                ; site(uid); maxBatchSize; sessionLanguage(isocode)[default = $defaultLanguage]; ns8MessageActionTypes(code)
+                                          ; $siteUid-Ns8FetchQueueMessagesCronJob ; ns8FetchQueueMessagesJob ; $siteUid ; 1000        ;                                                     ; UPDATE_ORDER_RISK_EVENT, UPDATE_ORDER_STATUS_EVENT
+
+INSERT_UPDATE Trigger; cronJob(code)[unique = true]          ; cronExpression    ; active[default = true]
+                     ; $siteUid-Ns8FetchQueueMessagesCronJob ; 0 0 0/1 1/1 * ? * ;
+
+# If the property does not exist or it's value is false, triggers will be disabled, otherwise enabled
+INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]          ; cronExpression    ; active[default = false]
+"#% if: ""$enableTriggers"".equals(""false"")"
+                                                ; $siteUid-Ns8FetchQueueMessagesCronJob ; 0 0 0/1 1/1 * ? * ;
+#% endif:
+
+INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]          ; cronExpression    ; active[default = true]
+"#% if: !""$enableTriggers"".equals(""false"")"
+                                                ; $siteUid-Ns8FetchQueueMessagesCronJob ; 0 0 0/1 1/1 * ? * ;
+#% endif:

@@ -1,7 +1,7 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CreditCardData;
-import com.ns8.hybris.core.data.NS8CreditCardTransactionType;
+import com.ns8.hybris.core.data.Ns8CreditCardData;
+import com.ns8.hybris.core.data.Ns8CreditCardTransactionType;
 import com.ns8.hybris.core.services.NS8PaymentTransactionService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.enums.CreditCardType;
@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Populates the information of the {@link PaymentTransactionModel} into a {@link NS8CreditCardData}
+ * Populates the information of the {@link PaymentTransactionModel} into a {@link Ns8CreditCardData}
  */
-public class DefaultNS8CreditCardDataPopulator implements Populator<PaymentTransactionModel, NS8CreditCardData> {
+public class DefaultNs8CreditCardDataPopulator implements Populator<PaymentTransactionModel, Ns8CreditCardData> {
 
     protected final NS8PaymentTransactionService ns8PaymentTransactionService;
-    protected Map<PaymentTransactionType, NS8CreditCardTransactionType> transactionTypeMapping;
+    protected Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping;
 
-    public DefaultNS8CreditCardDataPopulator(final NS8PaymentTransactionService ns8PaymentTransactionService, final Map<PaymentTransactionType, NS8CreditCardTransactionType> transactionTypeMapping) {
+    public DefaultNs8CreditCardDataPopulator(final NS8PaymentTransactionService ns8PaymentTransactionService, final Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping) {
         this.ns8PaymentTransactionService = ns8PaymentTransactionService;
         this.transactionTypeMapping = transactionTypeMapping;
     }
@@ -32,7 +32,7 @@ public class DefaultNS8CreditCardDataPopulator implements Populator<PaymentTrans
      * {@inheritDoc}
      */
     @Override
-    public void populate(final PaymentTransactionModel source, final NS8CreditCardData target) throws ConversionException {
+    public void populate(final PaymentTransactionModel source, final Ns8CreditCardData target) throws ConversionException {
         final PaymentInfoModel paymentInfo = source.getInfo();
         Assert.isInstanceOf(CreditCardPaymentInfoModel.class, paymentInfo);
         final CreditCardPaymentInfoModel ccPaymentInfo = (CreditCardPaymentInfoModel) paymentInfo;
@@ -49,9 +49,9 @@ public class DefaultNS8CreditCardDataPopulator implements Populator<PaymentTrans
      * Gets the NS8 Credit Card transaction type for the given transaction model
      *
      * @param source the transaction model
-     * @return {@link NS8CreditCardTransactionType}
+     * @return {@link Ns8CreditCardTransactionType}
      */
-    protected NS8CreditCardTransactionType getTransactionType(final PaymentTransactionModel source) {
+    protected Ns8CreditCardTransactionType getTransactionType(final PaymentTransactionModel source) {
         return transactionTypeMapping.get(ns8PaymentTransactionService.getApplicableEntry(source).getType());
     }
 
@@ -79,7 +79,7 @@ public class DefaultNS8CreditCardDataPopulator implements Populator<PaymentTrans
                 .orElse(null);
     }
 
-    protected void setTransactionTypeMapping(final Map<PaymentTransactionType, NS8CreditCardTransactionType> transactionTypeMapping) {
+    protected void setTransactionTypeMapping(final Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping) {
         this.transactionTypeMapping = transactionTypeMapping;
     }
 }

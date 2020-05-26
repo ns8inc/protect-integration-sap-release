@@ -15,7 +15,7 @@ public class DefaultNS8TrueStatsFacade implements NS8TrueStatsFacade {
      *
      * @param ns8TrueStatsService injected
      */
-    public DefaultNS8TrueStatsFacade(NS8TrueStatsService ns8TrueStatsService) {
+    public DefaultNS8TrueStatsFacade(final NS8TrueStatsService ns8TrueStatsService) {
         this.ns8TrueStatsService = ns8TrueStatsService;
     }
 

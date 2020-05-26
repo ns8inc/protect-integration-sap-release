@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!--
- Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved
--->
+
 <config xmlns="http://www.hybris.com/cockpit/config"
         xmlns:y="http://www.hybris.com/cockpit/config/hybris"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,27 +10,16 @@
         xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
 >
 
-    <context type="AbstractOrder">
-        <context component="editor-area" type="AbstractOrder" merge-by="type">
-            <editorArea:editorArea>
-                <editorArea:tab name="tab.configuration.ns8">
-                    <editorArea:section name="sec.abstractorder.ns8.details">
-                        <editorArea:attribute qualifier="customerIp"/>
-                        <editorArea:attribute qualifier="customerUserAgent"/>
-                    </editorArea:section>
-                </editorArea:tab>
-            </editorArea:editorArea>
-        </context>
-    </context>
-
     <context merge-by="module" parent="auto" component="explorer-tree">
         <explorer-tree:explorer-tree xmlns:explorer-tree="http://www.hybris.com/cockpitng/config/explorertree">
             <explorer-tree:navigation-node id="NS8">
-                <explorer-tree:type-node code="NS8Merchant" id="hmc_type_tree_ns8_merchant"/>
-                <explorer-tree:type-node code="Ns8QueueMessage" id="hmc_type_tree_ns8_message"/>
-                <explorer-tree:navigation-node id="hmc_treenode_ns8_jobs">
-                    <explorer-tree:type-node id="hmc_type_tree_ns8fetchqueuemessagescronjob"
-                                             code="Ns8FetchQueueMessagesCronJob"/>
+                <explorer-tree:type-node code="NS8Merchant" id="ns8.type.tree.merchant"/>
+                <explorer-tree:type-node code="Ns8QueueMessage" id="ns8.type.tree.queue.messages"/>
+                <explorer-tree:navigation-node id="ns8.type.tree.node.cronjobs">
+                    <explorer-tree:type-node code="Ns8FetchQueueMessagesCronJob"
+                                             id="ns8.type.tree.ns8fetchqueuemessagescronjobs"/>
+                    <explorer-tree:type-node code="Ns8ProcessMessagesCronJob"
+                                             id="ns8.type.tree.ns8processmessagescronjobs"/>
                 </explorer-tree:navigation-node>
             </explorer-tree:navigation-node>
         </explorer-tree:explorer-tree>
@@ -46,6 +33,22 @@
         </explorer-tree:explorer-tree>
     </context>
 
+    <context type="AbstractOrder">
+        <context component="editor-area" type="AbstractOrder" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:tab name="tab.configuration.ns8">
+                    <editorArea:section name="sec.abstractorder.ns8.details">
+                        <editorArea:attribute qualifier="customerIp"/>
+                        <editorArea:attribute qualifier="customerUserAgent"/>
+                        <editorArea:attribute qualifier="acceptLanguage"/>
+                        <editorArea:attribute qualifier="screenHeight"/>
+                        <editorArea:attribute qualifier="screenWidth"/>
+                        <editorArea:attribute qualifier="riskEventPayload"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
 
     <context type="Ns8FetchQueueMessagesCronJob" component="advanced-search" merge-by="type">
         <advanced-search:advanced-search connection-operator="AND">
@@ -56,16 +59,13 @@
         </advanced-search:advanced-search>
     </context>
 
-    <context type="Ns8FetchQueueMessagesCronJob" component="editor-area" merge-by="type">
-        <editorArea:editorArea name="Ns8FetchQueueMessagesCronJobEditor">
-            <editorArea:essentials>
-                <editorArea:essentialSection name="hmc.essential">
+    <context component="editor-area" type="Ns8FetchQueueMessagesCronJob" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.configuration.ns8.details">
                     <editorArea:attribute qualifier="site"/>
-                </editorArea:essentialSection>
-            </editorArea:essentials>
-            <editorArea:tab name="hmc.tab.common" position="0">
-                <editorArea:section name="hmc.properties">
                     <editorArea:attribute qualifier="maxBatchSize"/>
+                    <editorArea:attribute qualifier="ns8MessageActionTypes"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
@@ -76,7 +76,18 @@
             <list-view:column qualifier="orderId"/>
             <list-view:column qualifier="action"/>
             <list-view:column qualifier="creationtime"/>
+            <list-view:column qualifier="status"/>
         </list-view:list-view>
+    </context>
+
+    <context type="Ns8QueueMessage" component="advanced-search" merge-by="type">
+        <advanced-search:advanced-search connection-operator="AND">
+            <advanced-search:field-list>
+                <advanced-search:field name="action" operator="equals" selected="true"/>
+                <advanced-search:field name="orderId" operator="equals" selected="true"/>
+                <advanced-search:field name="status" operator="equals" selected="true"/>
+            </advanced-search:field-list>
+        </advanced-search:advanced-search>
     </context>
 
     <context type="Ns8QueueMessage" component="base" merge-by="type" parent="GenericItem">
@@ -94,6 +105,9 @@
                     <editorArea:attribute qualifier="orderId"/>
                     <editorArea:attribute qualifier="action"/>
                     <editorArea:attribute qualifier="creationtime"/>
+                    <editorArea:attribute qualifier="body"/>
+                    <editorArea:attribute qualifier="status"/>
+                    <editorArea:attribute qualifier="failReason"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
@@ -178,6 +192,220 @@
                 </editorArea:tab>
             </editorArea:editorArea>
         </context>
+    </context>
+
+    <context parent="GenericItem" type="Order" component="cs-editor-area" merge-by="type">
+        <editorArea:editorArea name="Order editor area">
+            <editorArea:tab name="customersupportbackoffice.order.tab.fraud" merge-mode="remove"/>
+            <editorArea:tab name="ns8.order.tab.fraudreports">
+                <editorArea:section name="sec.abstractorder.ns8.fraudreports">
+                    <editorArea:panel name="ns8_backoffice_fraudReport_panel">
+                        <editorArea:attribute
+                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                qualifier="fraudReports" readonly="true"
+                                label="ns8.section.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
+                                <editorArea:value>referenceEditorAreaViewFraudReport</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewNS8FraudReports</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>disableRemoveReference</editorArea:name>
+                                <editorArea:value>true</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="module" parent="GenericItem" type="FraudReport" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="hmc.tab.details" merge-mode="replace">
+                <editorArea:section name="hmc.sec.details" merge-mode="replace">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="provider"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="timestamp"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="status" readonly="true"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="explanation"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="score"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="risk"/>
+                </editorArea:section>
+                <editorArea:section name="hmc.sec.symptoms" merge-mode="replace">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                          qualifier="fraudSymptomScorings" merge-mode="replace">
+                        <editorArea:editor-parameter>
+                            <editorArea:name>listConfigContext</editorArea:name>
+                            <editorArea:value>referenceNS8FraudSymptomScoringListView</editorArea:value>
+                        </editorArea:editor-parameter>
+                    </editorArea:attribute>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context type="FraudSymptomScoring" component="referenceNS8FraudSymptomScoringListView">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="name" width="35%"/>
+            <list-view:column qualifier="score" width="35%"/>
+        </list-view:list-view>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="FraudReport" component="referenceListViewNS8FraudReports">
+        <list-view:list-view>
+            <list-view:column qualifier="code" width="310px"/>
+            <list-view:column qualifier="provider" width="160px"/>
+            <list-view:column qualifier="score" width="80px"/>
+            <list-view:column qualifier="risk" width="110px"/>
+            <list-view:column qualifier="status" width="80px"/>
+            <list-view:column qualifier="explanation" width="200px"/>
+            <list-view:column qualifier="timestamp" width="180px"/>
+            <list-view:column spring-bean="fraudCheckButtonCellRenderer"
+                              label="customersupportbackoffice.order.hierarchy.actions"/>
+        </list-view:list-view>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="FraudReport" component="referenceEditorAreaViewFraudReport">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.ns8.fraudreport.details">
+                    <editorArea:attribute qualifier="code" readonly="true"/>
+                    <editorArea:attribute qualifier="provider" readonly="true"/>
+                    <editorArea:attribute qualifier="score" readonly="true"/>
+                    <editorArea:attribute qualifier="risk" readonly="true"/>
+                    <editorArea:attribute qualifier="status" readonly="true"/>
+                    <editorArea:attribute qualifier="timestamp" readonly="true"/>
+                </editorArea:section>
+                <editorArea:section name="sec.ns8.fraudreport.fraudscoring">
+                    <editorArea:panel name="ns8_backoffice_fraudReportSymptomScorings_panel">
+                        <editorArea:attribute
+                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                qualifier="fraudSymptomScorings" readonly="true"
+                                label="sec.ns8.fraudsymptomscorings.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
+                                <editorArea:value>referenceEditorAreaViewFraudSymptomScoring</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewNs8FraudSymptomScoring</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>disableRemoveReference</editorArea:name>
+                                <editorArea:value>true</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="FraudSymptomScoring"
+             component="referenceListViewNs8FraudSymptomScoring">
+        <list-view:list-view>
+            <list-view:column qualifier="name" width="300px"/>
+            <list-view:column qualifier="score" width="300px"/>
+        </list-view:list-view>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="FraudSymptomScoring"
+             component="referenceEditorAreaViewFraudSymptomScoring">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.ns8.fraudsymptomscoring.details">
+                    <editorArea:attribute qualifier="name" readonly="true"/>
+                    <editorArea:attribute qualifier="score" readonly="true"/>
+                </editorArea:section>
+                <editorArea:section name="sec.ns8.fraudsymptomscoring.fraudfactors">
+                    <editorArea:panel name="ns8_backoffice_fraudSymptomScoringFactorsDetails_panel">
+                        <editorArea:attribute
+                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                qualifier="fraudFactors" readonly="true"
+                                label="ns8.section.fraudfactors.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
+                                <editorArea:value>referenceEditorAreaViewNs8FraudFactor</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewNs8FraudFactor</editorArea:value>
+                            </editorArea:editor-parameter>
+                            <editorArea:editor-parameter>
+                                <editorArea:name>disableRemoveReference</editorArea:name>
+                                <editorArea:value>true</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="Ns8FraudFactor"
+             component="referenceListViewNs8FraudFactor">
+        <list-view:list-view>
+            <list-view:column qualifier="category" width="10%"/>
+            <list-view:column qualifier="type" width="26%"/>
+            <list-view:column qualifier="description" hflex="true"/>
+        </list-view:list-view>
+    </context>
+
+    <context component="editor-area" type="FraudSymptomScoring" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.ns8.fraudsymptomscoring.details">
+                    <editorArea:attribute qualifier="name"/>
+                    <editorArea:attribute qualifier="score"/>
+                    <editorArea:attribute qualifier="fraudFactors"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context type="Ns8FraudFactor" component="base" merge-by="type" parent="GenericItem">
+        <y:base>
+            <y:labels>
+                <y:label>category + " - " + type</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <context component="referenceEditorAreaViewNs8FraudFactor" parent="GenericItem" type="Ns8FraudFactor"
+             merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.ns8.fraudsymptomscoring.details">
+                    <editorArea:attribute qualifier="id" readonly="true"/>
+                    <editorArea:attribute qualifier="type" readonly="true"/>
+                    <editorArea:attribute qualifier="category" readonly="true"/>
+                    <editorArea:attribute qualifier="description" readonly="true"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context component="editor-area" type="Ns8FraudFactor" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.ns8.fraudsymptomscoring.details">
+                    <editorArea:attribute qualifier="id"/>
+                    <editorArea:attribute qualifier="type"/>
+                    <editorArea:attribute qualifier="category"/>
+                    <editorArea:attribute qualifier="description"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
     </context>
 
     <context component="perspective-chooser" merge-by="module">

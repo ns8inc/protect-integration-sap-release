@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultNs8QueueService" alias="ns8QueueService"/>
+    <bean id="defaultNs8QueueService" class="com.ns8.hybris.notifications.services.impl.DefaultNs8QueueService">
+        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
+        <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
+    </bean>
+
+</beans>

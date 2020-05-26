@@ -1,6 +1,6 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8LineItemData;
+import com.ns8.hybris.core.data.Ns8LineItemData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -9,15 +9,15 @@ import de.hybris.platform.util.DiscountValue;
 import org.springframework.util.Assert;
 
 /**
- * Populates the information of the {@link OrderEntryModel} into a {@link NS8LineItemData}
+ * Populates the information of the {@link OrderEntryModel} into a {@link Ns8LineItemData}
  */
-public class DefaultNS8LineItemDataPopulator implements Populator<OrderEntryModel, NS8LineItemData> {
+public class DefaultNs8LineItemDataPopulator implements Populator<OrderEntryModel, Ns8LineItemData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void populate(final OrderEntryModel source, final NS8LineItemData target) throws ConversionException {
+    public void populate(final OrderEntryModel source, final Ns8LineItemData target) throws ConversionException {
         final ProductModel product = source.getProduct();
         Assert.notNull(product, "orderEntry.product must not be null");
 

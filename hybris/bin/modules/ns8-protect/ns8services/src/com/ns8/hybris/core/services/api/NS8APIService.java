@@ -1,5 +1,7 @@
 package com.ns8.hybris.core.services.api;
 
+import com.ns8.hybris.core.data.Ns8OrderVerificationRequest;
+import com.ns8.hybris.core.data.Ns8OrderVerificationResponse;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import de.hybris.platform.core.model.order.OrderModel;
 
@@ -42,5 +44,32 @@ public interface NS8APIService {
      * @param order the order to send to NS8
      */
     void triggerCreateOrderActionEvent(OrderModel order);
+
+    /**
+     * Sends an "UPDATE_ORDER_ACTION" event to NS8, with the given order
+     *
+     * @param order the order to send to NS8
+     */
+    void triggerUpdateOrderStatusAction(OrderModel order);
+
+    /**
+     * Retrieves a verification template for an order
+     *
+     * @param orderVerificationRequest the order verification request
+     * @param apiKey                   The merchant api key
+     * @return Verification template for the given order in HTML format or redirection URL
+     */
+    String getVerificationTemplate(Ns8OrderVerificationRequest orderVerificationRequest, String apiKey);
+
+    /**
+     * Posts information about the verification form contained in a template
+     * and retrieves a template in the shape of an HTML code or a URL to
+     * which the user will be redirected
+     *
+     * @param orderVerificationRequest the order verification request
+     * @param apiKey                   The merchant api key
+     * @return Verification response form ns8 containing either the html content or the redirect url
+     */
+    Ns8OrderVerificationResponse sendVerification(Ns8OrderVerificationRequest orderVerificationRequest, String apiKey);
 
 }

@@ -1,0 +1,37 @@
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+UserGroup;customersupportadministratorgroup;;;;;;;;
+
+# Access Rights for Customer Support Administrator;;;;;;;;;
+
+;;;;Ns8FraudFactor;+;+;-;-
+
+$END_USERRIGHTS;;;;;
+
+#
+# Import Access Rights for Customer Support Backoffice
+#
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+UserGroup;customersupportmanagergroup;;;;;;;;
+
+# Access Rights for Customer Support Manager;;;;;;;;;
+
+;;;;Ns8FraudFactor;+;+;-;-
+
+$END_USERRIGHTS;;;;;
+
+#
+# Import Access Rights for Customer Support Backoffice
+#
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+UserGroup;customersupportagentgroup;;;;;;;;
+
+# Access Rights for Customer Support Agent;;;;;;;;;
+
+;;;;Ns8FraudFactor;+;+;-;-
+
+$END_USERRIGHTS;;;;;

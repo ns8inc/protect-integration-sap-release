@@ -1,7 +1,7 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CustomerData;
-import com.ns8.hybris.core.data.NS8TransactionData;
+import com.ns8.hybris.core.data.Ns8CustomerData;
+import com.ns8.hybris.core.data.Ns8TransactionData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -12,15 +12,15 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
 /**
- * Populates the information of the {@link OrderModel} into a {@link NS8TransactionData}
+ * Populates the information of the {@link OrderModel} into a {@link Ns8TransactionData}
  */
-public class DefaultNS8CustomerDataPopulator implements Populator<OrderModel, NS8CustomerData> {
+public class DefaultNs8CustomerDataPopulator implements Populator<OrderModel, Ns8CustomerData> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void populate(final OrderModel source, final NS8CustomerData target) throws ConversionException {
+    public void populate(final OrderModel source, final Ns8CustomerData target) throws ConversionException {
         final UserModel user = source.getUser();
         Assert.isInstanceOf(CustomerModel.class, user, "order.user must be a customer");
         final CustomerModel customer = (CustomerModel) user;

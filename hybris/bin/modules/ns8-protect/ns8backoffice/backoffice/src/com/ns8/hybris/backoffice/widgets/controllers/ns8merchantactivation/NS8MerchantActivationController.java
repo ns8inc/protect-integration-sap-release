@@ -5,7 +5,7 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
-import com.hybris.cockpitng.dataaccess.facades.object.ObjectFacade;
+import com.hybris.cockpitng.dataaccess.facades.object.ObjectCRUDHandler;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
@@ -88,9 +88,9 @@ public class NS8MerchantActivationController extends DefaultWidgetController {
             String errorDetails = StringUtils.EMPTY;
             try {
                 ns8Merchant = ns8MerchantService.createMerchant(merchantParameters);
-            } catch (final NS8IntegrationException ex) {
-                LOG.error("Error installing the new NS8 Merchant: [{}]", ex::getMessage);
-                errorDetails = ex.getMessage();
+            } catch (final NS8IntegrationException e) {
+                LOG.error("Error installing the new NS8 Merchant: [{}]", e::getMessage);
+                errorDetails = e.getMessage();
             }
 
             handleCreateMerchantResponse(ns8Merchant, errorDetails);
@@ -105,7 +105,7 @@ public class NS8MerchantActivationController extends DefaultWidgetController {
             this.notificationService.notifyUser(getWidgetInstanceManager(), "JustMessage",
                     NotificationEvent.Level.SUCCESS, getLabel(NS8_MERCHANT_ACTIVATION_SUCCESS_MESSAGE));
             this.sendOutput(MERCHANT_ACTIVATED_OUTPUT_EVENT, null);
-            cockpitEventQueue.publishEvent(new DefaultCockpitEvent(ObjectFacade.OBJECTS_UPDATED_EVENT, getSiteModel(), null));
+            cockpitEventQueue.publishEvent(new DefaultCockpitEvent(ObjectCRUDHandler.OBJECTS_UPDATED_EVENT, getSiteModel(), null));
         } else {
             showMessageBoxFromErrorMessage(errorDetails, NS8_MERCHANT_ACTIVATION_ERROR_TITLE);
         }

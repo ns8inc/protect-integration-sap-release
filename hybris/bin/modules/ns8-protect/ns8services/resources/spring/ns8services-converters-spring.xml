@@ -6,13 +6,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
-    <alias name="defaultNS8MerchantDataPopulator" alias="ns8MerchantDataPopulator"/>
-    <bean id="defaultNS8MerchantDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.NS8MerchantDataPopulator"/>
+    <alias name="defaultNs8MerchantDataPopulator" alias="ns8MerchantDataPopulator"/>
+    <bean id="defaultNs8MerchantDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.Ns8MerchantDataPopulator"/>
 
-    <alias name="defaultNS8MerchantModelNS8MerchantDataConverter" alias="ns8MerchantModelNS8MerchantDataConverter"/>
-    <bean id="defaultNS8MerchantModelNS8MerchantDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8MerchantData"/>
+    <alias name="defaultNs8MerchantDataConverter" alias="ns8MerchantDataConverter"/>
+    <bean id="defaultNs8MerchantDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8MerchantData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8MerchantDataPopulator"/>
@@ -20,9 +20,9 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8OrderDataConverter" alias="ns8OrderDataConverter"/>
-    <bean id="defaultNS8OrderDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8OrderData"/>
+    <alias name="defaultNs8OrderDataConverter" alias="ns8OrderDataConverter"/>
+    <bean id="defaultNs8OrderDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8OrderData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8OrderDataPopulator"/>
@@ -30,9 +30,9 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8OrderDataPopulator" alias="ns8OrderDataPopulator"/>
-    <bean id="defaultNS8OrderDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8OrderDataPopulator">
+    <alias name="defaultNs8OrderDataPopulator" alias="ns8OrderDataPopulator"/>
+    <bean id="defaultNs8OrderDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8OrderDataPopulator">
         <constructor-arg name="ns8AddressDatasConverter" ref="ns8AddressDatasConverter"/>
         <constructor-arg name="ns8CustomerDataConverter" ref="ns8CustomerDataConverter"/>
         <constructor-arg name="ns8LineItemDataConverter" ref="ns8LineItemDataConverter"/>
@@ -42,7 +42,7 @@
 
     <alias name="defaultNs8SessionDataConverter" alias="ns8SessionDataConverter"/>
     <bean id="defaultNs8SessionDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8SessionData"/>
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8SessionData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8SessionDataPopulator"/>
@@ -54,9 +54,9 @@
     <bean id="defaultNs8SessionDataPopulator"
           class="com.ns8.hybris.core.converters.populators.DefaultNs8SessionDataPopulator"/>
 
-    <alias name="defaultNS8LineItemDataConverter" alias="ns8LineItemDataConverter"/>
-    <bean id="defaultNS8LineItemDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8LineItemData"/>
+    <alias name="defaultNs8LineItemDataConverter" alias="ns8LineItemDataConverter"/>
+    <bean id="defaultNs8LineItemDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8LineItemData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8LineItemDataPopulator"/>
@@ -64,13 +64,13 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8LineItemDataPopulator" alias="ns8LineItemDataPopulator"/>
-    <bean id="defaultNS8LineItemDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8LineItemDataPopulator"/>
+    <alias name="defaultNs8LineItemDataPopulator" alias="ns8LineItemDataPopulator"/>
+    <bean id="defaultNs8LineItemDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8LineItemDataPopulator"/>
 
-    <alias name="defaultNS8CustomerDataConverter" alias="ns8CustomerDataConverter"/>
-    <bean id="defaultNS8CustomerDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8CustomerData"/>
+    <alias name="defaultNs8CustomerDataConverter" alias="ns8CustomerDataConverter"/>
+    <bean id="defaultNs8CustomerDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8CustomerData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8CustomerDataPopulator"/>
@@ -78,12 +78,12 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8CustomerDataPopulator" alias="ns8CustomerDataPopulator"/>
-    <bean id="defaultNS8CustomerDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8CustomerDataPopulator"/>
+    <alias name="defaultNs8CustomerDataPopulator" alias="ns8CustomerDataPopulator"/>
+    <bean id="defaultNs8CustomerDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8CustomerDataPopulator"/>
 
-    <alias name="defaultNS8AddressDatasConverter" alias="ns8AddressDatasConverter"/>
-    <bean id="defaultNS8AddressDatasConverter" parent="abstractPopulatingConverter">
+    <alias name="defaultNs8AddressDatasConverter" alias="ns8AddressDatasConverter"/>
+    <bean id="defaultNs8AddressDatasConverter" parent="abstractPopulatingConverter">
         <property name="targetClass" value="java.util.ArrayList"/>
         <property name="populators">
             <list merge="true">
@@ -92,13 +92,13 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8AddressDatasPopulator" alias="ns8AddressDatasPopulator"/>
-    <bean id="defaultNS8AddressDatasPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8AddressDatasPopulator"/>
+    <alias name="defaultNs8AddressDatasPopulator" alias="ns8AddressDatasPopulator"/>
+    <bean id="defaultNs8AddressDatasPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8AddressDatasPopulator"/>
 
-    <alias name="defaultNS8CreditCardDataConverter" alias="ns8CreditCardDataConverter"/>
-    <bean id="defaultNS8CreditCardDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8CreditCardData"/>
+    <alias name="defaultNs8CreditCardDataConverter" alias="ns8CreditCardDataConverter"/>
+    <bean id="defaultNs8CreditCardDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8CreditCardData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8CreditCardDataPopulator"/>
@@ -106,23 +106,23 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8CreditCardDataPopulator" alias="ns8CreditCardDataPopulator"/>
-    <bean id="defaultNS8CreditCardDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8CreditCardDataPopulator">
+    <alias name="defaultNs8CreditCardDataPopulator" alias="ns8CreditCardDataPopulator"/>
+    <bean id="defaultNs8CreditCardDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8CreditCardDataPopulator">
         <constructor-arg name="ns8PaymentTransactionService" ref="ns8PaymentTransactionService"/>
         <constructor-arg name="transactionTypeMapping" ref="ns8TransactionTypeMapping"/>
     </bean>
 
-    <alias name="defaultNS8TransactionTypeMapping" alias="ns8TransactionTypeMapping"/>
-    <util:map id="defaultNS8TransactionTypeMapping" key-type="de.hybris.platform.payment.enums.PaymentTransactionType"
-              value-type="com.ns8.hybris.core.data.NS8CreditCardTransactionType">
+    <alias name="defaultNs8TransactionTypeMapping" alias="ns8TransactionTypeMapping"/>
+    <util:map id="defaultNs8TransactionTypeMapping" key-type="de.hybris.platform.payment.enums.PaymentTransactionType"
+              value-type="com.ns8.hybris.core.data.Ns8CreditCardTransactionType">
         <entry key="AUTHORIZATION" value="AUTHORIZATION"/>
         <entry key="CAPTURE" value="CAPTURE"/>
     </util:map>
 
-    <alias name="defaultNS8TransactionDataConverter" alias="ns8TransactionDataConverter"/>
-    <bean id="defaultNS8TransactionDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.NS8TransactionData"/>
+    <alias name="defaultNs8TransactionDataConverter" alias="ns8TransactionDataConverter"/>
+    <bean id="defaultNs8TransactionDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8TransactionData"/>
         <property name="populators">
             <list merge="true">
                 <ref bean="ns8TransactionDataPopulator"/>
@@ -130,20 +130,48 @@
         </property>
     </bean>
 
-    <alias name="defaultNS8TransactionDataPopulator" alias="ns8TransactionDataPopulator"/>
-    <bean id="defaultNS8TransactionDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.DefaultNS8TransactionDataPopulator">
+    <alias name="defaultNs8TransactionDataPopulator" alias="ns8TransactionDataPopulator"/>
+    <bean id="defaultNs8TransactionDataPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8TransactionDataPopulator">
         <constructor-arg name="ns8CreditCardDataConverter" ref="ns8CreditCardDataConverter"/>
         <constructor-arg name="ns8PaymentTransactionService" ref="ns8PaymentTransactionService"/>
         <constructor-arg name="transactionStatusMapping" ref="ns8TransactionStatusMapping"/>
     </bean>
 
-    <alias name="defaultNS8TransactionStatusMapping" alias="ns8TransactionStatusMapping"/>
-    <util:map id="defaultNS8TransactionStatusMapping" key-type="java.lang.String"
-              value-type="com.ns8.hybris.core.data.NS8TransactionStatus">
+    <alias name="defaultNs8OrderVerificationRequestPopulator" alias="ns8OrderVerificationRequestPopulator"/>
+    <bean id="defaultNs8OrderVerificationRequestPopulator"
+          class="com.ns8.hybris.core.converters.populators.DefaultNs8OrderVerificationRequestPopulator"/>
+
+    <alias name="defaultNs8OrderVerificationRequestConverter" alias="ns8OrderVerificationRequestConverter"/>
+    <bean id="defaultNs8OrderVerificationRequestConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8OrderVerificationRequest"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="ns8OrderVerificationRequestPopulator"/>
+            </list>
+        </property>
+    </bean>
+    <alias name="defaultNs8TransactionStatusMapping" alias="ns8TransactionStatusMapping"/>
+    <util:map id="defaultNs8TransactionStatusMapping" key-type="java.lang.String"
+              value-type="com.ns8.hybris.core.data.Ns8TransactionStatus">
         <entry key="ACCEPTED" value="SUCCESS"/>
         <entry key="ERROR" value="ERROR"/>
         <entry key="REJECTED" value="FAILURE"/>
         <entry key="REVIEW" value="PENDING"/>
     </util:map>
+
+    <alias name="defaultNs8PlatformOrderUpdateStatusPopulator" alias="ns8PlatformOrderUpdateStatusPopulator"/>
+    <bean id="defaultNs8PlatformOrderUpdateStatusPopulator"
+          class="com.ns8.hybris.core.converters.populators.Ns8PlatformOrderUpdateStatusPopulator"/>
+
+    <alias name="defaultNs8PlatformOrderUpdateStatusConverter" alias="ns8PlatformOrderUpdateStatusConverter"/>
+    <bean id="defaultNs8PlatformOrderUpdateStatusConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8PlatformOrderUpdateStatus"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="ns8PlatformOrderUpdateStatusPopulator"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

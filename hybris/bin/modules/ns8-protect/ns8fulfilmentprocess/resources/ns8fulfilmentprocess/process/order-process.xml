@@ -39,7 +39,7 @@
 		<event>${process.order.code}_NS8ScoreReceived</event>
 	</wait>
 
-	<action id="fraudCheck" bean="fraudCheckOrderInternalAction">
+	<action id="fraudCheck" bean="ns8FraudCheckOrderAction">
 		<transition name="OK" to="sendOrderPlacedNotification"/>
 		<transition name="POTENTIAL" to="manualOrderCheckCSA" />
 		<transition name="FRAUD" to="notifyCustomer" />

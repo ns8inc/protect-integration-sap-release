@@ -1,9 +1,9 @@
 package com.ns8.hybris.core.converters.populators;
 
-import com.ns8.hybris.core.data.NS8CreditCardData;
-import com.ns8.hybris.core.data.NS8TransactionData;
-import com.ns8.hybris.core.data.NS8TransactionMethod;
-import com.ns8.hybris.core.data.NS8TransactionStatus;
+import com.ns8.hybris.core.data.Ns8CreditCardData;
+import com.ns8.hybris.core.data.Ns8TransactionData;
+import com.ns8.hybris.core.data.Ns8TransactionMethod;
+import com.ns8.hybris.core.data.Ns8TransactionStatus;
 import com.ns8.hybris.core.services.NS8PaymentTransactionService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8TransactionDataPopulatorTest {
+public class DefaultNs8TransactionDataPopulatorTest {
 
     private static final double AMOUNT = 12.6d;
     private static final String CURRENCY_ISO = "iso";
@@ -37,30 +37,30 @@ public class DefaultNS8TransactionDataPopulatorTest {
     private static final String TRANSACTION_STATUS_DETAIL_AUTH = "transaction status detail AUTH";
 
     @InjectMocks
-    private DefaultNS8TransactionDataPopulator testObj;
+    private DefaultNs8TransactionDataPopulator testObj;
 
     @Mock
-    private Converter<PaymentTransactionModel, NS8CreditCardData> ns8CreditCardDataConverter;
+    private Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter;
     @Mock
     private NS8PaymentTransactionService NS8PaymentTransactionServiceMock;
 
     @Mock
     private PaymentTransactionModel paymentTransactionMock;
     @Mock
-    private NS8CreditCardData ns8CreditCardDataMock;
+    private Ns8CreditCardData ns8CreditCardDataMock;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private PaymentTransactionEntryModel transactionEntryMock;
 
-    private NS8TransactionData ns8TransactionData;
+    private Ns8TransactionData ns8TransactionData;
     private Date creationDate;
 
     @Before
     public void setUp() {
         testObj.setTransactionStatusMapping(Map.of(
-                "ACCEPTED", NS8TransactionStatus.SUCCESS,
-                "REJECTED", NS8TransactionStatus.FAILURE));
+                "ACCEPTED", Ns8TransactionStatus.SUCCESS,
+                "REJECTED", Ns8TransactionStatus.FAILURE));
 
-        ns8TransactionData = new NS8TransactionData();
+        ns8TransactionData = new Ns8TransactionData();
         creationDate = new Date();
         when(NS8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
         when(ns8CreditCardDataConverter.convert(paymentTransactionMock)).thenReturn(ns8CreditCardDataMock);
@@ -81,10 +81,10 @@ public class DefaultNS8TransactionDataPopulatorTest {
         assertThat(ns8TransactionData.getAmount()).isEqualTo(AMOUNT);
         assertThat(ns8TransactionData.getCreditCard()).isEqualTo(ns8CreditCardDataMock);
         assertThat(ns8TransactionData.getCurrency()).isEqualTo(CURRENCY_ISO);
-        assertThat(ns8TransactionData.getMethod()).isEqualTo(NS8TransactionMethod.CC);
+        assertThat(ns8TransactionData.getMethod()).isEqualTo(Ns8TransactionMethod.CC);
         assertThat(ns8TransactionData.getPlatformId()).isEqualTo(TRANSACTION_ID);
         assertThat(ns8TransactionData.getProcessedAt()).isEqualTo(creationDate);
-        assertThat(ns8TransactionData.getStatus()).isEqualTo(NS8TransactionStatus.SUCCESS);
+        assertThat(ns8TransactionData.getStatus()).isEqualTo(Ns8TransactionStatus.SUCCESS);
         assertThat(ns8TransactionData.getStatusDetails()).isEqualTo(TRANSACTION_STATUS_DETAIL_AUTH);
     }
 
