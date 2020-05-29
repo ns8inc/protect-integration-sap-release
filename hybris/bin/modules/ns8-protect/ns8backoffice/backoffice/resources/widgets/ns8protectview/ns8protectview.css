@@ -2,10 +2,5 @@ div#ns8-protect-dashboard-wrapper iframe {
     overflow-y: scroll !important;
     width: 100%;
     height: auto;
-}
-
-div#ns8-protect-dashboard-wrapper {
-    overflow-y: scroll !important;
-    width: 100%;
-    max-height: calc(100vh - 60px);
+    max-height: calc(100vh - 100px);
 }

@@ -5,7 +5,7 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.ns8.hybris.backoffice.data.context.Ns8NavigationContextData;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.platform.cms2.model.site.CMSSiteModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +24,7 @@ public class Ns8ProtectViewController extends DefaultWidgetController {
     protected static final String NS8_PROTECT_VIEW_VISIBLE_KEY = "ns8ProtectViewVisible";
 
     @WireVariable
-    protected transient NS8EndpointService ns8EndpointService;
+    protected transient Ns8EndpointService ns8EndpointService;
     @WireVariable
     protected transient NotificationService notificationService;
     @WireVariable

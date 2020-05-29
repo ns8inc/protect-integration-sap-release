@@ -10,7 +10,7 @@
     <author>ns8</author>
     <version>0.1</version>
 
-    <actionClassName>com.ns8.hybris.backoffice.actions.site.merchant.activate.NS8MerchantActivationAction</actionClassName>
+    <actionClassName>com.ns8.hybris.backoffice.actions.site.merchant.activate.Ns8MerchantActivationAction</actionClassName>
 
     <iconUri>icons/icon-action-activateNS8.png</iconUri>
     <iconDisabledUri>icons/icon-action-activateNS8-disabled.png</iconDisabledUri>

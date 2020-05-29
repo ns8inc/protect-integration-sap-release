@@ -19,9 +19,9 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8PaymentTransactionServiceTest {
+public class DefaultNs8PaymentTransactionServiceTest {
 
-    private DefaultNS8PaymentTransactionService testObj = new DefaultNS8PaymentTransactionService();
+    private DefaultNs8PaymentTransactionService testObj = new DefaultNs8PaymentTransactionService();
 
     @Mock
     private PaymentTransactionModel transactionMock;

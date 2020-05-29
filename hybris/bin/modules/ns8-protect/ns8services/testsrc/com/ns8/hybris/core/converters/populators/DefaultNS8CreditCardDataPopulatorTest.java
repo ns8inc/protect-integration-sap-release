@@ -2,7 +2,7 @@ package com.ns8.hybris.core.converters.populators;
 
 import com.ns8.hybris.core.data.Ns8CreditCardData;
 import com.ns8.hybris.core.data.Ns8CreditCardTransactionType;
-import com.ns8.hybris.core.services.NS8PaymentTransactionService;
+import com.ns8.hybris.core.services.Ns8PaymentTransactionService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.enums.CreditCardType;
 import de.hybris.platform.core.model.order.payment.CreditCardPaymentInfoModel;
@@ -41,7 +41,7 @@ public class DefaultNs8CreditCardDataPopulatorTest {
     private DefaultNs8CreditCardDataPopulator testObj;
 
     @Mock
-    protected NS8PaymentTransactionService NS8PaymentTransactionServiceMock;
+    protected Ns8PaymentTransactionService Ns8PaymentTransactionServiceMock;
 
 
     @Mock
@@ -60,7 +60,7 @@ public class DefaultNs8CreditCardDataPopulatorTest {
                 PaymentTransactionType.CAPTURE, Ns8CreditCardTransactionType.CAPTURE));
         ns8CreditCardData = new Ns8CreditCardData();
 
-        when(NS8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
+        when(Ns8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
         when(paymentTransactionMock.getInfo()).thenReturn(ccPaymentInfoMock);
         when(transactionEntryMock.getType()).thenReturn(PaymentTransactionType.AUTHORIZATION);
 

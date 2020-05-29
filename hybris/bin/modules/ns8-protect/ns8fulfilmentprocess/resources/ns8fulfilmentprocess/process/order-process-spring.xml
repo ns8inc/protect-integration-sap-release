@@ -54,10 +54,10 @@
     </bean>
 
     <alias name="defaultNS8ScoreOrderAction" alias="ns8ScoreOrderAction"/>
-    <bean id="defaultNS8ScoreOrderAction" class="com.ns8.hybris.fulfilmentprocess.actions.order.NS8ScoreOrderAction"
+    <bean id="defaultNS8ScoreOrderAction" class="com.ns8.hybris.fulfilmentprocess.actions.order.Ns8ScoreOrderAction"
           parent="abstractOrderAction">
         <constructor-arg name="ns8FraudService" ref="ns8FraudService"/>
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
     </bean>
 
     <bean id="fraudCheckOrderAction" class="com.ns8.hybris.fulfilmentprocess.actions.order.FraudCheckOrderAction"
@@ -136,6 +136,7 @@
           class="com.ns8.hybris.fulfilmentprocess.actions.order.Ns8FraudCheckOrderAction" parent="abstractOrderAction">
         <constructor-arg name="fraudService" ref="fraudService"/>
         <constructor-arg name="providerName" value="NS8_FraudServiceProvider"/>
+        <constructor-arg name="ns8FraudService" ref="ns8FraudService"/>
     </bean>
 
 </beans>

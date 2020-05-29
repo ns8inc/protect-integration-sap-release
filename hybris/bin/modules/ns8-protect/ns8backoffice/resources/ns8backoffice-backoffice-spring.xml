@@ -13,10 +13,14 @@
 
     <alias name="defaultNS8ActivationAction" alias="nS8ActivationAction"/>
     <bean id="defaultNS8ActivationAction"
-          class=" com.ns8.hybris.backoffice.actions.site.merchant.activate.NS8MerchantActivationAction"/>
+          class=" com.ns8.hybris.backoffice.actions.site.merchant.activate.Ns8MerchantActivationAction"/>
+
+    <alias name="defaultNs8DeactivationAction" alias="ns8DeactivationAction"/>
+    <bean id="defaultNs8DeactivationAction"
+          class=" com.ns8.hybris.backoffice.actions.site.merchant.deactivate.Ns8MerchantDeactivationAction"/>
 
     <alias name="defaultNS8AccessOrderAction" alias="nS8AccessOrderAction"/>
     <bean id="defaultNS8AccessOrderAction"
-          class=" com.ns8.hybris.backoffice.actions.order.NS8AccessOrderAction"/>
+          class=" com.ns8.hybris.backoffice.actions.order.Ns8AccessOrderAction"/>
 
 </beans>

@@ -160,16 +160,18 @@
         <entry key="REVIEW" value="PENDING"/>
     </util:map>
 
-    <alias name="defaultNs8PlatformOrderUpdateStatusPopulator" alias="ns8PlatformOrderUpdateStatusPopulator"/>
-    <bean id="defaultNs8PlatformOrderUpdateStatusPopulator"
-          class="com.ns8.hybris.core.converters.populators.Ns8PlatformOrderUpdateStatusPopulator"/>
+    <alias name="defaultNs8UpdateOrderStatusPopulator" alias="ns8UpdateOrderStatusPopulator"/>
+    <bean id="defaultNs8UpdateOrderStatusPopulator"
+          class="com.ns8.hybris.core.converters.populators.Ns8UpdateOrderStatusPopulator">
+        <constructor-arg name="ns8FraudService" ref="ns8FraudService"/>
+    </bean>
 
-    <alias name="defaultNs8PlatformOrderUpdateStatusConverter" alias="ns8PlatformOrderUpdateStatusConverter"/>
-    <bean id="defaultNs8PlatformOrderUpdateStatusConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8PlatformOrderUpdateStatus"/>
+    <alias name="defaultNs8UpdateOrderStatusConverter" alias="ns8UpdateOrderStatusConverter"/>
+    <bean id="defaultNs8UpdateOrderStatusConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8UpdateOrderStatus"/>
         <property name="populators">
             <list merge="true">
-                <ref bean="ns8PlatformOrderUpdateStatusPopulator"/>
+                <ref bean="ns8UpdateOrderStatusPopulator"/>
             </list>
         </property>
     </bean>

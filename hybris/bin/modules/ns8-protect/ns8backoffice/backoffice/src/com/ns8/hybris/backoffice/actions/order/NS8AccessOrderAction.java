@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * NS8 action to show the ns8 order details into a widget
  */
-public class NS8AccessOrderAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<Object, Object> {
+public class Ns8AccessOrderAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<Object, Object> {
 
     protected static final String ACTION_RESULT_SUCCESS_CODE = "success";
     protected static final String ACTION_RESULT_ERROR_CODE = "error";

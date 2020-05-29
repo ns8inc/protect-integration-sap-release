@@ -6,6 +6,13 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <alias name="defaultNs8UserIpStrategy" alias="ns8UserIpStrategy"/>
-    <bean id="defaultNs8UserIpStrategy" class="com.ns8.hybris.core.strategies.impl.DefaultNs8UserIpStrategy"/>
+    <bean id="defaultNs8UserIpStrategy" class="com.ns8.hybris.core.strategies.impl.DefaultNs8UserIpStrategy">
+        <!--
+            Request header used to retrieve the customer's IP address.
+            In case a different header should be used (because of infrastructure)
+            this can be subclassed and changed to use a different header
+        -->
+        <constructor-arg name="headerToCheck" value="X-Forwarded-For"/>
+    </bean>
 
 </beans>

@@ -1,8 +1,8 @@
 package com.ns8.hybris.notifications.services.impl;
 
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
-import com.ns8.hybris.core.services.api.NS8APIService;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import com.ns8.hybris.notifications.services.Ns8QueueService;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageWrapper;
@@ -39,13 +39,13 @@ public class DefaultNs8QueueService implements Ns8QueueService {
     protected static final String API_POLLING_DELETE_QUEUE_MESSAGE = "/api/polling/DeleteQueueMessage";
 
     protected final RestTemplate restTemplate;
-    protected final NS8APIService ns8APIService;
-    protected final NS8EndpointService ns8EndpointService;
+    protected final Ns8ApiService ns8ApiService;
+    protected final Ns8EndpointService ns8EndpointService;
 
-    public DefaultNs8QueueService(final NS8APIService ns8APIService,
+    public DefaultNs8QueueService(final Ns8ApiService ns8ApiService,
                                   final RestTemplate restTemplate,
-                                  final NS8EndpointService ns8EndpointService) {
-        this.ns8APIService = ns8APIService;
+                                  final Ns8EndpointService ns8EndpointService) {
+        this.ns8ApiService = ns8ApiService;
         this.restTemplate = restTemplate;
         this.ns8EndpointService = ns8EndpointService;
     }
@@ -75,10 +75,10 @@ public class DefaultNs8QueueService implements Ns8QueueService {
             return messages;
         } catch (final HttpStatusCodeException e) {
             LOG.error("Receiving of messages failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Receiving messages failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Receiving messages failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Receiving of messages failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
-            throw new NS8IntegrationException("Receiving of messages failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+            throw new Ns8IntegrationException("Receiving of messages failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
 
     }
@@ -104,10 +104,10 @@ public class DefaultNs8QueueService implements Ns8QueueService {
             return MapUtils.isNotEmpty(response.getBody()) ? response.getBody().get("success") : Boolean.FALSE;
         } catch (final HttpStatusCodeException e) {
             LOG.error("Deletion of the message failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Deletion of the message failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Deletion of the message failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Deletion of the message failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
-            throw new NS8IntegrationException("Deletion of the message failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+            throw new Ns8IntegrationException("Deletion of the message failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
 
     }
@@ -129,10 +129,10 @@ public class DefaultNs8QueueService implements Ns8QueueService {
             return response.getBody().get("url");
         } catch (final HttpStatusCodeException e) {
             LOG.error("Retrieval of the queue url failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Retrieval of the queue url failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Retrieval of the queue url failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Retrieval of the queue url failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
-            throw new NS8IntegrationException("Retrieval of the queue url failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+            throw new Ns8IntegrationException("Retrieval of the queue url failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
     }
 
@@ -147,7 +147,7 @@ public class DefaultNs8QueueService implements Ns8QueueService {
             return URLEncoder.encode(receiptHandle, StandardCharsets.UTF_8.toString());
         } catch (final UnsupportedEncodingException e) {
             LOG.error("Error while encoding the message receipt handle.");
-            throw new NS8IntegrationException("Deletion of the message failed.", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new Ns8IntegrationException("Deletion of the message failed.", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 

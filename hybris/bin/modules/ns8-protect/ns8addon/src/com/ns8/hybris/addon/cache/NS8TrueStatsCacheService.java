@@ -6,7 +6,7 @@ import de.hybris.platform.regioncache.key.CacheKey;
 /**
  * Defines an API to interact with CMS cache
  */
-public interface NS8TrueStatsCacheService {
+public interface Ns8TrueStatsCacheService {
     /**
      * Checks if cache is enabled
      *

@@ -1,10 +1,10 @@
 package com.ns8.hybris.notifications.services.impl;
 
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResponse;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageWrapper;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import org.apache.http.entity.ContentType;
 import org.junit.Before;
@@ -57,7 +57,7 @@ public class DefaultNs8QueueServiceTest {
     @Mock
     private Ns8QueueMessage ns8QueueMessageMock;
     @Mock
-    private NS8EndpointService ns8EndpointServiceMock;
+    private Ns8EndpointService ns8EndpointServiceMock;
     @Mock
     private Map<String, Object> deleteMessageResponseMock;
     @Mock
@@ -102,7 +102,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.receiveMessages(QUEUE_URL));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(exception);
     }
 
@@ -116,7 +116,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.receiveMessages(QUEUE_URL));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(exception);
     }
 
@@ -166,7 +166,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.deleteMessage(MERCHANT_API_KEY, RECEIPT_HANDLE));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientErrorException);
     }
 
@@ -178,7 +178,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.deleteMessage(MERCHANT_API_KEY, RECEIPT_HANDLE));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(exception);
     }
 
@@ -208,7 +208,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.getQueueUrl(MERCHANT_API_KEY));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientErrorException);
     }
 
@@ -220,7 +220,7 @@ public class DefaultNs8QueueServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.getQueueUrl(MERCHANT_API_KEY));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(exception);
     }
 

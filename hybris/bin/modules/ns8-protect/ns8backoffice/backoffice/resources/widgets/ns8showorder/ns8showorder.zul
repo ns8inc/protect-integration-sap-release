@@ -34,6 +34,8 @@
                             });
                             var protectClient = Protect.createClient(clientConfig);
                             protectClient.render('ORDER_DETAILS', hybrisOrderNumber);
+
+                            jQuery('#ns8-protect-client-iframe').attr('scrolling', 'yes');
                         });
                     });
                 </script>

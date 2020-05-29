@@ -20,6 +20,8 @@
                                              id="ns8.type.tree.ns8fetchqueuemessagescronjobs"/>
                     <explorer-tree:type-node code="Ns8ProcessMessagesCronJob"
                                              id="ns8.type.tree.ns8processmessagescronjobs"/>
+                    <explorer-tree:type-node code="Ns8QueueMessagesCleanUpCronJob"
+                                             id="ns8.type.tree.ns8cleanupsmessagescronjobs"/>
                 </explorer-tree:navigation-node>
             </explorer-tree:navigation-node>
         </explorer-tree:explorer-tree>
@@ -44,6 +46,8 @@
                         <editorArea:attribute qualifier="screenHeight"/>
                         <editorArea:attribute qualifier="screenWidth"/>
                         <editorArea:attribute qualifier="riskEventPayload"/>
+                        <editorArea:attribute qualifier="score"/>
+                        <editorArea:attribute qualifier="ns8Status"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
@@ -70,6 +74,27 @@
             </editorArea:tab>
         </editorArea:editorArea>
     </context>
+
+    <context type="Ns8QueueMessagesCleanUpCronJob" component="advanced-search" merge-by="type">
+        <advanced-search:advanced-search connection-operator="AND">
+            <advanced-search:field-list>
+                <advanced-search:field name="ageInDaysBeforeDeletion" operator="equals" selected="true"/>
+                <advanced-search:field name="ns8MessageStatus" operator="equals" selected="true"/>
+            </advanced-search:field-list>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context component="editor-area" type="Ns8QueueMessagesCleanUpCronJob" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.ns8">
+                <editorArea:section name="sec.configuration.ns8.details">
+                    <editorArea:attribute qualifier="ageInDaysBeforeDeletion"/>
+                    <editorArea:attribute qualifier="ns8MessageStatus"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
 
     <context type="Ns8QueueMessage" component="listview">
         <list-view:list-view>
@@ -108,6 +133,7 @@
                     <editorArea:attribute qualifier="body"/>
                     <editorArea:attribute qualifier="status"/>
                     <editorArea:attribute qualifier="failReason"/>
+                    <editorArea:attribute qualifier="messageId"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
@@ -145,7 +171,7 @@
                     <editorArea:attribute qualifier="phone"/>
                     <editorArea:attribute qualifier="apiKey"/>
                     <editorArea:attribute qualifier="queueId"/>
-                    <editorArea:attribute qualifier="enabled"/>
+                    <editorArea:attribute qualifier="enabled" readonly="true"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
@@ -158,8 +184,24 @@
                 <y:action action-id="com.hybris.cockpitng.action.delete" property="currentObject"/>
                 <y:action action-id="com.ns8.hybris.backoffice.basesite.activatens8merchantaction"
                           property="currentObject"/>
+                <y:action action-id="com.ns8.hybris.backoffice.basesite.deactivatens8merchantaction"
+                          property="currentObject"/>
             </y:group>
         </y:actions>
+    </context>
+
+    <context component="listview" type="Order" merge-by="type" parent="AbstractOrder">
+        <list-view:list-view refresh-after-object-creation="true">
+            <list-view:column qualifier="score" hflex="true"/>
+            <list-view:column qualifier="ns8Status" hflex="true"/>
+        </list-view:list-view>
+    </context>
+
+    <context component="cs-listview" type="Order" merge-by="type" parent="AbstractOrder">
+        <list-view:list-view refresh-after-object-creation="true">
+            <list-view:column qualifier="score" hflex="true"/>
+            <list-view:column qualifier="ns8Status" hflex="true"/>
+        </list-view:list-view>
     </context>
 
     <context type="Order" component="editorareaactions" merge-by="type" parent="auto">
@@ -174,8 +216,9 @@
 
     <context type="Order" component="cseditorareaactions" merge-by="type" parent="auto">
         <y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
-            <y:group qualifier="common">
-                <y:label>actiongroup.common</y:label>
+            <y:group qualifier="common" show-group-header="false"/>
+            <y:group qualifier="ns8" show-group-header="false">
+                <y:label>actiongroup.ns8</y:label>
                 <y:action action-id="com.ns8.hybris.backoffice.order.accessns8orderaction"
                           property="currentObject"/>
             </y:group>
@@ -221,6 +264,14 @@
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
+    </context>
+
+    <context type="FraudReport" component="base" merge-by="type" parent="GenericItem">
+        <y:base>
+            <y:labels>
+                <y:label>"Fraud Report -> Ns8 Score: " + score + " - Ns8 Status: " + status</y:label>
+            </y:labels>
+        </y:base>
     </context>
 
     <context merge-by="module" parent="GenericItem" type="FraudReport" component="editor-area">

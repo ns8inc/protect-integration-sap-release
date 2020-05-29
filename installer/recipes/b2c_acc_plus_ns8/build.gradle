@@ -136,7 +136,7 @@ def pl = platform {
         extName 'ns8fulfilmentprocess'
         extName 'ns8backoffice'
         extName 'ns8addon'
-
+        extName 'ns8sampledataaddon'
     }
 
     addons {
@@ -145,7 +145,7 @@ def pl = platform {
                     'assistedserviceyprofileaddon', 'assistedservicepromotionaddon', 'customerticketingaddon', 'textfieldconfiguratortemplateaddon', 'smarteditaddon',
                     'consignmenttrackingaddon', 'notificationaddon', 'customerinterestsaddon', 'stocknotificationaddon', 'orderselfserviceaddon', 'adaptivesearchsamplesaddon',
                     'configurablebundleaddon', 'pcmbackofficesamplesaddon', 'xyformssamples', 'xyformsstorefrontcommons', 'personalizationsearchsamplesaddon',
-                    'personalizationyprofilesampledataaddon', 'personalizationaddon', 'profiletagaddon', 'merchandisingaddon', 'merchandisingstorefrontsampledataaddon')
+                    'personalizationyprofilesampledataaddon', 'personalizationaddon', 'profiletagaddon', 'merchandisingaddon', 'merchandisingstorefrontsampledataaddon', 'ns8addon', 'ns8sampledataaddon')
             template 'yacceleratorstorefront'
         }
 

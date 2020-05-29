@@ -8,7 +8,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 /**
  * Handles all the events sent from SAP Commerce to NS8 protect
  */
-public interface NS8APIService {
+public interface Ns8ApiService {
 
     /**
      * Triggers the plugin install event for the given merchant model, sending a request to {NS8_BASE_BE_API}/protect/platform/install/sap
@@ -25,6 +25,13 @@ public interface NS8APIService {
      * @param ns8Merchant entity holding the values of the NS8Merchant
      */
     void triggerPluginInstallEvent(NS8MerchantModel ns8Merchant);
+
+    /**
+     * Sends an "UNINSTALL_ACTION" event to NS8, for the given merchant
+     *
+     * @param ns8Merchant the merchant to deactivate
+     */
+    void triggerMerchantUninstallEvent(NS8MerchantModel ns8Merchant);
 
     /**
      * Fetches the javascript content for the TrueStats script.

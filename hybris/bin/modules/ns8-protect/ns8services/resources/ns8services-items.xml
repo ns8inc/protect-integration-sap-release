@@ -2,6 +2,11 @@
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
 
     <enumtypes>
+        <enumtype code="OrderStatus" autocreate="false" dynamic="true">
+            <value code="FRAUD_SCORE_PENDING"/>
+            <value code="FRAUD_SCORED"/>
+        </enumtype>
+
         <enumtype code="Ns8RiskType" autocreate="true" generate="true">
             <value code="LOW"/>
             <value code="MEDIUM"/>
@@ -122,6 +127,16 @@
                         </columntype>
                     </persistence>
                 </attribute>
+                <attribute qualifier="score" type="java.lang.Double">
+                    <description>Dynamic attribute that shows the NS8 order score.</description>
+                    <persistence type="dynamic" attributeHandler="ns8ScoreAttributeHandler"/>
+                    <modifiers read="true" write="false" search="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="ns8Status" type="java.lang.String">
+                    <description>Dynamic attribute that shows the NS8 order status.</description>
+                    <persistence type="dynamic" attributeHandler="ns8OrderStatusAttributeHandler"/>
+                    <modifiers read="true" write="false" search="true" optional="true"/>
+                </attribute>
             </attributes>
         </itemtype>
 
@@ -161,6 +176,7 @@
                 </attribute>
             </attributes>
         </itemtype>
+
     </itemtypes>
 
 </items>

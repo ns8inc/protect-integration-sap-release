@@ -1,9 +1,9 @@
 package com.ns8.hybris.core.services.api.impl;
 
 import com.ns8.hybris.core.data.*;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8APIServiceTest {
+public class DefaultNs8ApiServiceTest {
 
     private static final String PLATFORM_NAME_VALUE = "platform";
     private static final String BASE_CLIENT_URL = "baseClientURL";
@@ -48,6 +48,7 @@ public class DefaultNS8APIServiceTest {
     private static final String API_KEY = "apiKey";
     private static final String CREATE_ORDER_ACTION = "CREATE_ORDER_ACTION";
     private static final String UPDATE_ORDER_STATUS_ACTION = "UPDATE_ORDER_STATUS_ACTION";
+    private static final String UNINSTALL_MERCHANT_ACTION = "UNINSTALL_ACTION";
     private static final String API_SWITCH_EXECUTOR = "/api/switch/executor";
     private static final String ACTION_HTTP_PARAM = "action";
     private static final String TOKEN = "tokenValue";
@@ -66,7 +67,7 @@ public class DefaultNS8APIServiceTest {
 
     @Spy
     @InjectMocks
-    private DefaultNS8APIService testObj;
+    private DefaultNs8ApiService testObj;
 
     @Mock(answer = RETURNS_DEEP_STUBS)
     private ConfigurationService configurationServiceMock;
@@ -77,9 +78,9 @@ public class DefaultNS8APIServiceTest {
     @Mock
     private Converter<OrderModel, Ns8OrderData> ns8OrderDataConverterMock;
     @Mock
-    private Converter<OrderModel, Ns8PlatformOrderUpdateStatus> ns8PlatformOrderUpdateStatusConverterMock;
+    private Converter<OrderModel, Ns8UpdateOrderStatus> ns8UpdateOrderStatusConverterMock;
     @Mock
-    private NS8EndpointService ns8EndpointServiceMock;
+    private Ns8EndpointService ns8EndpointServiceMock;
     @Mock
     private ModelService modelServiceMock;
 
@@ -94,7 +95,7 @@ public class DefaultNS8APIServiceTest {
     @Mock
     private Ns8OrderData ns8OrderDataMock;
     @Mock
-    private Ns8PlatformOrderUpdateStatus ns8PlatformOrderUpdateStatusMock;
+    private Ns8UpdateOrderStatus ns8UpdateOrderStatusMock;
     @Mock
     private Ns8OrderVerificationRequest orderVerificationRequestMock;
 
@@ -109,7 +110,7 @@ public class DefaultNS8APIServiceTest {
     public void setUp() {
         Whitebox.setInternalState(testObj, "ns8OrderDataConverter", ns8OrderDataConverterMock);
         Whitebox.setInternalState(testObj, "ns8MerchantDataConverter", merchantConverterMock);
-        Whitebox.setInternalState(testObj, "ns8PlatformOrderUpdateStatusConverter", ns8PlatformOrderUpdateStatusConverterMock);
+        Whitebox.setInternalState(testObj, "ns8UpdateOrderStatusConverter", ns8UpdateOrderStatusConverterMock);
         doReturn("prettyObject").when(testObj).prettyPrint(any());
         when(ns8EndpointServiceMock.getBaseBackendURL()).thenReturn(BASE_BACKEND_URL);
         when(ns8EndpointServiceMock.getBaseClientURL()).thenReturn(BASE_CLIENT_URL);
@@ -117,7 +118,7 @@ public class DefaultNS8APIServiceTest {
 
         when(merchantConverterMock.convert(ns8MerchantMock)).thenReturn(convertedMerchantMock);
         when(ns8OrderDataConverterMock.convert(orderMock)).thenReturn(ns8OrderDataMock);
-        when(ns8PlatformOrderUpdateStatusConverterMock.convert(orderMock)).thenReturn(ns8PlatformOrderUpdateStatusMock);
+        when(ns8UpdateOrderStatusConverterMock.convert(orderMock)).thenReturn(ns8UpdateOrderStatusMock);
         when(orderMock.getSite().getNs8Merchant()).thenReturn(ns8MerchantMock);
         when(pluginInstallResponseDataMock.getAccessToken()).thenReturn(ACCESS_TOKEN_FROM_RESPONSE);
         when(pluginInstallResponseDataMock.getQueueId()).thenReturn(QUEUE_ID_FROM_RESPONSE);
@@ -131,7 +132,7 @@ public class DefaultNS8APIServiceTest {
     }
 
     @Test
-    public void triggerPluginInstallEvent_ShouldSendMerchantInformationToNS8UsingRestTemplate() throws NS8IntegrationException {
+    public void triggerPluginInstallEvent_ShouldSendMerchantInformationToNS8UsingRestTemplate() throws Ns8IntegrationException {
         when(restTemplateMock.postForEntity(eq(BASE_BACKEND_URL + PROTECT_PLATFORM_INSTALL_URL + PLATFORM_NAME_VALUE), httpEntityCaptor.capture(), eq(PluginInstallResponseData.class)))
                 .thenReturn(new ResponseEntity(pluginInstallResponseDataMock, HttpStatus.OK));
 
@@ -152,7 +153,7 @@ public class DefaultNS8APIServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.triggerPluginInstallEvent(ns8MerchantMock));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientErrorException);
     }
 
@@ -163,7 +164,7 @@ public class DefaultNS8APIServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.triggerPluginInstallEvent(ns8MerchantMock));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class);
     }
 
@@ -206,7 +207,7 @@ public class DefaultNS8APIServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.fetchTrueStatsScript(ns8MerchantMock));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
@@ -219,7 +220,7 @@ public class DefaultNS8APIServiceTest {
         final Throwable thrown = catchThrowable(() -> testObj.fetchTrueStatsScript(ns8MerchantMock));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -273,7 +274,7 @@ public class DefaultNS8APIServiceTest {
         final String url = stringCaptor.getValue();
         assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + CREATE_ORDER_ACTION);
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
@@ -288,7 +289,7 @@ public class DefaultNS8APIServiceTest {
         final String url = stringCaptor.getValue();
         assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + CREATE_ORDER_ACTION);
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -328,7 +329,7 @@ public class DefaultNS8APIServiceTest {
                 entry(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + API_KEY)),
                 entry(HttpHeaders.CONTENT_TYPE, singletonList(ContentType.APPLICATION_JSON.toString()))
         );
-        assertThat(httpEntity.getBody()).isEqualTo(ns8PlatformOrderUpdateStatusMock);
+        assertThat(httpEntity.getBody()).isEqualTo(ns8UpdateOrderStatusMock);
     }
 
     @Test
@@ -342,7 +343,7 @@ public class DefaultNS8APIServiceTest {
         final String url = stringCaptor.getValue();
         assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UPDATE_ORDER_STATUS_ACTION);
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
@@ -357,7 +358,7 @@ public class DefaultNS8APIServiceTest {
         final String url = stringCaptor.getValue();
         assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UPDATE_ORDER_STATUS_ACTION);
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -392,7 +393,7 @@ public class DefaultNS8APIServiceTest {
         assertThat(headers).containsExactly(entry(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + API_KEY)));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
@@ -408,7 +409,7 @@ public class DefaultNS8APIServiceTest {
         assertUriValuesForGet(url);
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
 
@@ -447,7 +448,7 @@ public class DefaultNS8APIServiceTest {
         assertThat(httpEntity.getHeaders()).containsExactly(entry(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + API_KEY)));
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
@@ -463,12 +464,57 @@ public class DefaultNS8APIServiceTest {
         assertUrlForUriValues(url);
 
         assertThat(thrown)
-                .isInstanceOf(NS8IntegrationException.class)
+                .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
 
         final HttpEntity<?> httpEntity = httpEntityCaptor.getValue();
         assertThat(httpEntity.getHeaders()).containsExactly(entry(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + API_KEY)));
+    }
+
+    @Test
+    public void triggerMerchantUninstallEvent_ShouldCallApiToDisableMerchant() {
+        when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        testObj.triggerMerchantUninstallEvent(ns8MerchantMock);
+
+        final String url = stringCaptor.getValue();
+        assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UNINSTALL_MERCHANT_ACTION);
+
+        final HttpEntity<?> httpEntity = httpEntityCaptor.getValue();
+        assertThat(httpEntity.getHeaders()).containsOnly(entry(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + API_KEY)));
+    }
+
+    @Test
+    public void triggerMerchantUninstallEvent_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
+        final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
+                .thenThrow(clientException);
+
+        final Throwable thrown = catchThrowable(() -> testObj.triggerMerchantUninstallEvent(ns8MerchantMock));
+
+        final String url = stringCaptor.getValue();
+        assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UNINSTALL_MERCHANT_ACTION);
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCause(clientException)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+    }
+
+    @Test
+    public void triggerMerchantUninstallEvent_WhenResourceAccessException_ShouldThrowNs8IntegrationException() {
+        when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
+                .thenThrow(ResourceAccessException.class);
+
+        final Throwable thrown = catchThrowable(() -> testObj.triggerMerchantUninstallEvent(ns8MerchantMock));
+
+        final String url = stringCaptor.getValue();
+        assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UNINSTALL_MERCHANT_ACTION);
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCauseInstanceOf(ResourceAccessException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     private void assertUrlForUriValues(final String uri) {

@@ -1,9 +1,9 @@
 package com.ns8.hybris.addon.services.impl;
 
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheService;
-import com.ns8.hybris.addon.services.NS8TrueStatsService;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheService;
+import com.ns8.hybris.addon.services.Ns8TrueStatsService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.platform.cms2.model.site.CMSSiteModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import de.hybris.platform.regioncache.key.CacheKey;
@@ -11,24 +11,19 @@ import de.hybris.platform.regioncache.key.CacheKey;
 import java.util.Optional;
 
 /**
- * Default implementation of {@link NS8TrueStatsService}
+ * Default implementation of {@link Ns8TrueStatsService}
  */
-public class DefaultNS8TrueStatsService implements NS8TrueStatsService {
+public class DefaultNs8TrueStatsService implements Ns8TrueStatsService {
 
     protected final CMSSiteService cmsSiteService;
-    protected final NS8APIService ns8APIService;
-    protected final NS8TrueStatsCacheService ns8TrueStatsCacheService;
+    protected final Ns8ApiService ns8ApiService;
+    protected final Ns8TrueStatsCacheService ns8TrueStatsCacheService;
 
-    /**
-     * @param cmsSiteService           injected
-     * @param ns8APIService            injected
-     * @param ns8TrueStatsCacheService injected
-     */
-    public DefaultNS8TrueStatsService(final CMSSiteService cmsSiteService,
-                                      final NS8APIService ns8APIService,
-                                      final NS8TrueStatsCacheService ns8TrueStatsCacheService) {
+    public DefaultNs8TrueStatsService(final CMSSiteService cmsSiteService,
+                                      final Ns8ApiService ns8ApiService,
+                                      final Ns8TrueStatsCacheService ns8TrueStatsCacheService) {
         this.cmsSiteService = cmsSiteService;
-        this.ns8APIService = ns8APIService;
+        this.ns8ApiService = ns8ApiService;
         this.ns8TrueStatsCacheService = ns8TrueStatsCacheService;
     }
 
@@ -54,6 +49,6 @@ public class DefaultNS8TrueStatsService implements NS8TrueStatsService {
 
     protected String getTrueStatsScriptInternal(final CMSSiteModel currentSite) {
         final NS8MerchantModel ns8Merchant = currentSite.getNs8Merchant();
-        return ns8APIService.fetchTrueStatsScript(ns8Merchant);
+        return ns8ApiService.fetchTrueStatsScript(ns8Merchant);
     }
 }

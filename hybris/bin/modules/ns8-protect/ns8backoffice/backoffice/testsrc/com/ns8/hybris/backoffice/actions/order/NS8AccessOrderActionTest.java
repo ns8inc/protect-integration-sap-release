@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class NS8AccessOrderActionTest {
+public class Ns8AccessOrderActionTest {
 
     private static final String CURRENT_ORDER_OUTPUT = "currentOrderOutput";
     private static final String ACTION_RESULT_SUCCESS_CODE = "success";
@@ -29,7 +29,7 @@ public class NS8AccessOrderActionTest {
 
     @Spy
     @InjectMocks
-    private NS8AccessOrderAction testObj;
+    private Ns8AccessOrderAction testObj;
 
     @Mock
     private ActionContext<Object> actionContextMock;

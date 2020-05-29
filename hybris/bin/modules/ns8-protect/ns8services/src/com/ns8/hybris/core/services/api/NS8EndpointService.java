@@ -3,7 +3,7 @@ package com.ns8.hybris.core.services.api;
 /**
  * Handles retrieving the backend and client URLs from NS8
  */
-public interface NS8EndpointService {
+public interface Ns8EndpointService {
 
     /**
      * Depending on the value of the property "ns8services.api.environment" returns

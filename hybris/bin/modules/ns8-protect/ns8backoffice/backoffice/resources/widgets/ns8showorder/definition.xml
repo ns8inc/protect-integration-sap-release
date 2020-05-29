@@ -16,6 +16,6 @@
         <input id="currentOrderInput" type="de.hybris.platform.core.model.order.OrderModel"/>
     </sockets>
 
-    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8showorder.NS8ShowOrderController"/>
+    <controller class="com.ns8.hybris.backoffice.widgets.controllers.ns8showorder.Ns8ShowOrderController"/>
 
 </widget-definition>

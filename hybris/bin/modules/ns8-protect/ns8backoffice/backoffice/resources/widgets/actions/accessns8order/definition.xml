@@ -10,7 +10,7 @@
     <author>ns8</author>
     <version>0.1</version>
 
-    <actionClassName>com.ns8.hybris.backoffice.actions.order.NS8AccessOrderAction</actionClassName>
+    <actionClassName>com.ns8.hybris.backoffice.actions.order.Ns8AccessOrderAction</actionClassName>
 
     <iconUri>icons/icon-action-accessNS8order.png</iconUri>
     <iconDisabledUri>icons/icon-action-accessNS8order-disabled.png</iconDisabledUri>

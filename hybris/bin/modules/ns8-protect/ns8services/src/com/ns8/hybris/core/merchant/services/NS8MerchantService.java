@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Manages the merchant configurations
  */
-public interface NS8MerchantService {
+public interface Ns8MerchantService {
 
     /**
      * Creates the NS8MerchantModel base on the given parameters
@@ -20,10 +20,26 @@ public interface NS8MerchantService {
     Optional<NS8MerchantModel> createMerchant(MerchantParameters merchantParameters);
 
     /**
+     * Deactivates the  ns8 merchant
+     *
+     * @param ns8Merchant the ns8 merchant to deactivate
+     */
+    void deactivateMerchant(NS8MerchantModel ns8Merchant);
+
+
+    /**
      * Adds the given ns8 merchant to the cms site
      *
      * @param ns8Merchant the ns8 merchant
      * @param baseSite    the base site
      */
     void addMerchantToBaseSite(NS8MerchantModel ns8Merchant, BaseSiteModel baseSite);
+
+    /**
+     * Checks if the merchant is active or not
+     *
+     * @param ns8Merchant the merchant
+     * @return true if merchant is active, false otherwise
+     */
+    boolean isMerchantActive(NS8MerchantModel ns8Merchant);
 }

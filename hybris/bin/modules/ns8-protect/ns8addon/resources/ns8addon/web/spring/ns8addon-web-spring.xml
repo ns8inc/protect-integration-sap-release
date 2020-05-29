@@ -33,12 +33,12 @@
 
     <alias name="defaultNs8UserSessionDataFilter" alias="ns8UserSessionDataFilter"/>
     <bean id="defaultNs8UserSessionDataFilter" class="com.ns8.hybris.addon.filter.Ns8UserSessionDataFilter">
-        <constructor-arg name="sessionService" ref="sessionService" />
-        <constructor-arg name="ns8UserIpStrategy" ref="ns8UserIpStrategy" />
+        <constructor-arg name="sessionService" ref="sessionService"/>
+        <constructor-arg name="ns8UserIpStrategy" ref="ns8UserIpStrategy"/>
     </bean>
 
     <bean depends-on="storefrontTenantDefaultFilterChainList" parent="listMergeDirective">
-        <property name="add" ref="ns8UserSessionDataFilter" />
+        <property name="add" ref="ns8UserSessionDataFilter"/>
         <property name="afterBeanNames">
             <list value-type="java.lang.String">
                 <value>cartRestorationFilter</value>

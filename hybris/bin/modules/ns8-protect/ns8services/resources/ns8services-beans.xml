@@ -112,9 +112,9 @@
         <property name="transactionType" type="com.ns8.hybris.core.data.Ns8CreditCardTransactionType"/>
     </bean>
 
-    <bean class="com.ns8.hybris.core.data.Ns8PlatformOrderUpdateStatus">
+    <bean class="com.ns8.hybris.core.data.Ns8UpdateOrderStatus">
         <property name="name" type="java.lang.String"/>
-        <property name="status" type="com.ns8.hybris.core.data.Ns8PlatformOrderStatus"/>
+        <property name="status" type="com.ns8.hybris.core.data.Ns8Status"/>
         <property name="platformStatus" type="java.lang.String"/>
     </bean>
 

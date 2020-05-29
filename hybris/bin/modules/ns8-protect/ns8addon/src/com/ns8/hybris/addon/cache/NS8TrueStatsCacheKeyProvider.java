@@ -6,7 +6,7 @@ import de.hybris.platform.regioncache.key.CacheKey;
 /**
  * Provides the cache key for TrueStats response caching
  */
-public interface NS8TrueStatsCacheKeyProvider {
+public interface Ns8TrueStatsCacheKeyProvider {
 
     /**
      * Returns the cache key based on the base site

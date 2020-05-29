@@ -1,6 +1,6 @@
 package com.ns8.hybris.addon.facades.impl;
 
-import com.ns8.hybris.addon.services.NS8TrueStatsService;
+import com.ns8.hybris.addon.services.Ns8TrueStatsService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,15 +13,15 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8TrueStatsFacadeTest {
+public class DefaultNs8TrueStatsFacadeTest {
 
     private static final String JAVASCRIPT_CONTENT = "javascriptContent";
 
     @InjectMocks
-    private DefaultNS8TrueStatsFacade testObj;
+    private DefaultNs8TrueStatsFacade testObj;
 
     @Mock
-    private NS8TrueStatsService ns8TrueStatsServiceMock;
+    private Ns8TrueStatsService ns8TrueStatsServiceMock;
 
     @Test
     public void fetchTrueStatsContent_ShouldRetrieveJavascriptContentAndReturnIt() {

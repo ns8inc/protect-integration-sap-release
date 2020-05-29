@@ -4,7 +4,7 @@ import com.ns8.hybris.core.data.Ns8CreditCardData;
 import com.ns8.hybris.core.data.Ns8TransactionData;
 import com.ns8.hybris.core.data.Ns8TransactionMethod;
 import com.ns8.hybris.core.data.Ns8TransactionStatus;
-import com.ns8.hybris.core.services.NS8PaymentTransactionService;
+import com.ns8.hybris.core.services.Ns8PaymentTransactionService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
@@ -21,11 +21,11 @@ import java.util.Map;
 public class DefaultNs8TransactionDataPopulator implements Populator<PaymentTransactionModel, Ns8TransactionData> {
 
     protected final Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter;
-    protected final NS8PaymentTransactionService ns8PaymentTransactionService;
+    protected final Ns8PaymentTransactionService ns8PaymentTransactionService;
     protected Map<String, Ns8TransactionStatus> transactionStatusMapping;
 
     public DefaultNs8TransactionDataPopulator(final Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter,
-                                              final NS8PaymentTransactionService ns8PaymentTransactionService,
+                                              final Ns8PaymentTransactionService ns8PaymentTransactionService,
                                               final Map<String, Ns8TransactionStatus> transactionStatusMapping) {
         this.ns8CreditCardDataConverter = ns8CreditCardDataConverter;
         this.ns8PaymentTransactionService = ns8PaymentTransactionService;

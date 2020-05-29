@@ -3,7 +3,7 @@ package com.ns8.hybris.addon.facades.impl;
 import com.ns8.hybris.addon.data.Ns8OrderVerificationData;
 import com.ns8.hybris.core.data.Ns8OrderVerificationRequest;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
@@ -36,7 +36,7 @@ public class DefaultNs8OrderVerificationTemplateFacadeTest {
     private DefaultNs8OrderVerificationTemplateFacade testObj;
 
     @Mock
-    private NS8APIService ns8APIServiceMock;
+    private Ns8ApiService ns8ApiServiceMock;
     @Mock
     private BaseSiteService baseSiteServiceMock;
     @Mock
@@ -69,7 +69,7 @@ public class DefaultNs8OrderVerificationTemplateFacadeTest {
     public void getVerificationTemplate_WhenSiteHasMerchant_ShouldCallNs8APIService() {
         testObj.getVerificationTemplate(verificationDataMock);
 
-        verify(ns8APIServiceMock).getVerificationTemplate(verificationRequestMock, API_KEY);
+        verify(ns8ApiServiceMock).getVerificationTemplate(verificationRequestMock, API_KEY);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class DefaultNs8OrderVerificationTemplateFacadeTest {
     public void sendVerification_WhenSiteHasMerchant_ShouldCallNs8APIService() {
         testObj.sendVerification(verificationDataMock);
 
-        verify(ns8APIServiceMock).sendVerification(verificationRequestMock, API_KEY);
+        verify(ns8ApiServiceMock).sendVerification(verificationRequestMock, API_KEY);
     }
 
 

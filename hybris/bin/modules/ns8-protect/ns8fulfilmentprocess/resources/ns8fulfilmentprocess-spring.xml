@@ -115,23 +115,6 @@
         <property name="commerceAvailabilityCalculationStrategy" ref="commerceStockLevelCalculationStrategy"/>
     </bean>
 
-    <alias name="defaultNs8FraudServiceProvider" alias="ns8FraudServiceProvider"/>
-    <bean id="defaultNs8FraudServiceProvider"
-          class="com.ns8.hybris.fulfilmentprocess.fraud.providers.impl.DefaultNs8FraudServiceProvider">
-        <property name="providerName" value="NS8_FraudServiceProvider"/>
-    </bean>
-
-    <alias name="defaultNs8FraudService" alias="fraudService"/>
-    <bean id="defaultNs8FraudService" class="de.hybris.platform.fraud.impl.DefaultFraudService">
-        <property name="providers">
-            <list>
-                <ref bean="internalFraudServiceProvider"/>
-                <ref bean="commercialFraudServiceProvider"/>
-                <ref bean="ns8FraudServiceProvider"/>
-            </list>
-        </property>
-    </bean>
-
     <!--  Jobs -->
 
     <bean id="cleanUpFraudOrderJob" class="com.ns8.hybris.fulfilmentprocess.jobs.CleanUpFraudOrderJob">

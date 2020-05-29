@@ -1,27 +1,28 @@
 package com.ns8.hybris.core.merchant.services.impl;
 
 import com.ns8.hybris.core.merchant.parameter.builder.MerchantParameters;
-import com.ns8.hybris.core.merchant.services.NS8MerchantService;
+import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Optional;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 /**
- * Default implementation of {@link NS8MerchantService}
+ * Default implementation of {@link Ns8MerchantService}
  */
-public class DefaultNS8MerchantService implements NS8MerchantService {
+public class DefaultNs8MerchantService implements Ns8MerchantService {
 
     protected final ModelService modelService;
-    protected final NS8APIService ns8APIService;
+    protected final Ns8ApiService ns8ApiService;
 
-    public DefaultNS8MerchantService(final ModelService modelService, final NS8APIService ns8APIService) {
+    public DefaultNs8MerchantService(final ModelService modelService, final Ns8ApiService ns8ApiService) {
         this.modelService = modelService;
-        this.ns8APIService = ns8APIService;
+        this.ns8ApiService = ns8ApiService;
     }
 
     /**
@@ -39,8 +40,19 @@ public class DefaultNS8MerchantService implements NS8MerchantService {
         ns8Merchant.setLastName(merchantParameters.getMerchantLastName());
         ns8Merchant.setPhone(merchantParameters.getPhone());
 
-        ns8APIService.triggerPluginInstallEvent(ns8Merchant);
+        ns8ApiService.triggerPluginInstallEvent(ns8Merchant);
         return Optional.of(ns8Merchant);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deactivateMerchant(final NS8MerchantModel ns8Merchant) {
+        ns8ApiService.triggerMerchantUninstallEvent(ns8Merchant);
+
+        ns8Merchant.setEnabled(Boolean.FALSE);
+        modelService.save(ns8Merchant);
     }
 
     /**
@@ -53,5 +65,15 @@ public class DefaultNS8MerchantService implements NS8MerchantService {
 
         baseSite.setNs8Merchant(ns8Merchant);
         modelService.save(baseSite);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isMerchantActive(final NS8MerchantModel ns8Merchant) {
+        validateParameterNotNull(ns8Merchant, "NS8 Merchant cannot be null.");
+
+        return ns8Merchant.getEnabled() && StringUtils.isNotBlank(ns8Merchant.getApiKey());
     }
 }

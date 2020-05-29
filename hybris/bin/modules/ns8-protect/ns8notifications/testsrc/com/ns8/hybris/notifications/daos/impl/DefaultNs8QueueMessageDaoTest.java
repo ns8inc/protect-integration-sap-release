@@ -16,7 +16,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
+import static com.ns8.hybris.notifications.enums.Ns8MessageStatus.FAILED;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.verify;
@@ -91,4 +96,19 @@ public class DefaultNs8QueueMessageDaoTest {
         assertThat(result.isEmpty()).isTrue();
     }
 
+    @Test
+    public void findNs8QueueMessagesByStatusCreatedBeforeDate_WhenStatusAndCreationDateGiven_ShouldReturnQueueMessages() {
+        when(searchResultMock.getResult()).thenReturn(Collections.singletonList(message1Mock));
+
+        final Date creationDate = new Date();
+        final List<Ns8QueueMessageModel> result = testObj.findNs8QueueMessagesByStatusCreatedBeforeDate(FAILED, creationDate);
+
+        assertThat(result).containsExactlyInAnyOrder(message1Mock);
+
+        verify(flexibleSearchServiceMock).search(queryArgumentCaptor.capture());
+        final FlexibleSearchQuery value = queryArgumentCaptor.getValue();
+
+        assertThat(value.getQueryParameters().get("ns8QueueMessageStatus")).isEqualTo(FAILED);
+        assertThat(value.getQueryParameters().get("createdBeforeDate")).isEqualTo(creationDate);
+    }
 }
