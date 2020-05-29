@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8EndpointServiceTest {
+public class DefaultNs8EndpointServiceTest {
 
     private static final String CLIENT_BASE_URL_VALUE = "clientURL";
     private static final String BACKEND_BASE_URL_VALUE = "backendURL";
@@ -25,7 +25,7 @@ public class DefaultNS8EndpointServiceTest {
     private static final String NS_8_SERVICES_BASE_URL_BACKEND_API_CONFIGURATION_KEY = "ns8services.base.url.backend.api.";
 
     @InjectMocks
-    private DefaultNS8EndpointService testObj;
+    private DefaultNs8EndpointService testObj;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationService configurationServiceMock;

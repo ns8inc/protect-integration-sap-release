@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.ns8.hybris.backoffice.basesite.deactivatens8merchantaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>deactivatens8merchant.action</name>
+    <description>Deactivate NS8 Merchant Action</description>
+    <defaultTitle>Deactivate NS8 Merchant</defaultTitle>
+    <author>ns8</author>
+    <version>0.1</version>
+
+    <actionClassName>com.ns8.hybris.backoffice.actions.site.merchant.deactivate.Ns8MerchantDeactivationAction</actionClassName>
+
+    <iconUri>icons/icon-action-deactivateNS8.png</iconUri>
+    <iconDisabledUri>icons/icon-action-deactivateNS8-disabled.png</iconDisabledUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+
+    <inputType>de.hybris.platform.cms2.model.site.CMSSiteModel</inputType>
+    <outputType>de.hybris.platform.cms2.model.site.CMSSiteModel</outputType>
+    <sockets>
+        <output id="currentSiteOutput"/>
+    </sockets>
+
+</action-definition>

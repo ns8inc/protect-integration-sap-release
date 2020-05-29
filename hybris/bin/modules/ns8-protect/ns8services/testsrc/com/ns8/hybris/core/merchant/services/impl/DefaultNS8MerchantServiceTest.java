@@ -1,15 +1,16 @@
 package com.ns8.hybris.core.merchant.services.impl;
 
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.merchant.parameter.builder.MerchantParameters;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -17,14 +18,13 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8MerchantServiceTest {
+public class DefaultNs8MerchantServiceTest {
 
     private static final String PHONE_NUMBER = "0987654321";
     private static final String MERCHANT_EMAIL = "merchant@email.com";
@@ -33,12 +33,12 @@ public class DefaultNS8MerchantServiceTest {
     private static final String MERCHANT_LAST_NAME = "merchantlastname";
 
     @InjectMocks
-    private DefaultNS8MerchantService testObj;
+    private DefaultNs8MerchantService testObj;
 
     @Mock
     private ModelService modelServiceMock;
     @Mock
-    private NS8APIService ns8APIServiceMock;
+    private Ns8ApiService ns8ApiServiceMock;
     @Mock
     private NS8MerchantModel ns8MerchantMock;
     @Mock
@@ -55,6 +55,8 @@ public class DefaultNS8MerchantServiceTest {
                 .withPhone(PHONE_NUMBER)
                 .build();
         when(modelServiceMock.create(NS8MerchantModel.class)).thenReturn(new NS8MerchantModel());
+        when(ns8MerchantMock.getEnabled()).thenReturn(Boolean.TRUE);
+        when(ns8MerchantMock.getApiKey()).thenReturn("apikey");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -67,18 +69,18 @@ public class DefaultNS8MerchantServiceTest {
         final Optional<NS8MerchantModel> result = testObj.createMerchant(merchantParameters);
 
         verify(modelServiceMock).create(NS8MerchantModel.class);
-        assertTrue(result.isPresent());
+        assertThat(result.isPresent()).isTrue();
         final NS8MerchantModel resultNS8Merchant = result.get();
-        assertEquals(MERCHANT_EMAIL, resultNS8Merchant.getEmail());
-        assertEquals(STORE_URL, resultNS8Merchant.getStoreUrl());
-        assertEquals(MERCHANT_FIRST_NAME, resultNS8Merchant.getFirstName());
-        assertEquals(MERCHANT_LAST_NAME, resultNS8Merchant.getLastName());
-        assertEquals(PHONE_NUMBER, resultNS8Merchant.getPhone());
+        assertThat(resultNS8Merchant.getEmail()).isEqualTo(MERCHANT_EMAIL);
+        assertThat(resultNS8Merchant.getStoreUrl()).isEqualTo(STORE_URL);
+        assertThat(resultNS8Merchant.getFirstName()).isEqualTo(MERCHANT_FIRST_NAME);
+        assertThat(resultNS8Merchant.getLastName()).isEqualTo(MERCHANT_LAST_NAME);
+        assertThat(resultNS8Merchant.getPhone()).isEqualTo(PHONE_NUMBER);
     }
 
-    @Test(expected = NS8IntegrationException.class)
-    public void createMerchant_WhenIntegrationError_ShouldRemoveTheModelAndReturnOptionalEmpty() throws NS8IntegrationException {
-        doThrow(new NS8IntegrationException("exception", HttpStatus.SERVICE_UNAVAILABLE)).when(ns8APIServiceMock).triggerPluginInstallEvent(any(NS8MerchantModel.class));
+    @Test(expected = Ns8IntegrationException.class)
+    public void createMerchant_WhenIntegrationError_ShouldRemoveTheModelAndReturnOptionalEmpty() throws Ns8IntegrationException {
+        doThrow(new Ns8IntegrationException("exception", HttpStatus.SERVICE_UNAVAILABLE)).when(ns8ApiServiceMock).triggerPluginInstallEvent(any(NS8MerchantModel.class));
 
         testObj.createMerchant(merchantParameters);
     }
@@ -99,5 +101,45 @@ public class DefaultNS8MerchantServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void addMerchantToCmsSite_WhenSiteIsNull_ShouldThrowException() {
         testObj.addMerchantToBaseSite(ns8MerchantMock, null);
+    }
+
+    @Test
+    public void deactivateMerchant_ShouldDeactivateMerchant() {
+        testObj.deactivateMerchant(ns8MerchantMock);
+
+        final InOrder inOrder = inOrder(ns8ApiServiceMock, ns8MerchantMock, modelServiceMock);
+        inOrder.verify(ns8ApiServiceMock).triggerMerchantUninstallEvent(ns8MerchantMock);
+        inOrder.verify(ns8MerchantMock).setEnabled(Boolean.FALSE);
+        inOrder.verify(modelServiceMock).save(ns8MerchantMock);
+    }
+
+    @Test
+    public void isMerchantActive_WhenMerchantIsEnabledAndApiKeyPresent_ShouldReturnTrue() {
+        boolean result = testObj.isMerchantActive(ns8MerchantMock);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isMerchantActive_WhenMerchantIsEnabledAndApiKeyNull_ShouldReturnFalse() {
+        when(ns8MerchantMock.getApiKey()).thenReturn(null);
+
+        boolean result = testObj.isMerchantActive(ns8MerchantMock);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void isMerchantActive_WhenMerchantIsDisabled_ShouldReturnFalse() {
+        when(ns8MerchantMock.getEnabled()).thenReturn(Boolean.FALSE);
+
+        boolean result = testObj.isMerchantActive(ns8MerchantMock);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void isMerchantActive_WhenMerchantIsNull_ShouldThrowException() {
+        testObj.isMerchantActive(null);
     }
 }

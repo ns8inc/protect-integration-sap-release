@@ -2,7 +2,7 @@ package com.ns8.hybris.backoffice.widgets.controllers.ns8showorder;
 
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.platform.core.model.order.OrderModel;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
@@ -11,10 +11,10 @@ import org.zkoss.zul.Textbox;
 /**
  * Controller to display the NS8 order details widget with iframe
  */
-public class NS8ShowOrderController extends DefaultWidgetController {
+public class Ns8ShowOrderController extends DefaultWidgetController {
 
     @WireVariable
-    protected transient NS8EndpointService ns8EndpointService;
+    protected transient Ns8EndpointService ns8EndpointService;
     @Wire
     private Textbox orderNumber;
     @Wire

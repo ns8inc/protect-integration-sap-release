@@ -19,6 +19,6 @@
     </sockets>
 
     <controller
-            class="com.ns8.hybris.backoffice.widgets.controllers.ns8merchantactivation.NS8MerchantActivationController"/>
+            class="com.ns8.hybris.backoffice.widgets.controllers.ns8merchantactivation.Ns8MerchantActivationController"/>
 
 </widget-definition>

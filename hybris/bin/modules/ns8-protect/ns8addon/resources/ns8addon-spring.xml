@@ -28,19 +28,19 @@
     </bean>
 
     <alias name="defaultNS8TrueStatsServices" alias="ns8TrueStatsService"/>
-    <bean id="defaultNS8TrueStatsServices" class="com.ns8.hybris.addon.services.impl.DefaultNS8TrueStatsService">
+    <bean id="defaultNS8TrueStatsServices" class="com.ns8.hybris.addon.services.impl.DefaultNs8TrueStatsService">
         <constructor-arg name="cmsSiteService" ref="cmsSiteService"/>
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
     </bean>
 
     <alias name="defaultNS8TrueStatsFacade" alias="ns8TrueStatsFacade"/>
-    <bean id="defaultNS8TrueStatsFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNS8TrueStatsFacade">
+    <bean id="defaultNS8TrueStatsFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNs8TrueStatsFacade">
         <constructor-arg name="ns8TrueStatsService" ref="ns8TrueStatsService"/>
     </bean>
 
     <alias name="defaultNS8TrueStatsCacheService" alias="ns8TrueStatsCacheService"/>
     <bean id="defaultNS8TrueStatsCacheService"
-          class="com.ns8.hybris.addon.services.impl.DefaultNS8TrueStatsCacheService">
+          class="com.ns8.hybris.addon.services.impl.DefaultNs8TrueStatsCacheService">
         <constructor-arg name="cacheController" ref="cacheController"/>
         <constructor-arg name="cacheKeyProvider" ref="ns8TrueStatsCacheKeyProvider"/>
         <constructor-arg name="configurationService" ref="configurationService"/>
@@ -48,13 +48,18 @@
 
     <alias name="defaultNS8TrueStatsCacheKeyProvider" alias="ns8TrueStatsCacheKeyProvider"/>
     <bean id="defaultNS8TrueStatsCacheKeyProvider"
-          class="com.ns8.hybris.addon.cache.impl.DefaultNS8TrueStatsCacheKeyProvider"/>
+          class="com.ns8.hybris.addon.cache.impl.DefaultNs8TrueStatsCacheKeyProvider"/>
 
     <alias name="defaultNs8OrderVerificationTemplateFacade" alias="ns8OrderVerificationTemplateFacade"/>
     <bean id="defaultNs8OrderVerificationTemplateFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNs8OrderVerificationTemplateFacade">
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
         <constructor-arg name="baseSiteService" ref="baseSiteService"/>
         <constructor-arg name="ns8OrderVerificationRequestConverter" ref="ns8OrderVerificationRequestConverter"/>
     </bean>
 
+    <alias name="defaultNs8MerchantFacade" alias="ns8MerchantFacade"/>
+    <bean id="defaultNs8MerchantFacade" class="com.ns8.hybris.addon.facades.impl.DefaultNs8MerchantFacade">
+        <constructor-arg name="cmsSiteService" ref="cmsSiteService"/>
+        <constructor-arg name="ns8MerchantService" ref="ns8MerchantService"/>
+    </bean>
 </beans>

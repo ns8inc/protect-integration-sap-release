@@ -9,7 +9,7 @@ import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 /**
  * NS8 action to activate the current CmsSite with NS8
  */
-public class NS8MerchantActivationAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<Object, Object> {
+public class Ns8MerchantActivationAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<Object, Object> {
 
     protected static final String SOCKET_OUT_NS8_CMSSITE = "currentSiteOutput";
     protected static final String ACTION_RESULT_SUCCESS_CODE = "success";

@@ -2,7 +2,7 @@ package com.ns8.hybris.core.converters.populators;
 
 import com.ns8.hybris.core.data.Ns8CreditCardData;
 import com.ns8.hybris.core.data.Ns8CreditCardTransactionType;
-import com.ns8.hybris.core.services.NS8PaymentTransactionService;
+import com.ns8.hybris.core.services.Ns8PaymentTransactionService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.enums.CreditCardType;
 import de.hybris.platform.core.model.order.payment.CreditCardPaymentInfoModel;
@@ -20,10 +20,10 @@ import java.util.Optional;
  */
 public class DefaultNs8CreditCardDataPopulator implements Populator<PaymentTransactionModel, Ns8CreditCardData> {
 
-    protected final NS8PaymentTransactionService ns8PaymentTransactionService;
+    protected final Ns8PaymentTransactionService ns8PaymentTransactionService;
     protected Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping;
 
-    public DefaultNs8CreditCardDataPopulator(final NS8PaymentTransactionService ns8PaymentTransactionService, final Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping) {
+    public DefaultNs8CreditCardDataPopulator(final Ns8PaymentTransactionService ns8PaymentTransactionService, final Map<PaymentTransactionType, Ns8CreditCardTransactionType> transactionTypeMapping) {
         this.ns8PaymentTransactionService = ns8PaymentTransactionService;
         this.transactionTypeMapping = transactionTypeMapping;
     }

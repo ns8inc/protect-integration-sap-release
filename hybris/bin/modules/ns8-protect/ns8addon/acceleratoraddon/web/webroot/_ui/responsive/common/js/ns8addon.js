@@ -9,8 +9,11 @@ ACC.ns8addon = {
             url: ns8ScriptUrl,
             dataType: "script",
             headers: {
-                "NS8-Screen-Height" : window.innerHeight,
-                "NS8-Screen-Width" : window.innerWidth
+                "NS8-Screen-Height": window.innerHeight,
+                "NS8-Screen-Width": window.innerWidth
+            },
+            error: function () {
+                console.warn("Merchant is not active");
             }
         });
     }

@@ -9,15 +9,15 @@ INSERT_UPDATE Ns8ProcessMessagesCronJob; code[unique = true]       ; job(code)  
                                        ; ns8ProcessMessagesCronJob ; ns8ProcessMessagesJob ;
 
 INSERT_UPDATE Trigger; cronJob(code)[unique = true]; cronExpression    ; active[default = true]
-                     ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+                     ; ns8ProcessMessagesCronJob   ; 0 0/1 * 1/1 * ? * ;
 
 # If the property does not exist or it's value is false, triggers will be disabled, otherwise enabled
 INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]; cronExpression    ; active[default = false]
 "#% if: ""$enableTriggers"".equals(""false"")"
-                                                ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+                                                ; ns8ProcessMessagesCronJob   ; 0 0/1 * 1/1 * ? * ;
 #% endif:
 
 INSERT_UPDATE Trigger[impex.legacy.mode = false]; cronJob(code)[unique = true]; cronExpression    ; active[default = true]
 "#% if: !""$enableTriggers"".equals(""false"")"
-                                                ; ns8ProcessMessagesCronJob   ; 0 0 0/1 1/1 * ? * ;
+                                                ; ns8ProcessMessagesCronJob   ; 0 0/1 * 1/1 * ? * ;
 #% endif:

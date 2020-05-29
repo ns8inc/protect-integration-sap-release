@@ -8,9 +8,9 @@ import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.dataaccess.facades.object.ObjectCRUDHandler;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.merchant.parameter.builder.MerchantParameters;
-import com.ns8.hybris.core.merchant.services.NS8MerchantService;
+import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +27,9 @@ import java.util.Optional;
 /**
  * Controller to display the NS8 Merchant activation form
  */
-public class NS8MerchantActivationController extends DefaultWidgetController {
+public class Ns8MerchantActivationController extends DefaultWidgetController {
 
-    protected static final Logger LOG = LogManager.getLogger(NS8MerchantActivationController.class);
+    protected static final Logger LOG = LogManager.getLogger(Ns8MerchantActivationController.class);
     protected static final String NS8_MERCHANT_ACTIVATION_VALIDATION_TITLE = "ns8.merchant.activation.validation.title.error";
     protected static final String NS8_MERCHANT_ACTIVATION_VALIDATION_ERROR = "ns8.merchant.activation.validation.error";
     protected static final String NS8_MERCHANT_ACTIVATION_SUCCESS_MESSAGE = "ns8.merchant.activation.success";
@@ -40,7 +40,7 @@ public class NS8MerchantActivationController extends DefaultWidgetController {
     @WireVariable
     protected transient NotificationService notificationService;
     @WireVariable
-    protected transient NS8MerchantService ns8MerchantService;
+    protected transient Ns8MerchantService ns8MerchantService;
     @WireVariable
     protected transient CockpitEventQueue cockpitEventQueue;
 
@@ -88,7 +88,7 @@ public class NS8MerchantActivationController extends DefaultWidgetController {
             String errorDetails = StringUtils.EMPTY;
             try {
                 ns8Merchant = ns8MerchantService.createMerchant(merchantParameters);
-            } catch (final NS8IntegrationException e) {
+            } catch (final Ns8IntegrationException e) {
                 LOG.error("Error installing the new NS8 Merchant: [{}]", e::getMessage);
                 errorDetails = e.getMessage();
             }

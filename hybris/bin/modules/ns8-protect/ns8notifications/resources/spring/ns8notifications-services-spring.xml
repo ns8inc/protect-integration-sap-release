@@ -7,9 +7,15 @@
 
     <alias name="defaultNs8QueueService" alias="ns8QueueService"/>
     <bean id="defaultNs8QueueService" class="com.ns8.hybris.notifications.services.impl.DefaultNs8QueueService">
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
         <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
         <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
     </bean>
 
+    <alias name="defaultNs8QueueMessagesCleanUpService" alias="ns8QueueMessagesCleanUpService"/>
+    <bean id="defaultNs8QueueMessagesCleanUpService"
+          class="com.ns8.hybris.notifications.services.impl.DefaultNs8QueueMessagesCleanUpService">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="ns8QueueMessageDao" ref="ns8QueueMessageDao"/>
+    </bean>
 </beans>

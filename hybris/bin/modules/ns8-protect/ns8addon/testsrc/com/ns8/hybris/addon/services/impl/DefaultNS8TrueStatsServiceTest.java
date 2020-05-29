@@ -1,8 +1,8 @@
 package com.ns8.hybris.addon.services.impl;
 
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheService;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.cms2.model.site.CMSSiteModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
@@ -20,19 +20,19 @@ import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8TrueStatsServiceTest {
+public class DefaultNs8TrueStatsServiceTest {
 
     private static final String JAVASCRIPT_CONTENT = "javascriptContent";
 
     @InjectMocks
-    private DefaultNS8TrueStatsService testObj;
+    private DefaultNs8TrueStatsService testObj;
 
     @Mock
     private CMSSiteService cmsSiteServiceMock;
     @Mock
-    private NS8APIService ns8APIServiceMock;
+    private Ns8ApiService ns8ApiServiceMock;
     @Mock
-    private NS8TrueStatsCacheService ns8TrueStatsCacheServiceMock;
+    private Ns8TrueStatsCacheService ns8TrueStatsCacheServiceMock;
     @Mock
     private CMSSiteModel cmsSiteModelMock;
     @Mock
@@ -44,7 +44,7 @@ public class DefaultNS8TrueStatsServiceTest {
     public void setUp() {
         when(cmsSiteServiceMock.getCurrentSite()).thenReturn(cmsSiteModelMock);
         when(cmsSiteModelMock.getNs8Merchant()).thenReturn(ns8MerchantModelMock);
-        when(ns8APIServiceMock.fetchTrueStatsScript(ns8MerchantModelMock)).thenReturn(JAVASCRIPT_CONTENT);
+        when(ns8ApiServiceMock.fetchTrueStatsScript(ns8MerchantModelMock)).thenReturn(JAVASCRIPT_CONTENT);
         when(ns8TrueStatsCacheServiceMock.getKey(cmsSiteModelMock)).thenReturn(cacheKeyMock);
         when(ns8TrueStatsCacheServiceMock.useCache(cmsSiteModelMock)).thenReturn(true);
     }
@@ -65,7 +65,7 @@ public class DefaultNS8TrueStatsServiceTest {
         final String result = testObj.fetchTrueStatsContent();
 
         assertThat(result).isEqualTo(JAVASCRIPT_CONTENT);
-        verify(ns8APIServiceMock, never()).fetchTrueStatsScript(any(NS8MerchantModel.class));
+        verify(ns8ApiServiceMock, never()).fetchTrueStatsScript(any(NS8MerchantModel.class));
     }
 
     @Test

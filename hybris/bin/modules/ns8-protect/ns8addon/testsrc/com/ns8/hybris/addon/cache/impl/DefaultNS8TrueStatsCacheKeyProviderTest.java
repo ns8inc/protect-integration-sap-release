@@ -1,6 +1,6 @@
 package com.ns8.hybris.addon.cache.impl;
 
-import com.ns8.hybris.addon.cache.impl.DefaultNS8TrueStatsCacheKeyProvider.NS8TrueStatsCacheKey;
+import com.ns8.hybris.addon.cache.impl.DefaultNs8TrueStatsCacheKeyProvider.NS8TrueStatsCacheKey;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.regioncache.key.CacheUnitValueType;
@@ -17,13 +17,13 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8TrueStatsCacheKeyProviderTest {
+public class DefaultNs8TrueStatsCacheKeyProviderTest {
 
     private static final String NS8_TRUESTATS_UNIT_CODE = "__NS8_TRUESTATS_CACHE__";
     private static final String BASE_SITE_MODEL_UID = "baseSiteModelUid";
 
     @Spy
-    private DefaultNS8TrueStatsCacheKeyProvider testObj;
+    private DefaultNs8TrueStatsCacheKeyProvider testObj;
 
     @Mock
     private BaseSiteModel baseSiteModelMock;

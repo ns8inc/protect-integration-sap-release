@@ -14,6 +14,7 @@ public class Ns8servicesConstants extends GeneratedNs8servicesConstants {
     public static final String API_TEMPLATE_URL = "/api/merchant/template";
     public static final String CREATE_ORDER_ACTION = "CREATE_ORDER_ACTION";
     public static final String UPDATE_ORDER_STATUS_ACTION = "UPDATE_ORDER_STATUS_ACTION";
+    public static final String UNINSTALL_MERCHANT_ACTION = "UNINSTALL_ACTION";
 
     private Ns8servicesConstants() {
         //empty

@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ns8.hybris.core.data.*;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
@@ -34,11 +34,11 @@ import static com.ns8.hybris.core.constants.Ns8servicesConstants.*;
 import static java.util.Collections.singletonList;
 
 /**
- * Default implementation of {@link NS8APIService}
+ * Default implementation of {@link Ns8ApiService}
  */
-public class DefaultNS8APIService implements NS8APIService {
+public class DefaultNs8ApiService implements Ns8ApiService {
 
-    protected static final Logger LOG = LogManager.getLogger(DefaultNS8APIService.class);
+    protected static final Logger LOG = LogManager.getLogger(DefaultNs8ApiService.class);
 
     protected static final String NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY = "ns8services.platform.name";
     protected static final String ERROR_KEY = "error";
@@ -46,22 +46,22 @@ public class DefaultNS8APIService implements NS8APIService {
 
     protected final RestTemplate restTemplate;
     protected final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter;
-    protected final Converter<OrderModel, Ns8PlatformOrderUpdateStatus> ns8PlatformOrderUpdateStatusConverter;
+    protected final Converter<OrderModel, Ns8UpdateOrderStatus> ns8UpdateOrderStatusConverter;
     protected final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter;
     protected final ConfigurationService configurationService;
-    protected final NS8EndpointService ns8EndpointService;
+    protected final Ns8EndpointService ns8EndpointService;
     protected final ModelService modelService;
 
-    public DefaultNS8APIService(final RestTemplate restTemplate,
+    public DefaultNs8ApiService(final RestTemplate restTemplate,
                                 final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter,
-                                final Converter<OrderModel, Ns8PlatformOrderUpdateStatus> ns8PlatformOrderUpdateStatusConverter,
+                                final Converter<OrderModel, Ns8UpdateOrderStatus> ns8UpdateOrderStatusConverter,
                                 final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter,
                                 final ConfigurationService configurationService,
-                                final NS8EndpointService ns8EndpointService,
+                                final Ns8EndpointService ns8EndpointService,
                                 final ModelService modelService) {
         this.restTemplate = restTemplate;
         this.ns8MerchantDataConverter = ns8MerchantDataConverter;
-        this.ns8PlatformOrderUpdateStatusConverter = ns8PlatformOrderUpdateStatusConverter;
+        this.ns8UpdateOrderStatusConverter = ns8UpdateOrderStatusConverter;
         this.ns8OrderDataConverter = ns8OrderDataConverter;
         this.configurationService = configurationService;
         this.ns8EndpointService = ns8EndpointService;
@@ -83,17 +83,38 @@ public class DefaultNS8APIService implements NS8APIService {
 
         try {
             responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity(ns8MerchantData), PluginInstallResponseData.class);
+            updateMerchantFromNS8Response(ns8Merchant, responseEntity.getBody());
         } catch (final HttpStatusCodeException e) {
             LOG.error("Installation of NS8 Merchant failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", () -> requestUrl, () -> prettyPrint(ns8MerchantData), e::getStatusCode, e::getResponseBodyAsString);
             final String errorDetails = getErrorDetails(e);
-            throw new NS8IntegrationException("Installation of NS8 Merchant failed. " + errorDetails, e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Installation of NS8 Merchant failed. " + errorDetails, e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Installation of NS8 Merchant failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
                     () -> requestUrl, () -> prettyPrint(ns8MerchantData), () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
-            throw new NS8IntegrationException("Installation of NS8 Merchant failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+            throw new Ns8IntegrationException("Installation of NS8 Merchant failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
 
-        updateMerchantFromNS8Response(ns8Merchant, responseEntity.getBody());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void triggerMerchantUninstallEvent(final NS8MerchantModel ns8Merchant) {
+        final String requestUrl = buildUriComponents(UNINSTALL_MERCHANT_ACTION).toString();
+        final HttpHeaders headers = buildHeadersWithAuthorization(ns8Merchant.getApiKey());
+
+        try {
+            final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity<>(headers), Void.class);
+            LOG.debug("Merchant [{}] is deactivated successfully - Response code: [{}]", ns8Merchant.getEmail(), responseEntity.getStatusCode());
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Deactivation of NS8 Merchant failed. URL: [{}], status code [{}], error body: [{}].", () -> requestUrl, e::getStatusCode, e::getResponseBodyAsString);
+            throw new Ns8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
+        } catch (final ResourceAccessException e) {
+            LOG.error("Deactivation of NS8 Merchant failed due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> requestUrl, () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
+            throw new Ns8IntegrationException("Update status event failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+        }
     }
 
     /**
@@ -110,10 +131,10 @@ public class DefaultNS8APIService implements NS8APIService {
             return this.sanitiseTrueStatsScript(response);
         } catch (final HttpStatusCodeException e) {
             LOG.error("Fetching true stats failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Fetching true stats failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Fetching true stats failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Fetching true stats failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
-            throw new NS8IntegrationException("Fetching true stats failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+            throw new Ns8IntegrationException("Fetching true stats failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
     }
 
@@ -135,11 +156,11 @@ public class DefaultNS8APIService implements NS8APIService {
             LOG.debug("Order [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
             LOG.error("Sending order to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8OrderData), e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Installation of NS8 Merchant failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Installation of NS8 Merchant failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Sending order to NS8 failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
                     uri::toString, () -> prettyPrint(ns8OrderData), () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
-            throw new NS8IntegrationException("Sending order to NS8 failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+            throw new Ns8IntegrationException("Sending order to NS8 failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
     }
 
@@ -149,24 +170,24 @@ public class DefaultNS8APIService implements NS8APIService {
     @Override
     public void triggerUpdateOrderStatusAction(final OrderModel order) {
         final UriComponents uri = buildUriComponents(UPDATE_ORDER_STATUS_ACTION);
-        final Ns8PlatformOrderUpdateStatus ns8PlatformOrderUpdateStatus = ns8PlatformOrderUpdateStatusConverter.convert(order);
+        final Ns8UpdateOrderStatus ns8UpdateOrderStatus = ns8UpdateOrderStatusConverter.convert(order);
 
         Preconditions.checkArgument(order.getSite() != null && order.getSite().getNs8Merchant() != null
                 && StringUtils.isNotBlank(order.getSite().getNs8Merchant().getApiKey()), "The merchant api key is mandatory to trigger the update order status.");
-        final HttpEntity<Object> request = buildHttpEntity(order.getSite().getNs8Merchant().getApiKey(), ns8PlatformOrderUpdateStatus);
+        final HttpEntity<Object> request = buildHttpEntity(order.getSite().getNs8Merchant().getApiKey(), ns8UpdateOrderStatus);
 
         try {
             LOG.info("Sending order status update [{}] to NS8 for fraud check", order::getCode);
-            LOG.debug("Payload: [{}]", () -> prettyPrint(ns8PlatformOrderUpdateStatus));
+            LOG.debug("Payload: [{}]", () -> prettyPrint(ns8UpdateOrderStatus));
             final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(uri.toString(), request, Void.class);
             LOG.debug("Order status update [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8PlatformOrderUpdateStatus), e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
+            LOG.error("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8UpdateOrderStatus), e::getStatusCode, e::getResponseBodyAsString);
+            throw new Ns8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Update status event could not be completed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
-                    uri::toString, () -> prettyPrint(ns8PlatformOrderUpdateStatus), () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
-            throw new NS8IntegrationException("Update status event failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+                    uri::toString, () -> prettyPrint(ns8UpdateOrderStatus), () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
+            throw new Ns8IntegrationException("Update status event failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
     }
 
@@ -185,11 +206,11 @@ public class DefaultNS8APIService implements NS8APIService {
             return getNs8OrderVerificationContent(responseEntity);
         } catch (final HttpStatusCodeException e) {
             LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
                     () -> template, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
-            throw new NS8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+            throw new Ns8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
     }
 
@@ -209,11 +230,11 @@ public class DefaultNS8APIService implements NS8APIService {
             return new GsonBuilder().create().fromJson(responseEntity.getBody(), Ns8OrderVerificationResponse.class);
         } catch (final HttpStatusCodeException e) {
             LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
-            throw new NS8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
                     () -> template, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
-            throw new NS8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+            throw new Ns8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
     }
 

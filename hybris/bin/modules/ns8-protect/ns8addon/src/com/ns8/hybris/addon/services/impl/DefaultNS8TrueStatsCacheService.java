@@ -1,8 +1,8 @@
 package com.ns8.hybris.addon.services.impl;
 
 import com.google.common.base.Suppliers;
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheKeyProvider;
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheService;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheKeyProvider;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheService;
 import com.ns8.hybris.addon.cache.TrueStatsCacheValueLoader;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.regioncache.CacheController;
@@ -14,26 +14,19 @@ import java.util.function.Supplier;
 
 
 /**
- * Default implementation of {@link NS8TrueStatsCacheService}
+ * Default implementation of {@link Ns8TrueStatsCacheService}
  */
-public class DefaultNS8TrueStatsCacheService implements NS8TrueStatsCacheService {
+public class DefaultNs8TrueStatsCacheService implements Ns8TrueStatsCacheService {
 
     private static final String NS8_TRUESTATS_CACHE_ENABLED_KEY = "ns8.truestats.cache.enabled";
 
-    protected final NS8TrueStatsCacheKeyProvider cacheKeyProvider;
+    protected final Ns8TrueStatsCacheKeyProvider cacheKeyProvider;
     protected final ConfigurationService configurationService;
     protected final CacheController cacheController;
 
     private final Supplier<Boolean> useCache;
 
-    /**
-     * Default constructor
-     *
-     * @param cacheKeyProvider     injected
-     * @param configurationService injected
-     * @param cacheController      injected
-     */
-    public DefaultNS8TrueStatsCacheService(final NS8TrueStatsCacheKeyProvider cacheKeyProvider,
+    public DefaultNs8TrueStatsCacheService(final Ns8TrueStatsCacheKeyProvider cacheKeyProvider,
                                            final ConfigurationService configurationService,
                                            final CacheController cacheController) {
         this.cacheKeyProvider = cacheKeyProvider;

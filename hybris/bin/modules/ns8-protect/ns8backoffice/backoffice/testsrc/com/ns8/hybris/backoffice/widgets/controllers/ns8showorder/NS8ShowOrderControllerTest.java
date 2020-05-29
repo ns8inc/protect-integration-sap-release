@@ -1,7 +1,7 @@
 package com.ns8.hybris.backoffice.widgets.controllers.ns8showorder;
 
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class NS8ShowOrderControllerTest {
+public class Ns8ShowOrderControllerTest {
 
     private static final String ORDER_CODE = "orderCode";
     private static final String API_KEY = "apiKey";
@@ -29,10 +29,10 @@ public class NS8ShowOrderControllerTest {
 
     @Spy
     @InjectMocks
-    private NS8ShowOrderController testObj;
+    private Ns8ShowOrderController testObj;
 
     @Mock
-    private NS8EndpointService ns8EndpointServiceMock;
+    private Ns8EndpointService ns8EndpointServiceMock;
     @Mock
     private OrderModel orderMock;
     @Mock

@@ -19,9 +19,17 @@
             <map key-type="com.ns8.hybris.notifications.enums.Ns8MessageActionType"
                  value-type="com.ns8.hybris.notifications.messages.processing.strategies.Ns8ProcessMessagesStrategy">
                 <entry key="UPDATE_ORDER_RISK_EVENT" value-ref="ns8ProcessUpdateOrderRiskMessagesStrategy"/>
+                <entry key="UPDATE_ORDER_STATUS_EVENT" value-ref="ns8ProcessUpdateOrderStatusMessagesStrategy"/>
             </map>
         </constructor-arg>
         <constructor-arg name="ns8QueueMessageDao" ref="ns8QueueMessageDao"/>
+    </bean>
+
+    <alias name="defaultNs8QueueMessagesCleanUpJob" alias="ns8QueueMessagesCleanUpJob"/>
+    <bean id="defaultNs8QueueMessagesCleanUpJob"
+          class="com.ns8.hybris.notifications.jobs.Ns8QueueMessagesCleanUpJob"
+          parent="abstractJobPerformable">
+        <constructor-arg name="ns8QueueMessagesCleanUpService" ref="ns8QueueMessagesCleanUpService"/>
     </bean>
 
 </beans>

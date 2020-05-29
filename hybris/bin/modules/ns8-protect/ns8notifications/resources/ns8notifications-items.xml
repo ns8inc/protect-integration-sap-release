@@ -12,6 +12,7 @@
             <value code="PENDING"/>
             <value code="COMPLETED"/>
             <value code="FAILED"/>
+            <value code="IGNORED"/>
         </enumtype>
     </enumtypes>
 
@@ -37,6 +38,21 @@
                     <description>Max number of messages the job will fetch pr. execution</description>
                     <modifiers optional="true"/>
                     <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="Ns8QueueMessagesCleanUpCronJob" extends="CronJob">
+            <attributes>
+                <attribute qualifier="ns8MessageStatus" type="Ns8MessageStatus">
+                    <persistence type="property"/>
+                    <description>Message status processing status handled by the cronjob</description>
+                    <modifiers initial="true" optional="false"/>
+                </attribute>
+                <attribute qualifier="ageInDaysBeforeDeletion" type="java.lang.Integer">
+                    <persistence type="property"/>
+                    <modifiers optional="false" initial="true"/>
+                    <description>Max unprocessed time (in days) before queue messages are deleted</description>
                 </attribute>
             </attributes>
         </itemtype>

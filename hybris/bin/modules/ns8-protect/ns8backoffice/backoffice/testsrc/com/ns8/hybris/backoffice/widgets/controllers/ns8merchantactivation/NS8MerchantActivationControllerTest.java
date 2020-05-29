@@ -6,9 +6,9 @@ import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.dataaccess.facades.object.ObjectFacade;
 import com.hybris.cockpitng.engine.impl.DefaultWidgetInstanceManager;
 import com.hybris.cockpitng.util.notifications.NotificationService;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.merchant.parameter.builder.MerchantParameters;
-import com.ns8.hybris.core.merchant.services.NS8MerchantService;
+import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class NS8MerchantActivationControllerTest {
+public class Ns8MerchantActivationControllerTest {
 
     private static final String NS8_MERCHANT_ACTIVATION_VALIDATION_TITLE = "ns8.merchant.activation.validation.title.error";
     private static final String NS8_MERCHANT_ACTIVATION_VALIDATION_ERROR = "ns8.merchant.activation.validation.error";
@@ -41,14 +41,14 @@ public class NS8MerchantActivationControllerTest {
 
     @Spy
     @InjectMocks
-    private NS8MerchantActivationController testObj;
+    private Ns8MerchantActivationController testObj;
 
     @Mock
     private NotificationService notificationServiceMock;
     @Mock
     private DefaultWidgetInstanceManager widgetInstanceManagerMock;
     @Mock
-    private NS8MerchantService ns8MerchantServiceMock;
+    private Ns8MerchantService ns8MerchantServiceMock;
     @Mock
     private CockpitEventQueue cockpitEventQueueMock;
     @Mock
@@ -119,7 +119,7 @@ public class NS8MerchantActivationControllerTest {
 
     @Test
     public void submitMerchantActivation_WhenMandatoryFieldsPopulatedAndMerchantIsNotActivated_ShouldNotifyError() {
-        when(ns8MerchantServiceMock.createMerchant(any(MerchantParameters.class))).thenThrow(new NS8IntegrationException(ERROR_MESSAGE_INTEGRATION, HttpStatus.BAD_REQUEST));
+        when(ns8MerchantServiceMock.createMerchant(any(MerchantParameters.class))).thenThrow(new Ns8IntegrationException(ERROR_MESSAGE_INTEGRATION, HttpStatus.BAD_REQUEST));
 
         testObj.submitMerchantActivation();
 

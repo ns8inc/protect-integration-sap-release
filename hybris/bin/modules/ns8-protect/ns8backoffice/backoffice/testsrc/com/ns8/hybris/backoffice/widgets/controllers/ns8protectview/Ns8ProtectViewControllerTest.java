@@ -7,7 +7,7 @@ import com.hybris.cockpitng.engine.impl.DefaultWidgetInstanceManager;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.ns8.hybris.backoffice.data.context.Ns8NavigationContextData;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8EndpointService;
+import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.cms2.model.site.CMSSiteModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
@@ -48,7 +48,7 @@ public class Ns8ProtectViewControllerTest {
     private Ns8ProtectViewController testObj;
 
     @Mock
-    private NS8EndpointService ns8EndpointServiceMock;
+    private Ns8EndpointService ns8EndpointServiceMock;
     @Mock
     private NotificationService notificationServiceMock;
     @Mock

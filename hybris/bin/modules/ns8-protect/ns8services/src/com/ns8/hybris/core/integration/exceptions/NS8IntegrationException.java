@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 /**
  * Exception thrown from the NS8 integration errors
  */
-public class NS8IntegrationException extends RuntimeException {
+public class Ns8IntegrationException extends RuntimeException {
 
     private final HttpStatus httpStatus;
 
@@ -16,7 +16,7 @@ public class NS8IntegrationException extends RuntimeException {
      * @param message    exception message
      * @param httpStatus http status
      */
-    public NS8IntegrationException(final String message, final HttpStatus httpStatus) {
+    public Ns8IntegrationException(final String message, final HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
     }
@@ -28,7 +28,7 @@ public class NS8IntegrationException extends RuntimeException {
      * @param httpStatus http status
      * @param throwable  the throwable to pass
      */
-    public NS8IntegrationException(final String message, final HttpStatus httpStatus, final Throwable throwable) {
+    public Ns8IntegrationException(final String message, final HttpStatus httpStatus, final Throwable throwable) {
         super(message, throwable);
         this.httpStatus = httpStatus;
     }

@@ -1,6 +1,6 @@
 package com.ns8.hybris.addon.cache.impl;
 
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheKeyProvider;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheKeyProvider;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.Registry;
 import de.hybris.platform.regioncache.key.CacheKey;
@@ -9,9 +9,9 @@ import de.hybris.platform.regioncache.key.CacheUnitValueType;
 import java.util.Objects;
 
 /**
- * Sefault implementation of {@link NS8TrueStatsCacheKeyProvider}
+ * Sefault implementation of {@link Ns8TrueStatsCacheKeyProvider}
  */
-public class DefaultNS8TrueStatsCacheKeyProvider implements NS8TrueStatsCacheKeyProvider {
+public class DefaultNs8TrueStatsCacheKeyProvider implements Ns8TrueStatsCacheKeyProvider {
 
     /**
      * {@inheritDoc}

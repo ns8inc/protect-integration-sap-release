@@ -30,38 +30,61 @@
     <bean id="defaultNs8RequestResponseLoggingInterceptor"
           class="com.ns8.hybris.core.interceptors.RequestResponseLoggingInterceptor"/>
 
-    <alias name="defaultNS8APIService" alias="ns8APIService"/>
-    <bean id="defaultNS8APIService" class="com.ns8.hybris.core.services.api.impl.DefaultNS8APIService">
+    <alias name="defaultNs8ApiService" alias="ns8ApiService"/>
+    <bean id="defaultNs8ApiService" class="com.ns8.hybris.core.services.api.impl.DefaultNs8ApiService">
         <constructor-arg name="configurationService" ref="configurationService"/>
         <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
         <constructor-arg name="ns8MerchantDataConverter" ref="ns8MerchantDataConverter"/>
         <constructor-arg name="ns8OrderDataConverter" ref="ns8OrderDataConverter"/>
-        <constructor-arg name="ns8PlatformOrderUpdateStatusConverter" ref="ns8PlatformOrderUpdateStatusConverter"/>
+        <constructor-arg name="ns8UpdateOrderStatusConverter" ref="ns8UpdateOrderStatusConverter"/>
         <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
         <constructor-arg name="modelService" ref="modelService"/>
     </bean>
 
     <alias name="defaultNS8EndpointService" alias="ns8EndpointService"/>
-    <bean id="defaultNS8EndpointService" class="com.ns8.hybris.core.services.api.impl.DefaultNS8EndpointService">
+    <bean id="defaultNS8EndpointService" class="com.ns8.hybris.core.services.api.impl.DefaultNs8EndpointService">
         <constructor-arg name="configurationService" ref="configurationService"/>
     </bean>
 
     <alias name="defaultNS8MerchantService" alias="ns8MerchantService"/>
-    <bean id="defaultNS8MerchantService" class="com.ns8.hybris.core.merchant.services.impl.DefaultNS8MerchantService">
+    <bean id="defaultNS8MerchantService" class="com.ns8.hybris.core.merchant.services.impl.DefaultNs8MerchantService">
         <constructor-arg name="modelService" ref="modelService"/>
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
+    </bean>
+
+    <alias name="defaultNs8FraudServiceProvider" alias="ns8FraudServiceProvider"/>
+    <bean id="defaultNs8FraudServiceProvider"
+          class="com.ns8.hybris.core.fraud.providers.impl.DefaultNs8FraudServiceProvider">
+        <property name="providerName" value="NS8_FraudServiceProvider"/>
+    </bean>
+
+    <alias name="defaultFraudService" alias="fraudService"/>
+    <bean id="defaultFraudService" class="de.hybris.platform.fraud.impl.DefaultFraudService">
+        <property name="providers">
+            <list>
+                <ref bean="internalFraudServiceProvider"/>
+                <ref bean="commercialFraudServiceProvider"/>
+                <ref bean="ns8FraudServiceProvider"/>
+            </list>
+        </property>
     </bean>
 
     <alias name="defaultNS8FraudService" alias="ns8FraudService"/>
-    <bean id="defaultNS8FraudService" class="com.ns8.hybris.core.services.impl.DefaultNS8FraudService"/>
+    <bean id="defaultNS8FraudService" class="com.ns8.hybris.core.fraud.services.impl.DefaultNs8FraudService">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="timeService" ref="timeService"/>
+        <constructor-arg name="fraudService" ref="fraudService"/>
+        <constructor-arg name="providerName" value="NS8_FraudServiceProvider"/>
+    </bean>
 
     <alias name="defaultNS8PaymentTransactionService" alias="ns8PaymentTransactionService"/>
     <bean id="defaultNS8PaymentTransactionService"
-          class="com.ns8.hybris.core.services.impl.DefaultNS8PaymentTransactionService"/>
+          class="com.ns8.hybris.core.services.impl.DefaultNs8PaymentTransactionService"/>
 
-    <bean id="defaultOrderAfterSaveListener" class="com.ns8.hybris.core.listeners.OrderAfterSaveListener">
+    <alias name="defaultNs8OrderAfterSaveListener" alias="ns8OrderAfterSaveListener"/>
+    <bean id="defaultNs8OrderAfterSaveListener" class="com.ns8.hybris.core.listeners.Ns8OrderAfterSaveListener">
         <constructor-arg name="modelService" ref="modelService"/>
-        <constructor-arg name="ns8APIService" ref="ns8APIService"/>
+        <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
         <constructor-arg name="orderStatuses">
             <list value-type="de.hybris.platform.core.enums.OrderStatus">
                 <value>CANCELLED</value>
@@ -69,6 +92,8 @@
                 <value>PAYMENT_NOT_CAPTURED</value>
                 <value>PAYMENT_CAPTURED</value>
                 <value>CANCELLING</value>
+                <value>FRAUD_CHECKED</value>
+                <value>SUSPENDED</value>
             </list>
         </constructor-arg>
     </bean>
@@ -81,4 +106,17 @@
         <property name="add" ref="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
     </bean>
 
+    <alias name="defaultNs8AbstractOrderAttributeHandler" alias="ns8AbstractOrderAttributeHandler"/>
+    <bean id="defaultNs8AbstractOrderAttributeHandler"
+          class="com.ns8.hybris.core.order.dynamic.handlers.Ns8AbstractOrderAttributeHandler" abstract="true"/>
+
+    <alias name="defaultNs8ScoreAttributeHandler" alias="ns8ScoreAttributeHandler"/>
+    <bean id="defaultNs8ScoreAttributeHandler"
+          class="com.ns8.hybris.core.order.dynamic.handlers.Ns8ScoreAttributeHandler"
+          parent="ns8AbstractOrderAttributeHandler"/>
+
+    <alias name="defaultNs8OrderStatusAttributeHandler" alias="ns8OrderStatusAttributeHandler"/>
+    <bean id="defaultNs8OrderStatusAttributeHandler"
+          class="com.ns8.hybris.core.order.dynamic.handlers.Ns8OrderStatusAttributeHandler"
+          parent="ns8AbstractOrderAttributeHandler"/>
 </beans>

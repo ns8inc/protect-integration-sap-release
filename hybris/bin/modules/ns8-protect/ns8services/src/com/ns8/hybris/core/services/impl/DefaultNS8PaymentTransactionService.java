@@ -1,6 +1,6 @@
 package com.ns8.hybris.core.services.impl;
 
-import com.ns8.hybris.core.services.NS8PaymentTransactionService;
+import com.ns8.hybris.core.services.Ns8PaymentTransactionService;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -8,9 +8,9 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import java.util.Optional;
 
 /**
- * Default implementation of {@link NS8PaymentTransactionService}
+ * Default implementation of {@link Ns8PaymentTransactionService}
  */
-public class DefaultNS8PaymentTransactionService implements NS8PaymentTransactionService {
+public class DefaultNs8PaymentTransactionService implements Ns8PaymentTransactionService {
 
     /**
      * {@inheritDoc}

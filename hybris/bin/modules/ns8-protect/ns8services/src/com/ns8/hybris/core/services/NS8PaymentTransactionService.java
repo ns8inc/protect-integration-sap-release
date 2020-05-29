@@ -6,7 +6,7 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 /**
  * NS8 payment transaction service
  */
-public interface NS8PaymentTransactionService {
+public interface Ns8PaymentTransactionService {
 
     /**
      * Finds the most relevant {@link PaymentTransactionEntryModel} from the given {@link PaymentTransactionModel}

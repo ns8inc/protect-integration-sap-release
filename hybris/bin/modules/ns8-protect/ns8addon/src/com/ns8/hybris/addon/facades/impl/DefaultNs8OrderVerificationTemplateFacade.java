@@ -5,7 +5,7 @@ import com.ns8.hybris.addon.facades.Ns8OrderVerificationTemplateFacade;
 import com.ns8.hybris.core.data.Ns8OrderVerificationRequest;
 import com.ns8.hybris.core.data.Ns8OrderVerificationResponse;
 import com.ns8.hybris.core.model.NS8MerchantModel;
-import com.ns8.hybris.core.services.api.NS8APIService;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.site.BaseSiteService;
@@ -21,13 +21,13 @@ public class DefaultNs8OrderVerificationTemplateFacade implements Ns8OrderVerifi
 
     protected static final Logger LOG = LogManager.getLogger(DefaultNs8OrderVerificationTemplateFacade.class);
 
-    protected final NS8APIService ns8APIService;
+    protected final Ns8ApiService ns8ApiService;
     protected final BaseSiteService baseSiteService;
     protected final Converter<Ns8OrderVerificationData, Ns8OrderVerificationRequest> ns8OrderVerificationRequestConverter;
 
-    public DefaultNs8OrderVerificationTemplateFacade(final NS8APIService ns8APIService, final BaseSiteService baseSiteService,
+    public DefaultNs8OrderVerificationTemplateFacade(final Ns8ApiService ns8ApiService, final BaseSiteService baseSiteService,
                                                      final Converter<Ns8OrderVerificationData, Ns8OrderVerificationRequest> ns8OrderVerificationRequestConverter) {
-        this.ns8APIService = ns8APIService;
+        this.ns8ApiService = ns8ApiService;
         this.baseSiteService = baseSiteService;
         this.ns8OrderVerificationRequestConverter = ns8OrderVerificationRequestConverter;
     }
@@ -37,7 +37,7 @@ public class DefaultNs8OrderVerificationTemplateFacade implements Ns8OrderVerifi
      */
     @Override
     public String getVerificationTemplate(final Ns8OrderVerificationData verificationData) {
-        return ns8APIService.getVerificationTemplate(ns8OrderVerificationRequestConverter.convert(verificationData), getMerchantApiKey());
+        return ns8ApiService.getVerificationTemplate(ns8OrderVerificationRequestConverter.convert(verificationData), getMerchantApiKey());
     }
 
     /**
@@ -45,7 +45,7 @@ public class DefaultNs8OrderVerificationTemplateFacade implements Ns8OrderVerifi
      */
     @Override
     public Ns8OrderVerificationResponse sendVerification(final Ns8OrderVerificationData verificationData) {
-        return ns8APIService.sendVerification(ns8OrderVerificationRequestConverter.convert(verificationData), getMerchantApiKey());
+        return ns8ApiService.sendVerification(ns8OrderVerificationRequestConverter.convert(verificationData), getMerchantApiKey());
     }
 
     /**

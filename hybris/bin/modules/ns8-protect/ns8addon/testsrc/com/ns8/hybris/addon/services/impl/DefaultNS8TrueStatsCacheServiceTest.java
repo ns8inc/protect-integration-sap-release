@@ -1,6 +1,6 @@
 package com.ns8.hybris.addon.services.impl;
 
-import com.ns8.hybris.addon.cache.NS8TrueStatsCacheKeyProvider;
+import com.ns8.hybris.addon.cache.Ns8TrueStatsCacheKeyProvider;
 import com.ns8.hybris.addon.cache.TrueStatsCacheValueLoader;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
@@ -20,16 +20,16 @@ import static org.mockito.Mockito.when;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNS8TrueStatsCacheServiceTest {
+public class DefaultNs8TrueStatsCacheServiceTest {
 
     private static final String SCRIPT_CONTENT = "scriptContent";
     private static final String NS8_TRUESTATS_CACHE_ENABLED_KEY = "ns8.truestats.cache.enabled";
 
     @InjectMocks
-    private DefaultNS8TrueStatsCacheService testObj;
+    private DefaultNs8TrueStatsCacheService testObj;
 
     @Mock
-    private NS8TrueStatsCacheKeyProvider cacheKeyProviderMock;
+    private Ns8TrueStatsCacheKeyProvider cacheKeyProviderMock;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationService configurationServiceMock;
     @Mock

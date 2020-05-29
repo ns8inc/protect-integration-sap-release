@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
-public class NS8MerchantActivationActionTest {
+public class Ns8MerchantActivationActionTest {
 
     private static final String SOCKET_OUT_NS8_CMSSITE = "currentSiteOutput";
     private static final String ACTION_RESULT_SUCCESS_CODE = "success";
@@ -27,7 +27,7 @@ public class NS8MerchantActivationActionTest {
 
     @Spy
     @InjectMocks
-    private NS8MerchantActivationAction testObj;
+    private Ns8MerchantActivationAction testObj;
 
     @Mock
     private ActionContext<Object> actionContextMock;

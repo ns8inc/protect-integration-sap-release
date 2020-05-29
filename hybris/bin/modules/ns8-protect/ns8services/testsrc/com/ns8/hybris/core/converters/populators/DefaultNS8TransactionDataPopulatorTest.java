@@ -4,7 +4,7 @@ import com.ns8.hybris.core.data.Ns8CreditCardData;
 import com.ns8.hybris.core.data.Ns8TransactionData;
 import com.ns8.hybris.core.data.Ns8TransactionMethod;
 import com.ns8.hybris.core.data.Ns8TransactionStatus;
-import com.ns8.hybris.core.services.NS8PaymentTransactionService;
+import com.ns8.hybris.core.services.Ns8PaymentTransactionService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
@@ -42,7 +42,7 @@ public class DefaultNs8TransactionDataPopulatorTest {
     @Mock
     private Converter<PaymentTransactionModel, Ns8CreditCardData> ns8CreditCardDataConverter;
     @Mock
-    private NS8PaymentTransactionService NS8PaymentTransactionServiceMock;
+    private Ns8PaymentTransactionService Ns8PaymentTransactionServiceMock;
 
     @Mock
     private PaymentTransactionModel paymentTransactionMock;
@@ -62,7 +62,7 @@ public class DefaultNs8TransactionDataPopulatorTest {
 
         ns8TransactionData = new Ns8TransactionData();
         creationDate = new Date();
-        when(NS8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
+        when(Ns8PaymentTransactionServiceMock.getApplicableEntry(paymentTransactionMock)).thenReturn(transactionEntryMock);
         when(ns8CreditCardDataConverter.convert(paymentTransactionMock)).thenReturn(ns8CreditCardDataMock);
         when(paymentTransactionMock.getPlannedAmount()).thenReturn(BigDecimal.valueOf(AMOUNT));
         when(paymentTransactionMock.getCode()).thenReturn(TRANSACTION_ID);

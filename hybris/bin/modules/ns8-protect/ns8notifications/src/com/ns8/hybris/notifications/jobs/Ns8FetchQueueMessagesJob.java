@@ -2,7 +2,8 @@ package com.ns8.hybris.notifications.jobs;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
+import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import com.ns8.hybris.notifications.constants.Ns8notificationsConstants;
 import com.ns8.hybris.notifications.daos.Ns8QueueMessageDao;
@@ -35,10 +36,14 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
 
     protected final Ns8QueueService ns8QueueService;
     protected final Ns8QueueMessageDao ns8QueueMessageDao;
+    protected final Ns8MerchantService ns8MerchantService;
 
-    public Ns8FetchQueueMessagesJob(final Ns8QueueService ns8QueueService, final Ns8QueueMessageDao ns8QueueMessageDao) {
+    public Ns8FetchQueueMessagesJob(final Ns8QueueService ns8QueueService,
+                                    final Ns8QueueMessageDao ns8QueueMessageDao,
+                                    final Ns8MerchantService ns8MerchantService) {
         this.ns8QueueService = ns8QueueService;
         this.ns8QueueMessageDao = ns8QueueMessageDao;
+        this.ns8MerchantService = ns8MerchantService;
     }
 
     /**
@@ -47,7 +52,7 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
      * - the {@link Ns8FetchQueueMessagesCronJobModel#getMaxBatchSize()} number of messages have been received
      * - The queueUrl from {@link Ns8QueueService#getQueueUrl} expires
      *
-     * @param cronJob the cronjob model
+     * @param cronJob the cronJob model
      * @return the outcome of the execution
      */
     @Override
@@ -59,6 +64,10 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
         if (ns8Merchant == null) {
             LOG.error("No merchant configured for site [{}]", site::getUid);
             return new PerformResult(CronJobResult.FAILURE, CronJobStatus.ABORTED);
+        }
+        if (!ns8MerchantService.isMerchantActive(ns8Merchant)) {
+            LOG.error("Merchant [{}] is disabled for site [{}]", ns8Merchant::getQueueId, site::getUid);
+            return new PerformResult(CronJobResult.ERROR, CronJobStatus.ABORTED);
         }
 
         if (CollectionUtils.isEmpty(cronJob.getNs8MessageActionTypes())) {
@@ -80,7 +89,7 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
             List<Ns8QueueMessage> messages;
             try {
                 messages = ns8QueueService.receiveMessages(queueUrl);
-            } catch (final NS8IntegrationException e) {
+            } catch (final Ns8IntegrationException e) {
                 return handleReceiveMessagesIntegrationException(e, totalMessagesReceived);
             }
 
@@ -92,7 +101,7 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
 
             try {
                 processMessages(cronJob, ns8Merchant, messages, totalMessagesSaved);
-            } catch (final NS8IntegrationException e) {
+            } catch (final Ns8IntegrationException e) {
                 LOG.error("Got unexpected exception from delete message operation with api key [{}]. Exception error: [{}]",
                         ns8Merchant::getApiKey, e::getMessage);
                 return new PerformResult(CronJobResult.ERROR, CronJobStatus.ABORTED);
@@ -169,7 +178,7 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
     /**
      * Creates the {@link Ns8QueueMessageModel} and saves it
      *
-     * @param messageId the id of the message
+     * @param messageId   the id of the message
      * @param messageBody the received message body
      */
     protected void saveMessage(final String messageId, final String messageBody) {
@@ -188,7 +197,7 @@ public class Ns8FetchQueueMessagesJob extends AbstractJobPerformable<Ns8FetchQue
      * @param e the NS8IntegrationException
      * @return the cronjob result
      */
-    protected PerformResult handleReceiveMessagesIntegrationException(final NS8IntegrationException e, final int totalMessagesReceived) {
+    protected PerformResult handleReceiveMessagesIntegrationException(final Ns8IntegrationException e, final int totalMessagesReceived) {
         if (HttpStatus.FORBIDDEN.equals(e.getHttpStatus()) && totalMessagesReceived == 0) {
             LOG.warn("Got unexpected 403 from receiveMessageUrl in the first run - aborting the job");
             return new PerformResult(CronJobResult.ERROR, CronJobStatus.FINISHED);

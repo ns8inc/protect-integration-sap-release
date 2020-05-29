@@ -35,8 +35,9 @@
                                     },
                                 });
                                 var protectClient = Protect.createClient(clientConfig);
-                                //DASHBOARD, ORDER_RULES, SUSPICIOUS_ORDERS
                                 protectClient.render(viewName, '');
+
+                                jQuery('#ns8-protect-client-iframe').attr('scrolling', 'yes');
                             });
                         });
                     </script>

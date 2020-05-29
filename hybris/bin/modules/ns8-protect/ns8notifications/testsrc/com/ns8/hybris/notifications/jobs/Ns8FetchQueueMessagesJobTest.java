@@ -1,7 +1,8 @@
 package com.ns8.hybris.notifications.jobs;
 
 import com.google.gson.JsonObject;
-import com.ns8.hybris.core.integration.exceptions.NS8IntegrationException;
+import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
+import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import com.ns8.hybris.notifications.constants.Ns8notificationsConstants;
 import com.ns8.hybris.notifications.daos.Ns8QueueMessageDao;
@@ -64,6 +65,8 @@ public class Ns8FetchQueueMessagesJobTest {
     private Ns8QueueMessageModel messageModelMock;
     @Mock
     private Ns8QueueMessageDao ns8QueueMessageDaoMock;
+    @Mock
+    private Ns8MerchantService ns8MerchantServiceMock;
 
     private String message1Body, message2Body;
 
@@ -90,6 +93,7 @@ public class Ns8FetchQueueMessagesJobTest {
         when(ns8QueueMessageDaoMock.findNs8QueueMessageById(anyString())).thenReturn(Optional.empty());
 
         doReturn(false).when(testObj).callSuperClearAbortRequestedIfNeeded(cronjobMock);
+        when(ns8MerchantServiceMock.isMerchantActive(merchantMock)).thenReturn(Boolean.TRUE);
     }
 
     @Test
@@ -141,7 +145,7 @@ public class Ns8FetchQueueMessagesJobTest {
                 .thenReturn(Collections.singletonList(message2Mock))
                 .thenReturn(Collections.emptyList());
         when(modelServiceMock.create(Ns8QueueMessageModel.class)).thenReturn(messageModelMock);
-        when(ns8QueueServiceMock.deleteMessage(MERCHANT_API_KEY, RECEIPT_HANDLE)).thenThrow(new NS8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR));
+        when(ns8QueueServiceMock.deleteMessage(MERCHANT_API_KEY, RECEIPT_HANDLE)).thenThrow(new Ns8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR));
 
         final PerformResult result = testObj.perform(cronjobMock);
 
@@ -223,7 +227,7 @@ public class Ns8FetchQueueMessagesJobTest {
     @Test
     public void perform_403IntegrationExceptionThrownInFirstRun_ShouldSetTheJobInError() {
         when(ns8QueueServiceMock.receiveMessages(QUEUE_URL))
-                .thenThrow(new NS8IntegrationException("message", HttpStatus.FORBIDDEN));
+                .thenThrow(new Ns8IntegrationException("message", HttpStatus.FORBIDDEN));
 
         final PerformResult result = testObj.perform(cronjobMock);
 
@@ -241,7 +245,7 @@ public class Ns8FetchQueueMessagesJobTest {
     public void perform_403IntegrationExceptionThrown_ShouldStopReceivingMessages() {
         when(ns8QueueServiceMock.receiveMessages(QUEUE_URL))
                 .thenReturn(Collections.singletonList(message1Mock))
-                .thenThrow(new NS8IntegrationException("message", HttpStatus.FORBIDDEN));
+                .thenThrow(new Ns8IntegrationException("message", HttpStatus.FORBIDDEN));
 
         final PerformResult result = testObj.perform(cronjobMock);
 
@@ -258,7 +262,7 @@ public class Ns8FetchQueueMessagesJobTest {
     @Test
     public void perform_OtherIntegrationExceptionThrown_ShouldAbortJob() {
         when(ns8QueueServiceMock.receiveMessages(QUEUE_URL))
-                .thenThrow(new NS8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR));
+                .thenThrow(new Ns8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR));
 
         final PerformResult result = testObj.perform(cronjobMock);
 
@@ -287,6 +291,16 @@ public class Ns8FetchQueueMessagesJobTest {
         final PerformResult result = testObj.perform(cronjobMock);
 
         assertThat(result.getResult()).isEqualTo(CronJobResult.FAILURE);
+        assertThat(result.getStatus()).isEqualTo(CronJobStatus.ABORTED);
+    }
+
+    @Test
+    public void perform_WhenMerchantIsDisabled_ShouldAbortWithError() {
+        when(ns8MerchantServiceMock.isMerchantActive(merchantMock)).thenReturn(Boolean.FALSE);
+
+        final PerformResult result = testObj.perform(cronjobMock);
+
+        assertThat(result.getResult()).isEqualTo(CronJobResult.ERROR);
         assertThat(result.getStatus()).isEqualTo(CronJobStatus.ABORTED);
     }
 
