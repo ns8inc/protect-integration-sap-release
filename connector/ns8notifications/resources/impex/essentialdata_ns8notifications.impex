@@ -1,0 +1,12 @@
+INSERT_UPDATE ServicelayerJob; code[unique = true]        ; springId[unique = true]
+                             ; ns8FetchQueueMessagesJob   ; ns8FetchQueueMessagesJob
+                             ; ns8ProcessMessagesJob      ; ns8ProcessMessagesJob
+                             ; ns8QueueMessagesCleanUpJob ; ns8QueueMessagesCleanUpJob
+
+INSERT_UPDATE Ns8ProcessMessagesCronJob; code[unique = true]       ; job(code)             ; sessionLanguage(isoCode)[default = en]
+                                       ; ns8ProcessMessagesCronJob ; ns8ProcessMessagesJob ;
+
+INSERT_UPDATE Ns8QueueMessagesCleanUpCronJob; code[unique = true]                     ; job(code)                  ; ns8MessageStatus(code); ageInDaysBeforeDeletion; sessionLanguage(isoCode)[default = en]
+                                            ; ns8CompletedQueueMessagesCleanupCronJob ; ns8QueueMessagesCleanUpJob ; COMPLETED             ; 5                      ;
+                                            ; ns8IgnoredQueueMessagesCleanupCronJob   ; ns8QueueMessagesCleanUpJob ; IGNORED               ; 5                      ;
+                                            ; ns8FailedQueueMessagesCleanupCronJob    ; ns8QueueMessagesCleanUpJob ; FAILED                ; 30                     ;
