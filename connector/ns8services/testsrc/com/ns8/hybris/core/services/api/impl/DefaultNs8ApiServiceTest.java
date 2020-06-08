@@ -42,6 +42,7 @@ public class DefaultNs8ApiServiceTest {
     private static final String BASE_BACKEND_URL = "baseBackendURL";
     private static final String API_INIT_SCRIPT = "/api/init/script/";
     private static final String PROTECT_PLATFORM_INSTALL_URL = "/protect/platform/install/";
+    private static final String PROTECT_PLATFORM_REINSTALL_URL = "/protect/platform/install/reinstall/";
     private static final String NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY = "ns8services.platform.name";
     private static final String ACCESS_TOKEN_FROM_RESPONSE = "accessToken";
     private static final String QUEUE_ID_FROM_RESPONSE = "queueId";
@@ -98,6 +99,8 @@ public class DefaultNs8ApiServiceTest {
     private Ns8UpdateOrderStatus ns8UpdateOrderStatusMock;
     @Mock
     private Ns8OrderVerificationRequest orderVerificationRequestMock;
+    @Mock
+    private MerchantReactivateResponseData merchantReactivateResponseDataMock;
 
     @Captor
     private ArgumentCaptor<HttpEntity<?>> httpEntityCaptor;
@@ -123,6 +126,8 @@ public class DefaultNs8ApiServiceTest {
         when(pluginInstallResponseDataMock.getAccessToken()).thenReturn(ACCESS_TOKEN_FROM_RESPONSE);
         when(pluginInstallResponseDataMock.getQueueId()).thenReturn(QUEUE_ID_FROM_RESPONSE);
         when(ns8MerchantMock.getApiKey()).thenReturn(API_KEY);
+        when(ns8MerchantMock.getEnabled()).thenReturn(Boolean.TRUE);
+        when(ns8MerchantMock.getEmail()).thenReturn("some@email.com");
 
         when(orderVerificationRequestMock.getOrderId()).thenReturn(ORDER_ID);
         when(orderVerificationRequestMock.getToken()).thenReturn(TOKEN);
@@ -515,6 +520,49 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @Test
+    public void triggerMerchantReinstallEvent_ShouldSendMerchantInformationToNS8AndEnableMerchant() throws Ns8IntegrationException {
+        when(restTemplateMock.postForEntity(eq(BASE_BACKEND_URL + PROTECT_PLATFORM_REINSTALL_URL + PLATFORM_NAME_VALUE), httpEntityCaptor.capture(), eq(MerchantReactivateResponseData.class)))
+                .thenReturn(new ResponseEntity(merchantReactivateResponseDataMock, HttpStatus.OK));
+        when(merchantReactivateResponseDataMock.getSuccess()).thenReturn(true);
+
+        boolean result = testObj.triggerMerchantReinstallEvent(ns8MerchantMock);
+
+        assertThat(httpEntityCaptor.getValue().getBody()).isEqualTo(convertedMerchantMock);
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    public void triggerMerchantReinstallEvent_WhenResourceAccessException_ShouldThrowNs8IntegrationException() throws Ns8IntegrationException {
+        when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(MerchantReactivateResponseData.class)))
+                .thenThrow(ResourceAccessException.class);
+
+        final Throwable thrown = catchThrowable(() -> testObj.triggerMerchantReinstallEvent(ns8MerchantMock));
+
+        final String url = stringCaptor.getValue();
+        assertThat(url).isEqualTo(BASE_BACKEND_URL + PROTECT_PLATFORM_REINSTALL_URL + PLATFORM_NAME_VALUE);
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCauseInstanceOf(ResourceAccessException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @Test
+    public void triggerMerchantReinstallEvent_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
+        final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(MerchantReactivateResponseData.class)))
+                .thenThrow(clientException);
+
+        final Throwable thrown = catchThrowable(() -> testObj.triggerMerchantReinstallEvent(ns8MerchantMock));
+
+        final String url = stringCaptor.getValue();
+        assertThat(url).isEqualTo(BASE_BACKEND_URL + PROTECT_PLATFORM_REINSTALL_URL + PLATFORM_NAME_VALUE);
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCause(clientException)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
     }
 
     private void assertUrlForUriValues(final String uri) {

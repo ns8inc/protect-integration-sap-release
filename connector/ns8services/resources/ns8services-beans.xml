@@ -7,9 +7,14 @@
         <property name="lastName" type="java.lang.String"/>
         <property name="phone" type="java.lang.String"/>
     </bean>
+
     <bean class="com.ns8.hybris.core.data.PluginInstallResponseData">
         <property name="accessToken" type="java.lang.String"/>
         <property name="queueId" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.ns8.hybris.core.data.MerchantReactivateResponseData">
+        <property name="success" type="java.lang.Boolean"/>
     </bean>
 
     <bean class="com.ns8.hybris.core.data.Ns8OrderData">

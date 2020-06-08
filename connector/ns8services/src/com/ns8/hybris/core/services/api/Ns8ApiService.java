@@ -34,6 +34,14 @@ public interface Ns8ApiService {
     void triggerMerchantUninstallEvent(NS8MerchantModel ns8Merchant);
 
     /**
+     * Triggers the plugin reinstall event for the given merchant model, sending a request to {NS8_BASE_BE_API}/protect/platform/install/reinstall/sap/
+     *
+     * @param ns8Merchant the merchant to deactivate
+     * @return returns true if merchant is successfully reactivated, false otherwise
+     */
+    boolean triggerMerchantReinstallEvent(NS8MerchantModel ns8Merchant);
+
+    /**
      * Fetches the javascript content for the TrueStats script.
      * Sends a POST request to {NS8_BASE_CLIENT_API}/api/init/script
      * <p>

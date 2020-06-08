@@ -26,6 +26,12 @@ public interface Ns8MerchantService {
      */
     void deactivateMerchant(NS8MerchantModel ns8Merchant);
 
+    /**
+     *Reactivates the  ns8 merchant
+     *
+     * @param ns8Merchant the ns8 merchant to deactivate
+     */
+    void reactivateMerchant(NS8MerchantModel ns8Merchant);
 
     /**
      * Adds the given ns8 merchant to the cms site

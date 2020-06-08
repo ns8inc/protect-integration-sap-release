@@ -7,6 +7,8 @@ import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.dataaccess.facades.object.ObjectFacade;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
+import com.hybris.cockpitng.util.notifications.NotificationService;
+import com.hybris.cockpitng.util.notifications.event.NotificationEvent;
 import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
@@ -26,11 +28,14 @@ public class Ns8MerchantDeactivationAction extends AbstractComponentWidgetAdapte
     protected static final String DEACTIVATE_MERCHANT_SUCCESS_ACTION = "ns8.deactivate.merchant.confirm.action";
     protected static final String DEACTIVATE_MERCHANT_ERROR_ACTION = "ns8.deactivate.merchant.error.action";
     protected static final String DEACTIVATE_MERCHANT_UNSUPPORTED_ACTION = "ns8.deactivate.merchant.unsupported.action";
+    protected static final String MERCHANT_CONFIRM_DEACTIVATION = "ns8.deactivate.merchant.confirm.deactivation";
 
     @Resource
     private Ns8MerchantService ns8MerchantService;
     @Resource
     private CockpitEventQueue cockpitEventQueue;
+    @Resource
+    private NotificationService notificationService;
 
     /**
      * {@inheritDoc}
@@ -44,8 +49,9 @@ public class Ns8MerchantDeactivationAction extends AbstractComponentWidgetAdapte
 
             try {
                 ns8MerchantService.deactivateMerchant(baseSite.getNs8Merchant());
+                notificationService.notifyUser(ctx, "JustMessage",
+                        NotificationEvent.Level.SUCCESS, ctx.getLabel(DEACTIVATE_MERCHANT_SUCCESS_ACTION));
                 cockpitEventQueue.publishEvent(new DefaultCockpitEvent(ObjectFacade.OBJECTS_UPDATED_EVENT, baseSite, null));
-                showMessageToUser(ctx.getLabel(DEACTIVATE_MERCHANT_SUCCESS_ACTION));
                 return new ActionResult(ACTION_RESULT_SUCCESS_CODE);
             } catch (final Ns8IntegrationException e) {
                 showMessageBoxFromErrorMessage(ctx, e.getMessage());
@@ -82,7 +88,7 @@ public class Ns8MerchantDeactivationAction extends AbstractComponentWidgetAdapte
      */
     @Override
     public String getConfirmationMessage(final ActionContext<Object> ctx) {
-        return ctx.getLabel("ns8.deactivate.merchant.confirm.deactivation");
+        return ctx.getLabel(MERCHANT_CONFIRM_DEACTIVATION);
     }
 
     /**

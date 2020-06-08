@@ -3,4 +3,5 @@ div#ns8-protect-order-wrapper iframe {
     width: 100%;
     height: auto;
     max-height: calc(100vh - 300px);
+    border: 0;
 }

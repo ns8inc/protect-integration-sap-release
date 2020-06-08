@@ -55,6 +55,15 @@ public class DefaultNs8MerchantService implements Ns8MerchantService {
         modelService.save(ns8Merchant);
     }
 
+    @Override
+    public void reactivateMerchant(final NS8MerchantModel ns8Merchant) {
+        boolean isMerchantSuccessfullyActivated = ns8ApiService.triggerMerchantReinstallEvent(ns8Merchant);
+        if (isMerchantSuccessfullyActivated) {
+            ns8Merchant.setEnabled(Boolean.TRUE);
+            modelService.save(ns8Merchant);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
