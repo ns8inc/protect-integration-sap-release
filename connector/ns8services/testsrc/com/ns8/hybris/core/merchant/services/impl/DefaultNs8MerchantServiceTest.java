@@ -114,6 +114,26 @@ public class DefaultNs8MerchantServiceTest {
     }
 
     @Test
+    public void reactivateMerchant_WhenMerchantIsReactivated_ShouldSetEnabledTrue() {
+        when(ns8ApiServiceMock.triggerMerchantReinstallEvent(ns8MerchantMock)).thenReturn(true);
+
+        testObj.reactivateMerchant(ns8MerchantMock);
+
+        verify(ns8MerchantMock).setEnabled(Boolean.TRUE);
+        verify(modelServiceMock).save(ns8MerchantMock);
+    }
+
+    @Test
+    public void reactivateMerchant_WhenMerchantReactivationReturnFalse_ShouldDoNothing() {
+        when(ns8ApiServiceMock.triggerMerchantReinstallEvent(ns8MerchantMock)).thenReturn(false);
+
+        testObj.reactivateMerchant(ns8MerchantMock);
+
+        verifyZeroInteractions(ns8MerchantMock);
+        verifyZeroInteractions(modelServiceMock);
+    }
+
+    @Test
     public void isMerchantActive_WhenMerchantIsEnabledAndApiKeyPresent_ShouldReturnTrue() {
         boolean result = testObj.isMerchantActive(ns8MerchantMock);
 

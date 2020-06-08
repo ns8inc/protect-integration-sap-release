@@ -1,10 +1,12 @@
 package com.ns8.hybris.backoffice.actions.site.merchant.deactivate;
 
+import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.dataaccess.facades.object.ObjectFacade;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
@@ -41,6 +43,8 @@ public class Ns8MerchantDeactivationActionTest {
     @Mock
     private CockpitEventQueue cockpitEventQueueMock;
     @Mock
+    private NotificationService notificationServiceMock;
+    @Mock
     private ActionContext<Object> actionContextMock;
     @Mock
     private BaseSiteModel baseSiteMock;
@@ -69,10 +73,11 @@ public class Ns8MerchantDeactivationActionTest {
 
         final ActionResult<Object> result = testObj.perform(actionContextMock);
 
-        verify(ns8MerchantServiceMock).deactivateMerchant(ns8MerchantMock);
-        verify(testObj).showMessageToUser(MERCHANT_DEACTIVATED_LABEL);
+        final InOrder inOrder = inOrder(ns8MerchantServiceMock, notificationServiceMock, cockpitEventQueueMock);
+        inOrder.verify(ns8MerchantServiceMock).deactivateMerchant(ns8MerchantMock);
+        inOrder.verify(notificationServiceMock).notifyUser(actionContextMock, "JustMessage", NotificationEvent.Level.SUCCESS, MERCHANT_DEACTIVATED_LABEL);
+        inOrder.verify(cockpitEventQueueMock).publishEvent(defaultCockpitEventCaptor.capture());
         assertThat(result.getResultCode()).isEqualTo(ACTION_RESULT_SUCCESS_CODE);
-        verify(cockpitEventQueueMock).publishEvent(defaultCockpitEventCaptor.capture());
 
         final DefaultCockpitEvent event = defaultCockpitEventCaptor.getValue();
         assertEquals(event.getName(), ObjectFacade.OBJECTS_UPDATED_EVENT);

@@ -109,12 +109,39 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             LOG.debug("Merchant [{}] is deactivated successfully - Response code: [{}]", ns8Merchant.getEmail(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
             LOG.error("Deactivation of NS8 Merchant failed. URL: [{}], status code [{}], error body: [{}].", () -> requestUrl, e::getStatusCode, e::getResponseBodyAsString);
-            throw new Ns8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
+            throw new Ns8IntegrationException("NS8 merchant uninstall failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Deactivation of NS8 Merchant failed due to connection issues. URL: [{}], status code [{}], error body: [{}].",
                     () -> requestUrl, () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
-            throw new Ns8IntegrationException("Update status event failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+            throw new Ns8IntegrationException("NS8 merchant uninstall failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean triggerMerchantReinstallEvent(final NS8MerchantModel ns8Merchant) {
+        final Ns8MerchantData ns8MerchantData = ns8MerchantDataConverter.convert(ns8Merchant);
+        final String backendAPIURL = ns8EndpointService.getBaseBackendURL();
+        final String platform = configurationService.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY);
+        final String requestUrl = backendAPIURL + PROTECT_PLATFORM_REINSTALL_URL + platform;
+
+        final HttpEntity<Object> request = buildHttpEntity(ns8Merchant.getApiKey(), ns8MerchantData);
+        final ResponseEntity<MerchantReactivateResponseData> responseEntity;
+
+        try {
+            responseEntity = restTemplate.postForEntity(requestUrl, request, MerchantReactivateResponseData.class);
+            LOG.debug("Merchant [{}] is reactivated successfully - Response code: [{}]", ns8Merchant.getEmail(), responseEntity.getStatusCode());
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Reactivation of NS8 Merchant failed. URL: [{}], status code [{}], error body: [{}].", () -> requestUrl, e::getStatusCode, e::getResponseBodyAsString);
+            throw new Ns8IntegrationException("NS8 merchant reinstall failed.", e.getStatusCode(), e);
+        } catch (final ResourceAccessException e) {
+            LOG.error("Reactivation of NS8 Merchant failed due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> requestUrl, () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
+            throw new Ns8IntegrationException("NS8 merchant reinstall failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
+        }
+        return responseEntity.getBody().getSuccess();
     }
 
     /**

@@ -10,6 +10,7 @@ public class Ns8servicesConstants extends GeneratedNs8servicesConstants {
     public static final String SCREEN_HEIGHT_SESSION_ATTR = "NS8-Screen-Height";
     public static final String SCREEN_WIDTH_SESSION_ATTR = "NS8-Screen-Width";
     public static final String PROTECT_PLATFORM_INSTALL_URL = "/protect/platform/install/";
+    public static final String PROTECT_PLATFORM_REINSTALL_URL = "/protect/platform/install/reinstall/";
     public static final String API_SWITCH_EXECUTOR_URL = "/api/switch/executor";
     public static final String API_TEMPLATE_URL = "/api/merchant/template";
     public static final String CREATE_ORDER_ACTION = "CREATE_ORDER_ACTION";
