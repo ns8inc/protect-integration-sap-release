@@ -6,16 +6,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
-    <alias name="defaultNs8MerchantDataPopulator" alias="ns8MerchantDataPopulator"/>
-    <bean id="defaultNs8MerchantDataPopulator"
-          class="com.ns8.hybris.core.converters.populators.Ns8MerchantDataPopulator"/>
+    <alias name="defaultNs8PluginInstallRequestPopulator" alias="ns8PluginInstallRequestPopulator"/>
+    <bean id="defaultNs8PluginInstallRequestPopulator"
+          class="com.ns8.hybris.core.converters.populators.Ns8PluginInstallRequestPopulator">
+        <constructor-arg name="configurationService" ref="configurationService"/>
+    </bean>
 
-    <alias name="defaultNs8MerchantDataConverter" alias="ns8MerchantDataConverter"/>
-    <bean id="defaultNs8MerchantDataConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8MerchantData"/>
+    <alias name="defaultNs8PluginInstallRequestConverter" alias="ns8PluginInstallRequestConverter"/>
+    <bean id="defaultNs8PluginInstallRequestConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.ns8.hybris.core.data.Ns8PluginInstallRequest"/>
         <property name="populators">
             <list merge="true">
-                <ref bean="ns8MerchantDataPopulator"/>
+                <ref bean="ns8PluginInstallRequestPopulator"/>
             </list>
         </property>
     </bean>

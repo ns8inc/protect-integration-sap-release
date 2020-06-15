@@ -1,23 +1,22 @@
 package com.ns8.hybris.core.listeners;
 
+import com.google.common.collect.ImmutableList;
 import com.ns8.hybris.core.merchant.services.Ns8MerchantService;
 import com.ns8.hybris.core.model.NS8MerchantModel;
 import com.ns8.hybris.core.services.api.Ns8ApiService;
 import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.PK;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.tx.AfterSaveEvent;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-
-import java.util.Collections;
-import java.util.List;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
@@ -25,10 +24,6 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnitParamsRunner.class)
 public class Ns8OrderAfterSaveListenerTest {
 
-    private static final int ORDER_MODEL_TYPE_CODE = 45;
-    private static final int OTHER_MODEL_TYPE_CODE = 123;
-
-    @Spy
     @InjectMocks
     private Ns8OrderAfterSaveListener testObj;
 
@@ -39,69 +34,66 @@ public class Ns8OrderAfterSaveListenerTest {
     @Mock
     private Ns8MerchantService ns8MerchantServiceMock;
     @Mock
-    private AfterSaveEvent afterSaveEventMock;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private OrderModel orderMock;
+    private OrderModel orderMock, originalOrderMock;
+    @Mock
+    private BaseSiteModel baseSiteMock;
     @Mock
     private NS8MerchantModel ns8MerchantMock;
 
-    private PK orderPK;
-    private List<AfterSaveEvent> eventList;
-
-    private Object[] parameters() {
-        return new Object[]{
-                // Currently accepted cases: Type code OrderModel (45), on update and one of the following statuses
-                // CANCELLED, COMPLETED, PAYMENT_NOT_CAPTURED, PAYMENT_CAPTURED, CANCELLING
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.CANCELLED, 1},
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.COMPLETED, 1},
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.PAYMENT_NOT_CAPTURED, 1},
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.PAYMENT_CAPTURED, 1},
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.CANCELLING, 1},
-                // Invalid cases: Order code != 45, save events != UPDATE, invalid status
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.CREATE, OrderStatus.CHECKED_VALID, 0},
-                new Object[]{ORDER_MODEL_TYPE_CODE, AfterSaveEvent.CREATE, OrderStatus.COMPLETED, 0},
-                new Object[]{OTHER_MODEL_TYPE_CODE, AfterSaveEvent.UPDATE, OrderStatus.COMPLETED, 0}
-        };
-    }
+    private AfterSaveEvent afterSaveOrderEvent, afterSaveOtherEvent;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        final List<OrderStatus> orderStatuses = List.of(OrderStatus.CANCELLED, OrderStatus.COMPLETED,
-                OrderStatus.PAYMENT_NOT_CAPTURED, OrderStatus.PAYMENT_CAPTURED,
-                OrderStatus.CANCELLING);
-        orderPK = PK.fromLong(1234L);
-        doReturn(orderStatuses).when(testObj).getOrderStatuses();
-        eventList = Collections.singletonList(afterSaveEventMock);
-        when(orderMock.getSite().getNs8Merchant()).thenReturn(ns8MerchantMock);
+
+        final PK orderPK = PK.fromLong(8796094136365L);
+        afterSaveOrderEvent = new AfterSaveEvent(orderPK, AfterSaveEvent.UPDATE);
+        afterSaveOtherEvent = new AfterSaveEvent(PK.fromLong(8796094398468L), AfterSaveEvent.UPDATE);
+
+        when(modelService.get(orderPK)).thenReturn(orderMock);
+        when(orderMock.getSite()).thenReturn(baseSiteMock);
+        when(baseSiteMock.getNs8Merchant()).thenReturn(ns8MerchantMock);
         when(ns8MerchantServiceMock.isMerchantActive(ns8MerchantMock)).thenReturn(Boolean.TRUE);
+        when(orderMock.getSendOrderToNs8()).thenReturn(Boolean.TRUE);
     }
 
     @Test
-    @Parameters(method = "parameters")
-    public void afterSave_givenAfterSaveEvent_shouldCallAPIAccordingly(final int modelTypeCode, final int afterSaveEventType, final OrderStatus orderStatus, final int expectedNumberOfCalls) {
-        when(afterSaveEventMock.getType()).thenReturn(afterSaveEventType);
-        when(afterSaveEventMock.getPk()).thenReturn(orderPK);
-        when(modelService.get(orderPK)).thenReturn(orderMock);
-        when(orderMock.getStatus()).thenReturn(orderStatus);
+    public void afterSave_WhenOrderHasSendOrderFlagTrueAndMerchantIsActive_ShouldSendOrderToNs8() {
+        testObj.afterSave(ImmutableList.of(afterSaveOrderEvent));
 
-        doReturn(modelTypeCode).when(testObj).getPkTypecode(orderPK);
-
-        testObj.afterSave(eventList);
-
-        verify(ns8ApiService, times(expectedNumberOfCalls)).triggerUpdateOrderStatusAction(orderMock);
+        verify(ns8ApiService).triggerUpdateOrderStatusAction(orderMock);
     }
 
     @Test
-    public void afterSave_WhenMerchantIsDisabled_shouldNotCallAPIAccordingly() {
-        when(afterSaveEventMock.getType()).thenReturn(AfterSaveEvent.UPDATE);
-        when(afterSaveEventMock.getPk()).thenReturn(orderPK);
-        when(modelService.get(orderPK)).thenReturn(orderMock);
-        when(orderMock.getStatus()).thenReturn(OrderStatus.CANCELLED);
+    public void afterSave_WhenOrderHasSendOrderFlagFalseAndMerchantIsActive_ShouldNotSendOrderToNs8() {
+        when(orderMock.getSendOrderToNs8()).thenReturn(Boolean.FALSE);
+
+        testObj.afterSave(ImmutableList.of(afterSaveOrderEvent));
+
+        verifyZeroInteractions(ns8ApiService);
+    }
+
+    @Test
+    public void afterSave_WhenMerchantIsDisabled_ShouldNotSendOrderToNs8() {
         when(ns8MerchantServiceMock.isMerchantActive(ns8MerchantMock)).thenReturn(Boolean.FALSE);
-        doReturn(ORDER_MODEL_TYPE_CODE).when(testObj).getPkTypecode(orderPK);
 
-        testObj.afterSave(eventList);
+        testObj.afterSave(ImmutableList.of(afterSaveOrderEvent));
+
+        verifyZeroInteractions(ns8ApiService);
+    }
+
+    @Test
+    public void afterSave_WhenNotOrderModel_ShouldDoNothing() {
+        testObj.afterSave(ImmutableList.of(afterSaveOtherEvent));
+
+        verifyZeroInteractions(ns8ApiService);
+    }
+
+    @Test
+    public void afterSave_WhenOrderModelHasVersion_ShouldDoNothing() {
+        when(orderMock.getOriginalVersion()).thenReturn(originalOrderMock);
+
+        testObj.afterSave(ImmutableList.of(afterSaveOtherEvent));
 
         verifyZeroInteractions(ns8ApiService);
     }

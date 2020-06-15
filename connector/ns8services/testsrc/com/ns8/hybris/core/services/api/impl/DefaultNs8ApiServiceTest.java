@@ -75,7 +75,7 @@ public class DefaultNs8ApiServiceTest {
     @Mock
     private RestTemplate restTemplateMock;
     @Mock
-    private Converter<NS8MerchantModel, Ns8MerchantData> merchantConverterMock;
+    private Converter<NS8MerchantModel, Ns8PluginInstallRequest> pluginInstallRequestConverterMock;
     @Mock
     private Converter<OrderModel, Ns8OrderData> ns8OrderDataConverterMock;
     @Mock
@@ -88,7 +88,7 @@ public class DefaultNs8ApiServiceTest {
     @Mock
     private NS8MerchantModel ns8MerchantMock;
     @Mock
-    private Ns8MerchantData convertedMerchantMock;
+    private Ns8PluginInstallRequest ns8PluginInstallRequestMock;
     @Mock
     private PluginInstallResponseData pluginInstallResponseDataMock;
     @Mock(answer = RETURNS_DEEP_STUBS)
@@ -112,14 +112,14 @@ public class DefaultNs8ApiServiceTest {
     @Before
     public void setUp() {
         Whitebox.setInternalState(testObj, "ns8OrderDataConverter", ns8OrderDataConverterMock);
-        Whitebox.setInternalState(testObj, "ns8MerchantDataConverter", merchantConverterMock);
+        Whitebox.setInternalState(testObj, "ns8PluginInstallRequestConverter", pluginInstallRequestConverterMock);
         Whitebox.setInternalState(testObj, "ns8UpdateOrderStatusConverter", ns8UpdateOrderStatusConverterMock);
         doReturn("prettyObject").when(testObj).prettyPrint(any());
         when(ns8EndpointServiceMock.getBaseBackendURL()).thenReturn(BASE_BACKEND_URL);
         when(ns8EndpointServiceMock.getBaseClientURL()).thenReturn(BASE_CLIENT_URL);
         when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY)).thenReturn(PLATFORM_NAME_VALUE);
 
-        when(merchantConverterMock.convert(ns8MerchantMock)).thenReturn(convertedMerchantMock);
+        when(pluginInstallRequestConverterMock.convert(ns8MerchantMock)).thenReturn(ns8PluginInstallRequestMock);
         when(ns8OrderDataConverterMock.convert(orderMock)).thenReturn(ns8OrderDataMock);
         when(ns8UpdateOrderStatusConverterMock.convert(orderMock)).thenReturn(ns8UpdateOrderStatusMock);
         when(orderMock.getSite().getNs8Merchant()).thenReturn(ns8MerchantMock);
@@ -143,7 +143,7 @@ public class DefaultNs8ApiServiceTest {
 
         testObj.triggerPluginInstallEvent(ns8MerchantMock);
 
-        assertThat(httpEntityCaptor.getValue().getBody()).isEqualTo(convertedMerchantMock);
+        assertThat(httpEntityCaptor.getValue().getBody()).isEqualTo(ns8PluginInstallRequestMock);
         verify(ns8MerchantMock).setApiKey(ACCESS_TOKEN_FROM_RESPONSE);
         verify(ns8MerchantMock).setQueueId(QUEUE_ID_FROM_RESPONSE);
         verify(ns8MerchantMock).setEnabled(true);
@@ -530,7 +530,7 @@ public class DefaultNs8ApiServiceTest {
 
         boolean result = testObj.triggerMerchantReinstallEvent(ns8MerchantMock);
 
-        assertThat(httpEntityCaptor.getValue().getBody()).isEqualTo(convertedMerchantMock);
+        assertThat(httpEntityCaptor.getValue().getBody()).isEqualTo(ns8PluginInstallRequestMock);
         assertThat(result).isEqualTo(true);
     }
 

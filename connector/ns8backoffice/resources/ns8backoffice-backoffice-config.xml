@@ -48,6 +48,7 @@
                         <editorArea:attribute qualifier="riskEventPayload"/>
                         <editorArea:attribute qualifier="score"/>
                         <editorArea:attribute qualifier="ns8Status"/>
+                        <editorArea:attribute qualifier="sendOrderToNs8" readonly="true"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
@@ -192,14 +193,16 @@
 
     <context component="listview" type="Order" merge-by="type" parent="AbstractOrder">
         <list-view:list-view refresh-after-object-creation="true">
-            <list-view:column qualifier="score" hflex="true"/>
+            <list-view:column qualifier="score" hflex="true" spring-bean="ns8ScoreRenderer"
+                              label="ns8backoffice.list.view.abstractorder.score"/>
             <list-view:column qualifier="ns8Status" hflex="true"/>
         </list-view:list-view>
     </context>
 
     <context component="cs-listview" type="Order" merge-by="type" parent="AbstractOrder">
         <list-view:list-view refresh-after-object-creation="true">
-            <list-view:column qualifier="score" hflex="true"/>
+            <list-view:column qualifier="score" hflex="true" spring-bean="ns8ScoreRenderer"
+                              label="ns8backoffice.list.view.abstractorder.score"/>
             <list-view:column qualifier="ns8Status" hflex="true"/>
         </list-view:list-view>
     </context>

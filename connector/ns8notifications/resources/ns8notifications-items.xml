@@ -12,7 +12,6 @@
             <value code="PENDING"/>
             <value code="COMPLETED"/>
             <value code="FAILED"/>
-            <value code="IGNORED"/>
         </enumtype>
     </enumtypes>
 

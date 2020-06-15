@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+    <alias name="defaultNs8SendOrderToNs8PrepareInterceptor" alias="ns8SendOrderToNs8PrepareInterceptor"/>
+    <bean id="defaultNs8SendOrderToNs8PrepareInterceptor"
+          class="com.ns8.hybris.core.order.interceptors.Ns8SendOrderToNs8PrepareInterceptor">
+        <constructor-arg name="orderStatuses" ref="orderStatuses"/>
+    </bean>
+
+    <alias name="orderStatusesList" alias="orderStatuses"/>
+    <util:list id="orderStatusesList" value-type="de.hybris.platform.core.enums.OrderStatus">
+        <value>CANCELLED</value>
+        <value>COMPLETED</value>
+        <value>PAYMENT_NOT_CAPTURED</value>
+        <value>PAYMENT_CAPTURED</value>
+        <value>CANCELLING</value>
+        <value>FRAUD_CHECKED</value>
+        <value>SUSPENDED</value>
+    </util:list>
+
+    <bean id="ns8SendOrderToNs8PrepareInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="ns8SendOrderToNs8PrepareInterceptor"/>
+        <property name="typeCode" value="Order"/>
+    </bean>
+
+</beans>

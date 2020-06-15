@@ -9,5 +9,6 @@
     <import resource="spring/ns8services-converters-spring.xml"/>
     <import resource="spring/ns8services-daos-spring.xml"/>
     <import resource="spring/ns8services-strategies-spring.xml"/>
+    <import resource="spring/ns8services-interceptors-spring.xml"/>
 
 </beans>

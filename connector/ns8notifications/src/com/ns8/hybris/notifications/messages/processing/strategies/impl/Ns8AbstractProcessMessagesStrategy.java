@@ -5,14 +5,12 @@ import com.ns8.hybris.core.order.daos.Ns8OrderDao;
 import com.ns8.hybris.notifications.enums.Ns8MessageStatus;
 import com.ns8.hybris.notifications.messages.processing.strategies.Ns8ProcessMessagesStrategy;
 import com.ns8.hybris.notifications.model.Ns8QueueMessageModel;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Optional;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
@@ -28,20 +26,17 @@ public abstract class Ns8AbstractProcessMessagesStrategy implements Ns8ProcessMe
     protected ModelService modelService;
     protected BusinessProcessService businessProcessService;
     protected Ns8OrderDao orderDao;
-    protected List<OrderStatus> updateAllowedOrderStatuses;
     protected String providerName;
     protected Ns8FraudService ns8FraudService;
 
     public Ns8AbstractProcessMessagesStrategy(final ModelService modelService,
                                               final BusinessProcessService businessProcessService,
                                               final Ns8OrderDao orderDao,
-                                              final List<OrderStatus> updateAllowedOrderStatuses,
                                               final String providerName,
                                               final Ns8FraudService ns8FraudService) {
         this.modelService = modelService;
         this.businessProcessService = businessProcessService;
         this.orderDao = orderDao;
-        this.updateAllowedOrderStatuses = updateAllowedOrderStatuses;
         this.providerName = providerName;
         this.ns8FraudService = ns8FraudService;
     }
@@ -59,21 +54,12 @@ public abstract class Ns8AbstractProcessMessagesStrategy implements Ns8ProcessMe
 
         final Optional<OrderModel> orderForCode = orderDao.findOrderForCode(message.getOrderId());
 
-        if (orderForCode.isEmpty()) {
-            updateFailReason(String.format("Order model not found for the following order id [%s].", message.getOrderId()),
-                    message);
-            updateMessageStatus(message, Ns8MessageStatus.FAILED);
-        } else {
-            final OrderModel order = orderForCode.get();
-
-            if (updateAllowedOrderStatuses.contains(order.getStatus())) {
-                processMessageForOrder(message, order);
-            } else {
-                updateFailReason(String.format("Ignored because the order with id [%s] is in [%s] status. No further update is allowed", message.getOrderId(), order.getStatus().toString()),
-                        message);
-                updateMessageStatus(message, Ns8MessageStatus.IGNORED);
-            }
-        }
+        orderForCode.ifPresentOrElse(order -> processMessageForOrder(message, order),
+                () -> {
+                    updateFailReason(String.format("Order model not found for the following order id [%s].", message.getOrderId()),
+                            message);
+                    updateMessageStatus(message, Ns8MessageStatus.FAILED);
+                });
     }
 
     /**

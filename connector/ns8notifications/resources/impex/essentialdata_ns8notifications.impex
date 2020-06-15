@@ -8,5 +8,4 @@ INSERT_UPDATE Ns8ProcessMessagesCronJob; code[unique = true]       ; job(code)  
 
 INSERT_UPDATE Ns8QueueMessagesCleanUpCronJob; code[unique = true]                     ; job(code)                  ; ns8MessageStatus(code); ageInDaysBeforeDeletion; sessionLanguage(isoCode)[default = en]
                                             ; ns8CompletedQueueMessagesCleanupCronJob ; ns8QueueMessagesCleanUpJob ; COMPLETED             ; 5                      ;
-                                            ; ns8IgnoredQueueMessagesCleanupCronJob   ; ns8QueueMessagesCleanUpJob ; IGNORED               ; 5                      ;
                                             ; ns8FailedQueueMessagesCleanupCronJob    ; ns8QueueMessagesCleanUpJob ; FAILED                ; 30                     ;

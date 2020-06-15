@@ -5,12 +5,9 @@ import com.ns8.hybris.core.order.daos.Ns8OrderDao;
 import com.ns8.hybris.notifications.enums.Ns8MessageStatus;
 import com.ns8.hybris.notifications.messages.processing.strategies.Ns8ProcessMessagesStrategy;
 import com.ns8.hybris.notifications.model.Ns8QueueMessageModel;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
-
-import java.util.List;
 
 /**
  * {@link Ns8ProcessMessagesStrategy} implementation to process messages with action type UPDATE_ORDER_RISK_EVENT
@@ -20,10 +17,9 @@ public class Ns8ProcessUpdateOrderRiskMessagesStrategy extends Ns8AbstractProces
     public Ns8ProcessUpdateOrderRiskMessagesStrategy(final ModelService modelService,
                                                      final BusinessProcessService businessProcessService,
                                                      final Ns8OrderDao orderDao,
-                                                     final List<OrderStatus> updateAllowedOrderStatuses,
                                                      final String providerName,
                                                      final Ns8FraudService ns8FraudService) {
-        super(modelService, businessProcessService, orderDao, updateAllowedOrderStatuses, providerName, ns8FraudService);
+        super(modelService, businessProcessService, orderDao, providerName, ns8FraudService);
     }
 
     /**

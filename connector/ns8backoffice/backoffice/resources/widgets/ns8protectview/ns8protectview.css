@@ -1,7 +1,11 @@
+.yw-com_hybris_backoffice_widgets_ns8_ns8protectview.widget_body.z-div {
+    height: 100%;
+}
+
 div#ns8-protect-dashboard-wrapper iframe {
     overflow-y: scroll !important;
     width: 100%;
-    height: auto;
+    height: 100vh !important;
     max-height: calc(100vh - 100px);
     border: 0;
 }

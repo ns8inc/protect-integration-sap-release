@@ -23,4 +23,9 @@
     <bean id="defaultNS8AccessOrderAction"
           class=" com.ns8.hybris.backoffice.actions.order.Ns8AccessOrderAction"/>
 
+    <alias name="defaultNs8ScoreRenderer" alias="ns8ScoreRenderer"/>
+    <bean id="defaultNs8ScoreRenderer"
+          class="com.ns8.hybris.backoffice.listview.renderer.Ns8ScoreRenderer">
+    </bean>
+
 </beans>

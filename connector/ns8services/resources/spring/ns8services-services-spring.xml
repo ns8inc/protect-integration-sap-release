@@ -34,7 +34,7 @@
     <bean id="defaultNs8ApiService" class="com.ns8.hybris.core.services.api.impl.DefaultNs8ApiService">
         <constructor-arg name="configurationService" ref="configurationService"/>
         <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
-        <constructor-arg name="ns8MerchantDataConverter" ref="ns8MerchantDataConverter"/>
+        <constructor-arg name="ns8PluginInstallRequestConverter" ref="ns8PluginInstallRequestConverter"/>
         <constructor-arg name="ns8OrderDataConverter" ref="ns8OrderDataConverter"/>
         <constructor-arg name="ns8UpdateOrderStatusConverter" ref="ns8UpdateOrderStatusConverter"/>
         <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
@@ -85,17 +85,6 @@
     <bean id="defaultNs8OrderAfterSaveListener" class="com.ns8.hybris.core.listeners.Ns8OrderAfterSaveListener">
         <constructor-arg name="modelService" ref="modelService"/>
         <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
-        <constructor-arg name="orderStatuses">
-            <list value-type="de.hybris.platform.core.enums.OrderStatus">
-                <value>CANCELLED</value>
-                <value>COMPLETED</value>
-                <value>PAYMENT_NOT_CAPTURED</value>
-                <value>PAYMENT_CAPTURED</value>
-                <value>CANCELLING</value>
-                <value>FRAUD_CHECKED</value>
-                <value>SUSPENDED</value>
-            </list>
-        </constructor-arg>
     </bean>
 
     <alias name="defaultNs8PopulateSessionVarsPlaceOrderMethodHook" alias="ns8PopulateSessionVarsPlaceOrderMethodHook"/>
