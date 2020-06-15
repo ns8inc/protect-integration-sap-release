@@ -4,6 +4,8 @@
         xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd "
         height="100%">
 
+    <style src="${wr}/ns8merchantactivation.css"/>
+
     <div id="mainCnt" width="100%" style="position: relative;" height="100%">
         <div height="100%" style="background: white;overflow: auto;">
             <vlayout spacing="30px" sclass="yrb-modal-content">

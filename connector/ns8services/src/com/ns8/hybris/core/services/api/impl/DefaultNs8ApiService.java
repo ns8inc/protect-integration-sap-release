@@ -45,7 +45,7 @@ public class DefaultNs8ApiService implements Ns8ApiService {
     protected static final String BEARER = "Bearer ";
 
     protected final RestTemplate restTemplate;
-    protected final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter;
+    protected final Converter<NS8MerchantModel, Ns8PluginInstallRequest> ns8PluginInstallRequestConverter;
     protected final Converter<OrderModel, Ns8UpdateOrderStatus> ns8UpdateOrderStatusConverter;
     protected final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter;
     protected final ConfigurationService configurationService;
@@ -53,14 +53,14 @@ public class DefaultNs8ApiService implements Ns8ApiService {
     protected final ModelService modelService;
 
     public DefaultNs8ApiService(final RestTemplate restTemplate,
-                                final Converter<NS8MerchantModel, Ns8MerchantData> ns8MerchantDataConverter,
+                                final Converter<NS8MerchantModel, Ns8PluginInstallRequest> ns8PluginInstallRequestConverter,
                                 final Converter<OrderModel, Ns8UpdateOrderStatus> ns8UpdateOrderStatusConverter,
                                 final Converter<OrderModel, Ns8OrderData> ns8OrderDataConverter,
                                 final ConfigurationService configurationService,
                                 final Ns8EndpointService ns8EndpointService,
                                 final ModelService modelService) {
         this.restTemplate = restTemplate;
-        this.ns8MerchantDataConverter = ns8MerchantDataConverter;
+        this.ns8PluginInstallRequestConverter = ns8PluginInstallRequestConverter;
         this.ns8UpdateOrderStatusConverter = ns8UpdateOrderStatusConverter;
         this.ns8OrderDataConverter = ns8OrderDataConverter;
         this.configurationService = configurationService;
@@ -76,21 +76,21 @@ public class DefaultNs8ApiService implements Ns8ApiService {
         final String platform = configurationService.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY);
         final String backendAPIURL = ns8EndpointService.getBaseBackendURL();
 
-        final Ns8MerchantData ns8MerchantData = ns8MerchantDataConverter.convert(ns8Merchant);
+        final Ns8PluginInstallRequest ns8PluginInstallRequest = ns8PluginInstallRequestConverter.convert(ns8Merchant);
         final String requestUrl = backendAPIURL + PROTECT_PLATFORM_INSTALL_URL + platform;
 
         final ResponseEntity<PluginInstallResponseData> responseEntity;
 
         try {
-            responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity(ns8MerchantData), PluginInstallResponseData.class);
+            responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity(ns8PluginInstallRequest), PluginInstallResponseData.class);
             updateMerchantFromNS8Response(ns8Merchant, responseEntity.getBody());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Installation of NS8 Merchant failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", () -> requestUrl, () -> prettyPrint(ns8MerchantData), e::getStatusCode, e::getResponseBodyAsString);
+            LOG.error("Installation of NS8 Merchant failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", () -> requestUrl, () -> prettyPrint(ns8PluginInstallRequest), e::getStatusCode, e::getResponseBodyAsString);
             final String errorDetails = getErrorDetails(e);
             throw new Ns8IntegrationException("Installation of NS8 Merchant failed. " + errorDetails, e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Installation of NS8 Merchant failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
-                    () -> requestUrl, () -> prettyPrint(ns8MerchantData), () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
+                    () -> requestUrl, () -> prettyPrint(ns8PluginInstallRequest), () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
             throw new Ns8IntegrationException("Installation of NS8 Merchant failed due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
 
@@ -122,12 +122,12 @@ public class DefaultNs8ApiService implements Ns8ApiService {
      */
     @Override
     public boolean triggerMerchantReinstallEvent(final NS8MerchantModel ns8Merchant) {
-        final Ns8MerchantData ns8MerchantData = ns8MerchantDataConverter.convert(ns8Merchant);
+        final Ns8PluginInstallRequest ns8PluginInstallRequest = ns8PluginInstallRequestConverter.convert(ns8Merchant);
         final String backendAPIURL = ns8EndpointService.getBaseBackendURL();
         final String platform = configurationService.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY);
         final String requestUrl = backendAPIURL + PROTECT_PLATFORM_REINSTALL_URL + platform;
 
-        final HttpEntity<Object> request = buildHttpEntity(ns8Merchant.getApiKey(), ns8MerchantData);
+        final HttpEntity<Object> request = buildHttpEntity(ns8Merchant.getApiKey(), ns8PluginInstallRequest);
         final ResponseEntity<MerchantReactivateResponseData> responseEntity;
 
         try {

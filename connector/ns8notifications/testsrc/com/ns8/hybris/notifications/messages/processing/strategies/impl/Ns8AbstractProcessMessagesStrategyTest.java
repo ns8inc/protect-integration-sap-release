@@ -19,8 +19,6 @@ import org.mockito.Spy;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -49,8 +47,6 @@ public class Ns8AbstractProcessMessagesStrategyTest {
     @Mock
     private OrderModel orderMock;
 
-    private List<OrderStatus> updateAllowedOrderStatuses = Arrays.asList(OrderStatus.FRAUD_SCORE_PENDING, OrderStatus.FRAUD_SCORED, OrderStatus.WAIT_FRAUD_MANUAL_CHECK);
-
     @Before
     public void setUp() {
         testObj = Mockito.mock(
@@ -59,7 +55,6 @@ public class Ns8AbstractProcessMessagesStrategyTest {
         Whitebox.setInternalState(testObj, "modelService", modelServiceMock);
         Whitebox.setInternalState(testObj, "businessProcessService", businessProcessServiceMock);
         Whitebox.setInternalState(testObj, "orderDao", orderDaoMock);
-        Whitebox.setInternalState(testObj, "updateAllowedOrderStatuses", updateAllowedOrderStatuses);
         Whitebox.setInternalState(testObj, "ns8FraudService", ns8FraudServiceMock);
 
         when(messageMock.getBody()).thenReturn(BODY_PAYLOAD);
@@ -75,21 +70,6 @@ public class Ns8AbstractProcessMessagesStrategyTest {
         final InOrder inOrder = inOrder(orderDaoMock, testObj);
         inOrder.verify(orderDaoMock).findOrderForCode(ORDER_ID);
         inOrder.verify(testObj).processMessageForOrder(messageMock, orderMock);
-    }
-
-    @Test
-    public void processMessage_WhenOrderFoundButNotInAllowedUpdateStatuses_ShouldIgnoreTheMessage() {
-        when(orderMock.getStatus()).thenReturn(OrderStatus.SUSPENDED);
-
-        testObj.processMessage(messageMock);
-
-        final InOrder inOrder = inOrder(orderDaoMock, messageMock, modelServiceMock);
-        inOrder.verify(orderDaoMock).findOrderForCode(ORDER_ID);
-        inOrder.verify(messageMock).setFailReason(Mockito.anyString());
-        inOrder.verify(messageMock).setStatus(Ns8MessageStatus.IGNORED);
-        inOrder.verify(modelServiceMock).save(messageMock);
-
-        verify(testObj, never()).processMessageForOrder(messageMock, orderMock);
     }
 
     @Test

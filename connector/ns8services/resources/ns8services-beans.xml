@@ -1,11 +1,13 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
 
-    <bean class="com.ns8.hybris.core.data.Ns8MerchantData">
+    <bean class="com.ns8.hybris.core.data.Ns8PluginInstallRequest">
         <property name="email" type="java.lang.String"/>
         <property name="storeUrl" type="java.lang.String"/>
         <property name="firstName" type="java.lang.String"/>
         <property name="lastName" type="java.lang.String"/>
         <property name="phone" type="java.lang.String"/>
+        <property name="moduleVersion" type="java.lang.String"/>
+        <property name="platformVersion" type="java.lang.String"/>
     </bean>
 
     <bean class="com.ns8.hybris.core.data.PluginInstallResponseData">

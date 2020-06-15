@@ -62,7 +62,7 @@
                     <persistence type="property"/>
                 </attribute>
                 <attribute qualifier="enabled" type="java.lang.Boolean">
-                    <modifiers write="true" read="true" unique="false"/>
+                    <modifiers write="true" read="true" unique="false" optional="false"/>
                     <persistence type="property"/>
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
@@ -136,6 +136,11 @@
                     <description>Dynamic attribute that shows the NS8 order status.</description>
                     <persistence type="dynamic" attributeHandler="ns8OrderStatusAttributeHandler"/>
                     <modifiers read="true" write="false" search="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="sendOrderToNs8" type="java.lang.Boolean">
+                    <modifiers write="true" read="true" unique="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
             </attributes>
         </itemtype>

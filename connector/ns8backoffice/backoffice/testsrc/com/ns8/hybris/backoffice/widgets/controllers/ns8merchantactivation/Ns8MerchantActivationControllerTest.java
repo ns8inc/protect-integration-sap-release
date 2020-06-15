@@ -13,6 +13,7 @@ import com.ns8.hybris.core.model.NS8MerchantModel;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,7 @@ public class Ns8MerchantActivationControllerTest {
     private static final String NS8_STORE_URL_VALIDATION_ERROR = "Store Url needs to be a valid and secure url.";
     private static final String NS8_FIELD_LENGTH_VALIDATION_ERROR = "Field length can not exceed [200] characters.";
     private static final String NS8_MANDATORY_FIELD_VALIDATION_ERROR = "LField is required.";
-    private static final String LONG_STRING = "qqqqqqqqqqwwwwwwwwwweeeeeeeeeerrrrrrrrrrttttttttttyyyyyyyyyyuuuuuuuuuuiiiiiiiiiioooooooooopppppppppp@aaaaaaaaaassssssssssddddddddddffffffffffggggggggggghhhhhhhhhhjjjjjjjjjjjkkkkkkkkkkkllllllllll.zzzzzz";
+    private static final String LONG_STRING = RandomStringUtils.random(201);
 
     @Spy
     @InjectMocks
@@ -126,7 +127,8 @@ public class Ns8MerchantActivationControllerTest {
 
     @Test
     public void handleEmailChange_WhenEmailTooLong_ShouldThrowException() {
-        Whitebox.setInternalState(testObj, "email", new Textbox(LONG_STRING));
+        final String longEmail = RandomStringUtils.random(185) + "@" + RandomStringUtils.random(10) + "." + RandomStringUtils.random(5);
+        Whitebox.setInternalState(testObj, "email", new Textbox(longEmail));
 
         final Throwable thrown = catchThrowable(() -> testObj.handleEmailChange(eventMock));
 
@@ -181,6 +183,17 @@ public class Ns8MerchantActivationControllerTest {
     }
 
     @Test
+    public void handleOptionalFieldsOnChange_WhenFirstNameIsEmpty_ShouldThrowException() {
+        Whitebox.setInternalState(testObj, "merchantFirstName", new Textbox("  "));
+
+        final Throwable thrown = catchThrowable(() -> testObj.handleMerchantFirstNameChange(eventMock));
+
+        assertThat(thrown)
+                .isInstanceOf(WrongValueException.class)
+                .withFailMessage(NS8_MANDATORY_FIELD_VALIDATION_ERROR);
+    }
+
+    @Test
     public void handleOptionalFieldsOnChange_WhenFirstNameTooLong_ShouldThrowException() {
         Whitebox.setInternalState(testObj, "merchantFirstName", new Textbox(LONG_STRING));
 
@@ -192,6 +205,17 @@ public class Ns8MerchantActivationControllerTest {
     }
 
     @Test
+    public void handleOptionalFieldsOnChange_WhenLastNameIsEmpty_ShouldThrowException() {
+        Whitebox.setInternalState(testObj, "merchantLastName", new Textbox("  "));
+
+        final Throwable thrown = catchThrowable(() -> testObj.handleMerchantLastNameChange(eventMock));
+
+        assertThat(thrown)
+                .isInstanceOf(WrongValueException.class)
+                .withFailMessage(NS8_MANDATORY_FIELD_VALIDATION_ERROR);
+    }
+
+    @Test
     public void handleOptionalFieldsOnChange_WhenLastNameTooLong_ShouldThrowException() {
         Whitebox.setInternalState(testObj, "merchantLastName", new Textbox(LONG_STRING));
 
@@ -200,6 +224,17 @@ public class Ns8MerchantActivationControllerTest {
         assertThat(thrown)
                 .isInstanceOf(WrongValueException.class)
                 .withFailMessage(NS8_FIELD_LENGTH_VALIDATION_ERROR);
+    }
+
+    @Test
+    public void handleOptionalFieldsOnChange_WhenPhoneNumberIsEmpty_ShouldThrowException() {
+        Whitebox.setInternalState(testObj, "phoneNumber", new Textbox("  "));
+
+        final Throwable thrown = catchThrowable(() -> testObj.handleMerchantPhoneNumberChange(eventMock));
+
+        assertThat(thrown)
+                .isInstanceOf(WrongValueException.class)
+                .withFailMessage(NS8_MANDATORY_FIELD_VALIDATION_ERROR);
     }
 
     @Test

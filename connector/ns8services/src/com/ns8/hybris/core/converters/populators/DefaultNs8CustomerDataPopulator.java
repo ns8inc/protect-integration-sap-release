@@ -11,6 +11,10 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Populates the information of the {@link OrderModel} into a {@link Ns8TransactionData}
  */
@@ -55,10 +59,20 @@ public class DefaultNs8CustomerDataPopulator implements Populator<OrderModel, Ns
      * @return customer's first name and last name concatenated
      */
     protected String[] getFirstAndLastName(final CustomerModel customer) {
-        final String name = customer.getName();
-        final String[] firstNameLastName = new String[2];
-        firstNameLastName[0] = name.split(" ")[0];
-        firstNameLastName[1] = name.substring(name.indexOf(' ')).trim();
-        return firstNameLastName;
+        final List<String> fullNameSplit = Arrays.stream(customer.getName().split(" "))
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+
+        final String firstName = fullNameSplit.get(0);
+        final String lastName;
+
+        if (fullNameSplit.size() == 1) {
+            lastName = firstName;
+        } else {
+            fullNameSplit.remove(0);
+            lastName = String.join(" ", fullNameSplit);
+        }
+
+        return new String[]{firstName, lastName};
     }
 }

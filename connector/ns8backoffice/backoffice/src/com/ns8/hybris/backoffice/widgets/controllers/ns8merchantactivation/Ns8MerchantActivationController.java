@@ -139,7 +139,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     }
 
     /**
-     * Adds event listeners for the fields to handle onChange event
+     * Adds event listeners for the fields to handle field change validation
      */
     protected void addMerchantFieldListeners() {
         addMerchantFieldListenersForEventType(Events.ON_BLUR);
@@ -157,7 +157,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     /**
      * Validates the email field change, shows error messages if field is not valid
      *
-     * @param event the onChange email event
+     * @param event the event
      */
     protected void handleEmailChange(final Event event) {
         final String emailValue = this.email.getValue();
@@ -175,7 +175,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     /**
      * Validates the storeUrl field change, shows error messages if field is not valid
      *
-     * @param event the onChange email event
+     * @param event the event
      */
     protected void handleStoreUrlChange(final Event event) {
         final String storeUrlValue = this.storeUrl.getValue();
@@ -193,10 +193,14 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     /**
      * Validates the merchantFirstName field change, shows error messages if field is not valid
      *
-     * @param event the onChange email event
+     * @param event the event
      */
     protected void handleMerchantFirstNameChange(final Event event) {
-        if (isFiledLengthInvalid(this.merchantFirstName.getValue())) {
+        final String merchantFirstNameValue = this.merchantFirstName.getValue();
+        if (StringUtils.isBlank(merchantFirstNameValue)) {
+            throw new WrongValueException(this.merchantFirstName, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
+        }
+        if (isFiledLengthInvalid(merchantFirstNameValue)) {
             throw new WrongValueException(this.merchantFirstName, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
     }
@@ -204,10 +208,14 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     /**
      * Validates the merchantLastName field change, shows error messages if field is not valid
      *
-     * @param event the onChange email event
+     * @param event event
      */
     protected void handleMerchantLastNameChange(final Event event) {
-        if (isFiledLengthInvalid(this.merchantLastName.getValue())) {
+        final String merchantLastNameValue = this.merchantLastName.getValue();
+        if (StringUtils.isBlank(merchantLastNameValue)) {
+            throw new WrongValueException(this.merchantLastName, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
+        }
+        if (isFiledLengthInvalid(merchantLastNameValue)) {
             throw new WrongValueException(this.merchantLastName, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
     }
@@ -215,9 +223,13 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     /**
      * Validates the phoneNumber field change, shows error messages if field is not valid
      *
-     * @param event the onChange email event
+     * @param event the event
      */
     protected void handleMerchantPhoneNumberChange(final Event event) {
+        final String phoneNumberValue = this.phoneNumber.getValue();
+        if (StringUtils.isBlank(phoneNumberValue)) {
+            throw new WrongValueException(this.phoneNumber, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
+        }
         if (isFiledLengthInvalid(this.phoneNumber.getValue())) {
             throw new WrongValueException(this.phoneNumber, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <alias name="defaultNs8AbstractProcessMessagesStrategy" alias="ns8AbstractProcessMessagesStrategy"/>
     <bean name="defaultNs8AbstractProcessMessagesStrategy"
@@ -13,17 +11,9 @@
         <constructor-arg name="modelService" ref="modelService"/>
         <constructor-arg name="businessProcessService" ref="businessProcessService"/>
         <constructor-arg name="orderDao" ref="orderDao"/>
-        <constructor-arg name="updateAllowedOrderStatuses" ref="ns8UpdateAllowedOrderStatuses"/>
         <constructor-arg name="providerName" value="NS8_FraudServiceProvider"/>
         <constructor-arg name="ns8FraudService" ref="ns8FraudService"/>
     </bean>
-
-    <alias name="defaultNs8UpdateAllowedOrderStatuses" alias="ns8UpdateAllowedOrderStatuses"/>
-    <util:list id="defaultNs8UpdateAllowedOrderStatuses">
-        <value>FRAUD_SCORE_PENDING</value>
-        <value>FRAUD_SCORED</value>
-        <value>WAIT_FRAUD_MANUAL_CHECK</value>
-    </util:list>
 
     <alias name="defaultNs8ProcessUpdateOrderRiskMessagesStrategy" alias="ns8ProcessUpdateOrderRiskMessagesStrategy"/>
     <bean id="defaultNs8ProcessUpdateOrderRiskMessagesStrategy"

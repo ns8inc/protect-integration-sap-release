@@ -13,7 +13,6 @@ import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,10 +30,9 @@ public class Ns8ProcessUpdateOrderStatusMessagesStrategy extends Ns8AbstractProc
     public Ns8ProcessUpdateOrderStatusMessagesStrategy(final ModelService modelService,
                                                        final BusinessProcessService businessProcessService,
                                                        final Ns8OrderDao orderDao,
-                                                       final List<OrderStatus> updateAllowedOrderStatuses,
                                                        final String providerName,
                                                        final Ns8FraudService ns8FraudService) {
-        super(modelService, businessProcessService, orderDao, updateAllowedOrderStatuses, providerName, ns8FraudService);
+        super(modelService, businessProcessService, orderDao, providerName, ns8FraudService);
     }
 
     /**

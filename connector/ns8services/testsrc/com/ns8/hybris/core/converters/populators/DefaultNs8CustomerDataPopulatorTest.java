@@ -43,7 +43,6 @@ public class DefaultNs8CustomerDataPopulatorTest {
     private Ns8CustomerData ns8Customer;
     private Date creationTime;
 
-
     @Before
     public void setUp() {
         creationTime = new Date();
@@ -79,7 +78,7 @@ public class DefaultNs8CustomerDataPopulatorTest {
     }
 
     @Test
-    public void populate_phone1NotPresent_shouldUsePhone2() {
+    public void populate_WhenPhone1NotPresent_ShouldUsePhone2() {
         when(paymentAddressMock.getPhone1()).thenReturn(null);
 
         testObj.populate(orderMock, ns8Customer);
@@ -88,7 +87,47 @@ public class DefaultNs8CustomerDataPopulatorTest {
     }
 
     @Test
-    public void populate_userNotInstanceOfCustomer_shouldThrowException() {
+    public void populate_WhenLastNameNotPresent_ShouldFirstName() {
+        when(customerMock.getName()).thenReturn(FIRST_NAME);
+
+        testObj.populate(orderMock, ns8Customer);
+
+        assertThat(ns8Customer.getFirstName()).isEqualTo(FIRST_NAME);
+        assertThat(ns8Customer.getLastName()).isEqualTo(FIRST_NAME);
+    }
+
+    @Test
+    public void populate_WhenContainingMultipleSpace_ShouldReturnFirstAndLastNameWithoutExtraSpaces() {
+        when(customerMock.getName()).thenReturn("   " + FIRST_NAME + "    " + " Last  Name     Test           ");
+
+        testObj.populate(orderMock, ns8Customer);
+
+        assertThat(ns8Customer.getFirstName()).isEqualTo(FIRST_NAME);
+        assertThat(ns8Customer.getLastName()).isEqualTo("Last Name Test");
+    }
+
+    @Test
+    public void populate_WhenContainingMultipleSpaceAndNameDuplicated_ShouldReturnFirstAndLastNameCorrectly() {
+        when(customerMock.getName()).thenReturn("   " + FIRST_NAME + "    " + FIRST_NAME + " Last  Name");
+
+        testObj.populate(orderMock, ns8Customer);
+
+        assertThat(ns8Customer.getFirstName()).isEqualTo(FIRST_NAME);
+        assertThat(ns8Customer.getLastName()).isEqualTo(FIRST_NAME + " " + "Last Name");
+    }
+
+    @Test
+    public void populate_WhenNameHasLeadingSpacesAndNoLastName_ShouldSetFirstNameInBothCases() {
+        when(customerMock.getName()).thenReturn("   " + FIRST_NAME + " ");
+
+        testObj.populate(orderMock, ns8Customer);
+
+        assertThat(ns8Customer.getFirstName()).isEqualTo(FIRST_NAME);
+        assertThat(ns8Customer.getLastName()).isEqualTo(FIRST_NAME);
+    }
+
+    @Test
+    public void populate_WhenUserNotInstanceOfCustomer_ShouldThrowException() {
         when(orderMock.getUser()).thenReturn(Mockito.mock(UserModel.class));
 
         final Throwable thrown = catchThrowable(() -> testObj.populate(orderMock, ns8Customer));
