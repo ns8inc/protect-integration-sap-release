@@ -127,6 +127,27 @@
                         </columntype>
                     </persistence>
                 </attribute>
+                <attribute qualifier="ns8OrderPayload" type="java.lang.String">
+                    <description>Order payload with details received from Ns8</description>
+                    <modifiers optional="true"/>
+                    <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>MEDIUMTEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype>
+                            <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                    </persistence>
+                </attribute>
                 <attribute qualifier="score" type="java.lang.Double">
                     <description>Dynamic attribute that shows the NS8 order score.</description>
                     <persistence type="dynamic" attributeHandler="ns8ScoreAttributeHandler"/>
@@ -177,7 +198,23 @@
                 </attribute>
                 <attribute qualifier="description" type="java.lang.String">
                     <modifiers write="true" read="true" unique="false"/>
-                    <persistence type="property"/>
+                    <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>MEDIUMTEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype>
+                            <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                    </persistence>
                 </attribute>
             </attributes>
         </itemtype>

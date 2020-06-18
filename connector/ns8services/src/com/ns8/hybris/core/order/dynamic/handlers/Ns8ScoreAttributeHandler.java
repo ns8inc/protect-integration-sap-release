@@ -2,25 +2,32 @@ package com.ns8.hybris.core.order.dynamic.handlers;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.fraud.model.FraudReportModel;
 import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Dynamic attribute handler to populate the score for the order from the payload
  */
 public class Ns8ScoreAttributeHandler extends Ns8AbstractOrderAttributeHandler implements DynamicAttributeHandler<Double, AbstractOrderModel> {
 
-    protected static final String SCORE_BODY_KEY = "score";
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Double get(final AbstractOrderModel model) {
-        if (model instanceof OrderModel) {
-            final Object scoreValue = getDynamicAttribute((OrderModel) model, SCORE_BODY_KEY);
-            return scoreValue != null ? Double.valueOf((String) scoreValue) : null;
-        }
-        return null;
+        return Optional.ofNullable(model)
+                .filter(OrderModel.class::isInstance)
+                .map(OrderModel.class::cast)
+                .map(OrderModel::getFraudReports)
+                .stream()
+                .flatMap(Collection::stream)
+                .map(FraudReportModel::getScore)
+                .filter(score -> score.compareTo(0D) >= 0)
+                .findAny()
+                .orElse(null);
     }
 
     /**

@@ -49,7 +49,7 @@ public class DefaultNs8FraudService implements Ns8FraudService {
     public boolean hasOrderBeenScored(final OrderModel order) {
         validateParameterNotNull(order, "Order cannot be null");
 
-        return StringUtils.isNotBlank(order.getRiskEventPayload());
+        return StringUtils.isNotBlank(order.getRiskEventPayload()) || StringUtils.isNotBlank(order.getNs8OrderPayload());
     }
 
     /**

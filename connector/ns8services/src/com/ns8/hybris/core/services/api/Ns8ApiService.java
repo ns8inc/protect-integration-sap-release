@@ -87,4 +87,11 @@ public interface Ns8ApiService {
      */
     Ns8OrderVerificationResponse sendVerification(Ns8OrderVerificationRequest orderVerificationRequest, String apiKey);
 
+    /**
+     * Retrieves and saves into OrderModel, the order information coming from Ns8
+     *
+     * @param orderModel the order we want to get info from Ns8
+     */
+    void getNs8Order(final OrderModel orderModel);
+
 }

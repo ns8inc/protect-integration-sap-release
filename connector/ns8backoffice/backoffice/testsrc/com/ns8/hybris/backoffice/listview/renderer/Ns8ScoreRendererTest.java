@@ -59,7 +59,15 @@ public class Ns8ScoreRendererTest {
     }
 
     @Test
-    public void render_shouldSetLabelWithAmountValue_WhenScoreIsNotEmpty() {
+    public void render_shouldSetLabelWithAmountValue_WhenRiskEventPayloadIsNotEmpty() {
+        testObj.render(listCellMock, columnConfigurationMock, orderModelMock, dataTypeMock, widgetInstanceManagerMock);
+        verify(listCellMock).setLabel(SCORE_VALUE_LABEL);
+    }
+
+    @Test
+    public void render_shouldSetLabelWithAmountValue_WhenRiskEventPayloadIsEmptyButNs8OrderPayloadIsNot() {
+        when(orderModelMock.getRiskEventPayload()).thenReturn(null);
+        when(orderModelMock.getNs8OrderPayload()).thenReturn(new Gson().toJson(createEventBody()));
         testObj.render(listCellMock, columnConfigurationMock, orderModelMock, dataTypeMock, widgetInstanceManagerMock);
         verify(listCellMock).setLabel(SCORE_VALUE_LABEL);
     }
@@ -72,8 +80,16 @@ public class Ns8ScoreRendererTest {
     }
 
     @Test
-    public void render_shouldSetNotAvailable_WhenPayloadIsEmpty() {
+    public void render_shouldSetNotAvailable_WhenRiskEventPayloadIsEmpty() {
         when(orderModelMock.getRiskEventPayload()).thenReturn(null);
+        testObj.render(listCellMock, columnConfigurationMock, orderModelMock, dataTypeMock, widgetInstanceManagerMock);
+        verify(listCellMock).setLabel(NOT_AVAILABLE_MESSAGE);
+    }
+
+    @Test
+    public void render_shouldSetNotAvailable_WhenRiskEventPayloadAndNs8OrderPayloadAreEmpty() {
+        when(orderModelMock.getRiskEventPayload()).thenReturn(null);
+        when(orderModelMock.getNs8OrderPayload()).thenReturn(null);
         testObj.render(listCellMock, columnConfigurationMock, orderModelMock, dataTypeMock, widgetInstanceManagerMock);
         verify(listCellMock).setLabel(NOT_AVAILABLE_MESSAGE);
     }

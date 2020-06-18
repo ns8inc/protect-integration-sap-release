@@ -10,8 +10,10 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.fraud.impl.AbstractFraudServiceProvider;
 import de.hybris.platform.fraud.impl.FraudServiceResponse;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,8 @@ public class DefaultNs8FraudServiceProvider extends AbstractFraudServiceProvider
     protected static final String CATEGORY_FACTOR_BODY_KEY = "category";
     protected static final String DESCRIPTION_FACTOR_BODY_KEY = "description";
     protected static final String EQ8_PROVIDER_TYPE = "EQ8";
+    protected static final String FRAUD_ASSESSTMENTS_BODY_KEY = "fraudAssessments";
+    protected static final String AD_HOC_SCORE = "AD_HOC_SCORE";
 
     /**
      * {@inheritDoc}
@@ -41,25 +45,28 @@ public class DefaultNs8FraudServiceProvider extends AbstractFraudServiceProvider
     @Override
     public FraudServiceResponse recognizeOrderFraudSymptoms(final AbstractOrderModel abstractOrder) {
 
-        final String riskEventPayload = abstractOrder.getRiskEventPayload();
-        final Map<String, Object> riskEventBodyMap = new Gson().fromJson(riskEventPayload, Map.class);
+        final String payload = StringUtils.isEmpty(abstractOrder.getRiskEventPayload()) ? abstractOrder.getNs8OrderPayload() : abstractOrder.getRiskEventPayload();
+        final Map<String, Object> payloadBodyMap = new Gson().fromJson(payload, Map.class);
 
-        if (MapUtils.isEmpty(riskEventBodyMap) || !riskEventBodyMap.containsKey(RISK_BODY_KEY) || !riskEventBodyMap.containsKey(SCORE_BODY_KEY)) {
+        if (MapUtils.isEmpty(payloadBodyMap) || (!payloadBodyMap.containsKey(RISK_BODY_KEY) || !payloadBodyMap.containsKey(SCORE_BODY_KEY) && (!payloadBodyMap.containsKey(FRAUD_ASSESSTMENTS_BODY_KEY) || getNs8Score(payloadBodyMap) == null))) {
             return null;
         }
 
-        final String risk = (String) riskEventBodyMap.get(RISK_BODY_KEY);
-        final String status = (String) riskEventBodyMap.get(STATUS_BODY_KEY);
-        final double score = Double.parseDouble((String) riskEventBodyMap.get(SCORE_BODY_KEY));
+        final String risk = (String) payloadBodyMap.get(RISK_BODY_KEY);
+        final String status = (String) payloadBodyMap.get(STATUS_BODY_KEY);
+        final Double score = payloadBodyMap.containsKey(SCORE_BODY_KEY) ? Double.parseDouble((String) payloadBodyMap.get(SCORE_BODY_KEY)) : getNs8Score(payloadBodyMap);
+        final String action = payloadBodyMap.containsKey(ACTION_BODY_KEY) ? (String) payloadBodyMap.get(ACTION_BODY_KEY) : AD_HOC_SCORE;
 
         final List<Ns8FraudSymptom> symptomList = new ArrayList<>();
-        if (riskEventBodyMap.containsKey(FRAUD_DATA_BODY_KEY)) {
-            final List<Map<String, Object>> fraudDatas = (List<Map<String, Object>>) riskEventBodyMap.get(FRAUD_DATA_BODY_KEY);
+        final String fraudDataKey = payloadBodyMap.containsKey(FRAUD_DATA_BODY_KEY) ? FRAUD_DATA_BODY_KEY : FRAUD_ASSESSTMENTS_BODY_KEY;
+
+        if (payloadBodyMap.containsKey(fraudDataKey)) {
+            final List<Map<String, Object>> fraudDatas = (List<Map<String, Object>>) payloadBodyMap.get(fraudDataKey);
 
             addFraudSymptoms(symptomList, fraudDatas);
         }
 
-        return new Ns8FraudServiceResponse(this.getProviderName(), score, Ns8FraudReportStatus.valueOf(status), Ns8FraudReportRisk.valueOf(risk), (String) riskEventBodyMap.get(ACTION_BODY_KEY), null, symptomList);
+        return new Ns8FraudServiceResponse(this.getProviderName(), score, Ns8FraudReportStatus.valueOf(status), Ns8FraudReportRisk.valueOf(risk), action, null, symptomList);
     }
 
     /**
@@ -100,6 +107,29 @@ public class DefaultNs8FraudServiceProvider extends AbstractFraudServiceProvider
         }
         return ns8FraudFactors;
     }
+
+    /**
+     * Obtains the Ns8 Score provided by EQ8
+     *
+     * @param ns8Payload the source factor list
+     * @return Ns8 score provided by EQ8 as a double. Null if not exists.
+     */
+    protected Double getNs8Score(final Map<String, Object> ns8Payload) {
+        if (!MapUtils.isEmpty(ns8Payload)) {
+            final List<Map<String, Object>> fraudAssesstments = (List<Map<String, Object>>) ns8Payload.get(FRAUD_ASSESSTMENTS_BODY_KEY);
+            if (CollectionUtils.isEmpty(fraudAssesstments)) {
+                return null;
+            } else {
+                return (Double) fraudAssesstments.stream()
+                        .filter(provider -> EQ8_PROVIDER_TYPE.equals(provider.get(PROVIDER_FRAUD_DATA_TYPE_BODY_KEY)))
+                        .findFirst()
+                        .get()
+                        .get(SCORE_BODY_KEY);
+            }
+        }
+        return null;
+    }
+
 
     /**
      * {@inheritDoc}

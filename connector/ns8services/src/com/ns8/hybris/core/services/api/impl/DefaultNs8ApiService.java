@@ -1,8 +1,7 @@
 package com.ns8.hybris.core.services.api.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.ns8.hybris.core.data.*;
 import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
 import com.ns8.hybris.core.model.NS8MerchantModel;
@@ -18,16 +17,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Base64;
 import java.util.Map;
 
 import static com.ns8.hybris.core.constants.Ns8servicesConstants.*;
@@ -388,5 +385,44 @@ public class DefaultNs8ApiService implements Ns8ApiService {
 
     protected String getNs8OrderVerificationContent(final ResponseEntity<String> responseEntity) {
         return new GsonBuilder().create().fromJson(responseEntity.getBody(), Ns8OrderVerificationResponse.class).getHtml();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getNs8Order(final OrderModel orderModel) {
+
+        final String orderCode = orderModel.getCode();
+        final UriComponents uri = getGetOrderUriComponents(Base64.getEncoder().encodeToString(orderCode.getBytes()));
+        Preconditions.checkArgument(orderModel.getSite() != null && orderModel.getSite().getNs8Merchant() != null
+                && StringUtils.isNotBlank(orderModel.getSite().getNs8Merchant().getApiKey()), "The merchant api key is mandatory to trigger the update order status.");
+        final HttpHeaders headers = buildHeadersWithAuthorization(orderModel.getSite().getNs8Merchant().getApiKey());
+        final HttpEntity request = new HttpEntity(headers);
+
+        try {
+            LOG.debug("Getting order [{}] from NS8", orderCode);
+            final ResponseEntity<String> responseEntity = restTemplate.exchange(uri.toString(), HttpMethod.GET, request, String.class);
+            orderModel.setNs8OrderPayload(responseEntity.getBody());
+            modelService.save(orderModel);
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Could not retrieve order [{}]. URL: [{}], status code [{}], error body: [{}].", () -> orderCode, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
+            throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+        } catch (final ResourceAccessException ex) {
+            LOG.error("Could not retrieve order [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> orderCode, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
+            throw new Ns8IntegrationException("Could not retrieve order from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+        }
+    }
+
+    /**
+     * Generates the URI components with a given set of parameters
+     *
+     * @param orderId the order id with base64 codification
+     */
+      protected UriComponents getGetOrderUriComponents(final String orderId) {
+        return UriComponentsBuilder.fromUriString(ns8EndpointService.getBaseClientURL())
+                .path(API_ORDER_URL + orderId)
+                .build();
     }
 }

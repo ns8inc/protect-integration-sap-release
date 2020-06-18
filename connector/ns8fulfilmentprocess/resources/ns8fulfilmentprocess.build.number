@@ -1,11 +1,11 @@
 #Ant properties
-#Mon Jun 15 09:14:12 UTC 2020
+#Thu Jun 18 09:20:19 UTC 2020
 version.api=1905
 vendor=hybris
 group.id=de.hybris.platform
 name=ns8fulfilmentprocess
 description=ns8fulfilmentprocess
-builddate=20200615 0914
+builddate=20200618 0920
 releasedate=20200402 1419
 version=1905.13
 module.name=platform-module

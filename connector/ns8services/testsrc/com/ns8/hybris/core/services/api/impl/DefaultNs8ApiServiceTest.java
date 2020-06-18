@@ -16,16 +16,15 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Base64;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
@@ -47,10 +46,12 @@ public class DefaultNs8ApiServiceTest {
     private static final String ACCESS_TOKEN_FROM_RESPONSE = "accessToken";
     private static final String QUEUE_ID_FROM_RESPONSE = "queueId";
     private static final String API_KEY = "apiKey";
+    private static final String BEARER = "Bearer ";
     private static final String CREATE_ORDER_ACTION = "CREATE_ORDER_ACTION";
     private static final String UPDATE_ORDER_STATUS_ACTION = "UPDATE_ORDER_STATUS_ACTION";
     private static final String UNINSTALL_MERCHANT_ACTION = "UNINSTALL_ACTION";
     private static final String API_SWITCH_EXECUTOR = "/api/switch/executor";
+    private static final String API_ORDER_URL = "/api/orders/order-name/";
     private static final String ACTION_HTTP_PARAM = "action";
     private static final String TOKEN = "tokenValue";
     private static final String ORDER_ID = "orderId";
@@ -65,6 +66,7 @@ public class DefaultNs8ApiServiceTest {
     private static final String ORDER_ID_PARAM = "orderId";
     private static final String RETURN_URI_PARAM = "returnUri";
     private static final String VERIFICATION_ID_PARAM = "verificationId";
+    private static final String DIRTY_NS8_ORDER = "{\"status\": \"APPROVED\",\"id\": \"orderId\"}";
 
     @Spy
     @InjectMocks
@@ -108,6 +110,7 @@ public class DefaultNs8ApiServiceTest {
     private ArgumentCaptor<String> stringCaptor;
     @Captor
     private ArgumentCaptor<HttpHeaders> headersCaptor;
+
 
     @Before
     public void setUp() {
@@ -516,6 +519,56 @@ public class DefaultNs8ApiServiceTest {
 
         final String url = stringCaptor.getValue();
         assertThat(url).isEqualTo(BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UNINSTALL_MERCHANT_ACTION);
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCauseInstanceOf(ResourceAccessException.class)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @Test
+    public void getNs8Order_WhenOrderIsCorrectlyDefined_ShouldTReturnNS8OrderDetails() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.AUTHORIZATION, singletonList(BEARER + API_KEY));
+        final HttpEntity request = new HttpEntity(headers);
+        when(orderMock.getCode()).thenReturn(ORDER_ID_PARAM);
+        when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
+                .thenReturn(new ResponseEntity(DIRTY_NS8_ORDER, HttpStatus.OK));
+
+        testObj.getNs8Order(orderMock);
+
+        verify(orderMock).setNs8OrderPayload(DIRTY_NS8_ORDER);
+        verify(modelServiceMock).save(orderMock);
+    }
+
+    @Test
+    public void getNs8Order_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.AUTHORIZATION, singletonList(BEARER + API_KEY));
+        final HttpEntity request = new HttpEntity(headers);
+        final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        when(orderMock.getCode()).thenReturn(ORDER_ID_PARAM);
+        when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
+                .thenThrow(clientException);
+
+        final Throwable thrown = catchThrowable(() -> testObj.getNs8Order(orderMock));
+
+        assertThat(thrown)
+                .isInstanceOf(Ns8IntegrationException.class)
+                .hasCause(clientException)
+                .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+    }
+
+    @Test
+    public void getNs8Order_WhenResourceAccessException_ShouldThrowNs8IntegrationException() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.AUTHORIZATION, singletonList(BEARER + API_KEY));
+        final HttpEntity request = new HttpEntity(headers);
+        when(orderMock.getCode()).thenReturn(ORDER_ID_PARAM);
+        when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
+                .thenThrow(ResourceAccessException.class);
+
+        final Throwable thrown = catchThrowable(() -> testObj.getNs8Order(orderMock));
+
         assertThat(thrown)
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCauseInstanceOf(ResourceAccessException.class)
