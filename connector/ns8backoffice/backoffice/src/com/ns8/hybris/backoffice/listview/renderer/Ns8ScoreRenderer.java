@@ -44,7 +44,7 @@ public class Ns8ScoreRenderer extends AbstractWidgetComponentRenderer<Listcell, 
     (final Listcell listcell, final ListColumn configuration, final Object object, final DataType dataType, final WidgetInstanceManager widgetInstanceManager) {
         if (object instanceof OrderModel) {
             final OrderModel order = (OrderModel) object;
-            if (StringUtils.isBlank(order.getRiskEventPayload())) {
+            if (StringUtils.isBlank(order.getRiskEventPayload()) && StringUtils.isBlank(order.getNs8OrderPayload())) {
                 listcell.setLabel(NOT_AVAILABLE_MESSAGE);
             } else {
                 final Double amount = (Double) propertyValueService.readValue(object, SCORE_KEY);
