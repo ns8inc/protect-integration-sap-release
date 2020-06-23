@@ -2,3 +2,9 @@
 .ya-com_ns8_hybris_backoffice_basesite_activatens8merchantaction td {
     vertical-align: middle;
 }
+
+
+.yw-com_ns8_hybris_backoffice_cmssite_widgets_ns8merchantactivation .z-label {
+    margin-bottom: 0;
+    margin-top: 10px;
+}

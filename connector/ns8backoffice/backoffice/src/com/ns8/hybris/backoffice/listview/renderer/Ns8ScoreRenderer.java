@@ -48,7 +48,7 @@ public class Ns8ScoreRenderer extends AbstractWidgetComponentRenderer<Listcell, 
                 listcell.setLabel(NOT_AVAILABLE_MESSAGE);
             } else {
                 final Double amount = (Double) propertyValueService.readValue(object, SCORE_KEY);
-                if (amount != null && permissionFacade.canChangeProperty(dataType.getCode(), SCORE_KEY)) {
+                if (amount != null && permissionFacade.canReadProperty(dataType.getCode(), SCORE_KEY)) {
                     listcell.setLabel(String.valueOf(amount));
                 } else {
                     listcell.setLabel(NOT_AVAILABLE_MESSAGE);

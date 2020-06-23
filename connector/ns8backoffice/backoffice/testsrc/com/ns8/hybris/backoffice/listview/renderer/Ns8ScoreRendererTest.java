@@ -53,7 +53,7 @@ public class Ns8ScoreRendererTest {
     @Before
     public void setUp() {
         when(dataTypeMock.getCode()).thenReturn(ORDER_TYPE);
-        when(permissionFacadeMock.canChangeProperty(ORDER_TYPE, SCORE_KEY)).thenReturn(true);
+        when(permissionFacadeMock.canReadProperty(ORDER_TYPE, SCORE_KEY)).thenReturn(true);
         when(orderModelMock.getRiskEventPayload()).thenReturn(new Gson().toJson(createEventBody()));
         when(propertyValueServiceMock.readValue(orderModelMock, SCORE_KEY)).thenReturn(SCORE_VALUE);
     }

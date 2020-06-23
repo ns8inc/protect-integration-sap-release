@@ -5,6 +5,7 @@
         height="100%">
 
     <style src="${wr}/ns8merchantactivation.css"/>
+    <script type="text/javascript" defer="true" src="${wr}/ns8merchantactivation.js"></script>
 
     <div id="mainCnt" width="100%" style="position: relative;" height="100%">
         <div height="100%" style="background: white;overflow: auto;">
@@ -42,7 +43,7 @@
                     </div>
                     <div sclass="yw-component-wrapper">
                         <button id="ns8MerchantActivate" label="${c:l('action.activate.ns8.form.activate')}"
-                                sclass="yw-btn-primary">
+                                sclass="yw-btn-primary merchant-activation-button">
                             <custom-attributes ytestid="ns8MerchantActivateBtn"/>
                         </button>
                     </div>
