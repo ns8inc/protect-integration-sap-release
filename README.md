@@ -18,13 +18,13 @@ In order to install NS8 you must have:
 3. Run the `ant clean` command from within your SAP Commerce `bin/platform` directory.
 4. Copy the following lines into your `localextensions.xml` after `<path dir="${HYBRIS_BIN_DIR}"/>` :
 
-    <path autoload="true" dir="${HYBRIS_BIN_DIR}/modules/ns8-protect"/>
+    `<path autoload="true" dir="${HYBRIS_BIN_DIR}/modules/ns8-protect"/>`
 
     > 📝 **Note:** ****The extensions do not rely on absolute paths, so you can place the extensions in a different location (such as `${HYBRIS_BIN_DIR}/custom`) as long as you provide the correct path in Step 4.
 
 5. Run the following commands to install the AddOns on the yaccelatorstorefront (replace "yacceleratorstorefront" with the name of your custom storefront):
 
-    ant addoninstall -Daddonnames="ns8addon" -DaddonStorefront.yacceleratorstorefront="yacceleratorstorefront"
+    `ant addoninstall -Daddonnames="ns8addon" -DaddonStorefront.yacceleratorstorefront="yacceleratorstorefront"`
 
 ## Create sample cronjobs
 
@@ -32,7 +32,7 @@ The `ns8sampledataaddon` is optional, and can be installed by following these st
 
 1. Install the AddOn using the following code:
 
-    ant addoninstall -Daddonnames="ns8sampledataaddon" -DaddonStorefront.yacceleratorstorefront="yacceleratorstorefront"
+    `ant addoninstall -Daddonnames="ns8sampledataaddon" -DaddonStorefront.yacceleratorstorefront="yacceleratorstorefront"`
 
 2. Run the `ant clean all` command from within your SAP `bin/platform` directory.
 3. Run the `hybrisserver.sh` to start up the SAP server.
