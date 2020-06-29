@@ -9,6 +9,7 @@
     <bean id="defaultNs8QueueService" class="com.ns8.hybris.notifications.services.impl.DefaultNs8QueueService">
         <constructor-arg name="ns8ApiService" ref="ns8ApiService"/>
         <constructor-arg name="restTemplate" ref="ns8RestTemplate"/>
+        <constructor-arg name="configurationService" ref="configurationService"/>
         <constructor-arg name="ns8EndpointService" ref="ns8EndpointService"/>
     </bean>
 

@@ -9,6 +9,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import java.util.Base64;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.*;
@@ -39,6 +41,7 @@ public class DefaultNs8ApiServiceTest {
     private static final String PLATFORM_NAME_VALUE = "platform";
     private static final String BASE_CLIENT_URL = "baseClientURL";
     private static final String BASE_BACKEND_URL = "baseBackendURL";
+    private static final String PLATFORM_ERROR_URL = "/api/util/log-platform-error";
     private static final String API_INIT_SCRIPT = "/api/init/script/";
     private static final String PROTECT_PLATFORM_INSTALL_URL = "/protect/platform/install/";
     private static final String PROTECT_PLATFORM_REINSTALL_URL = "/protect/platform/install/reinstall/";
@@ -67,6 +70,27 @@ public class DefaultNs8ApiServiceTest {
     private static final String RETURN_URI_PARAM = "returnUri";
     private static final String VERIFICATION_ID_PARAM = "verificationId";
     private static final String DIRTY_NS8_ORDER = "{\"status\": \"APPROVED\",\"id\": \"orderId\"}";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL_VALUE = "Plugin installation error";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL_KEY = "ns8services.error.triggerPluginInstallEvent";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL_KEY = "ns8services.error.triggerMerchantUninstallEvent";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL_VALUE = "Uninstalling merchant error";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL_KEY = "ns8services.error.triggerMerchantReinstallEvent";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL_VALUE = "Reinstalling merchant error";
+    private static final String NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT_KEY = "ns8services.error.fetchTrueStatsScript";
+    private static final String NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT_VALUE = "Fetching TrueStats error";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER_KEY = "ns8services.error.triggerCreateOrderActionEvent";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER_VALUE = "Error sending the order";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS_KEY = "ns8services.error.triggerUpdateOrderStatusAction";
+    private static final String NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS_VALUE= "Uptdating order status error";
+    private static final String NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE_KEY = "ns8services.error.getVerificationTemplate";
+    private static final String NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE_VALUE = "Verification template error";
+    private static final String NS_8_SERVICES_ERROR_SEND_VERIFICATION_KEY = "ns8services.error.sendVerification";
+    private static final String NS_8_SERVICES_ERROR_SEND_VERIFICATION_VALUE = "Sending verification error";
+    private static final String NS_8_SERVICES_ERROR_NS8_ORDER_KEY = "ns8services.error.getNs8Order";
+    private static final String NS_8_SERVICES_ERROR_NS8_ORDER_VALUE = "Getting Ns8 Order error";
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String STACK_TRACE_MESSAGE = "stackTraceMessage";
+    private static final String VERIFICATION_TEMPLATE_URL = "baseClientURL/api/merchant/template?orderId=orderId&token=tokenValue&verificationId=verificationId&view=orders-validate&returnUri=returnUri";
 
     @Spy
     @InjectMocks
@@ -103,6 +127,10 @@ public class DefaultNs8ApiServiceTest {
     private Ns8OrderVerificationRequest orderVerificationRequestMock;
     @Mock
     private MerchantReactivateResponseData merchantReactivateResponseDataMock;
+    @Mock
+    private ResponseEntity<Ns8PlatformErrorResponse> responseEntityMock;
+    @Mock
+    private Ns8PlatformErrorResponse ns8PlatformErrorResponseMock;
 
     @Captor
     private ArgumentCaptor<HttpEntity<?>> httpEntityCaptor;
@@ -121,6 +149,15 @@ public class DefaultNs8ApiServiceTest {
         when(ns8EndpointServiceMock.getBaseBackendURL()).thenReturn(BASE_BACKEND_URL);
         when(ns8EndpointServiceMock.getBaseClientURL()).thenReturn(BASE_CLIENT_URL);
         when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY)).thenReturn(PLATFORM_NAME_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL_KEY)).thenReturn(NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT_KEY)).thenReturn(NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER_KEY)).thenReturn(NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS_KEY)).thenReturn(NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE_KEY)).thenReturn(NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_SEND_VERIFICATION_KEY)).thenReturn(NS_8_SERVICES_ERROR_SEND_VERIFICATION_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL_KEY)).thenReturn(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_NS8_ORDER_KEY)).thenReturn(NS_8_SERVICES_ERROR_NS8_ORDER_VALUE);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL_KEY)).thenReturn(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL_VALUE);
 
         when(pluginInstallRequestConverterMock.convert(ns8MerchantMock)).thenReturn(ns8PluginInstallRequestMock);
         when(ns8OrderDataConverterMock.convert(orderMock)).thenReturn(ns8OrderDataMock);
@@ -137,6 +174,9 @@ public class DefaultNs8ApiServiceTest {
         when(orderVerificationRequestMock.getVerificationId()).thenReturn(VERIFICATION_ID);
         when(orderVerificationRequestMock.getView()).thenReturn(TEMPLATE_ID);
         when(orderVerificationRequestMock.getReturnURI()).thenReturn(RETURN_URI);
+        when(responseEntityMock.getBody()).thenReturn(ns8PlatformErrorResponseMock);
+        when(responseEntityMock.hasBody()).thenReturn(Boolean.TRUE);
+        when(ns8PlatformErrorResponseMock.getLogged()).thenReturn(Boolean.TRUE);
     }
 
     @Test
@@ -156,13 +196,22 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void triggerPluginInstallEvent_WhenHttpStatusCodeException_ShouldThrowNS8IntegrationException() {
         final HttpClientErrorException clientErrorException = new HttpClientErrorException(HttpStatus.BAD_REQUEST, "exception");
+        final String errorStackMessage = String.format("Installation of NS8 Merchant failed. URL: [%s], payload: [%s], status code [%s], error body: [%s].",
+                BASE_BACKEND_URL + PROTECT_PLATFORM_INSTALL_URL + PLATFORM_NAME_VALUE,
+                "prettyObject",
+                HttpStatus.BAD_REQUEST,
+                StringUtils.EMPTY);
+
         doThrow(clientErrorException).when(restTemplateMock).postForEntity(eq(BASE_BACKEND_URL + PROTECT_PLATFORM_INSTALL_URL + PLATFORM_NAME_VALUE), any(HttpEntity.class), eq(PluginInstallResponseData.class));
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
 
         final Throwable thrown = catchThrowable(() -> testObj.triggerPluginInstallEvent(ns8MerchantMock));
 
         assertThat(thrown)
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientErrorException);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL_VALUE, errorStackMessage);
     }
 
     @Test
@@ -209,8 +258,15 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void fetchTrueStatsScript_WhenHttpStatusCodeException_ShouldThrowNS8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Reactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                BASE_CLIENT_URL + API_INIT_SCRIPT,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
         when(restTemplateMock.postForObject(eq(BASE_CLIENT_URL + API_INIT_SCRIPT), httpEntityCaptor.capture(), eq(String.class)))
                 .thenThrow(clientException);
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
 
         final Throwable thrown = catchThrowable(() -> testObj.fetchTrueStatsScript(ns8MerchantMock));
 
@@ -218,6 +274,8 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT_VALUE, errorStackMessage);
     }
 
     @Test
@@ -274,6 +332,14 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void triggerCreateOrderActionEvent_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Sending order to NS8 failed. URL: [%s], payload: [%s], status code [%s], error body: [%s].",
+                BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + CREATE_ORDER_ACTION,
+                "prettyObject",
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
                 .thenThrow(clientException);
 
@@ -285,6 +351,7 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER_VALUE, errorStackMessage);
     }
 
     @Test
@@ -343,6 +410,15 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void triggerUpdateOrderStatusAction_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
+                BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UPDATE_ORDER_STATUS_ACTION,
+                "prettyObject",
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
+
         when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
                 .thenThrow(clientException);
 
@@ -354,6 +430,7 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS_VALUE, errorStackMessage);
     }
 
     @Test
@@ -389,6 +466,14 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void getVerificationTemplate_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Could not retrieve template [%s]. URL: [%s], status code [%s], error body: [%s].",
+                TEMPLATE_ID,
+                VERIFICATION_TEMPLATE_URL,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(restTemplateMock.getForEntity(stringCaptor.capture(), eq(String.class), headersCaptor.capture()))
                 .thenThrow(clientException);
 
@@ -404,6 +489,7 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE_VALUE, errorStackMessage);
     }
 
     @Test
@@ -444,6 +530,14 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void sendVerification_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Could not send verification template [%s]. URL: [%s], status code [%s], error body: [%s].",
+                TEMPLATE_ID,
+                BASE_CLIENT_URL + API_TEMPLATE_URL,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(String.class)))
                 .thenThrow(clientException);
 
@@ -459,6 +553,7 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_SEND_VERIFICATION_VALUE, errorStackMessage);
     }
 
     @Test
@@ -497,6 +592,13 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void triggerMerchantUninstallEvent_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Deactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                BASE_CLIENT_URL + API_SWITCH_EXECUTOR + "?" + ACTION_HTTP_PARAM + "=" + UNINSTALL_MERCHANT_ACTION,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(Void.class)))
                 .thenThrow(clientException);
 
@@ -508,6 +610,7 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL_VALUE, errorStackMessage);
     }
 
     @Test
@@ -534,7 +637,7 @@ public class DefaultNs8ApiServiceTest {
         when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
                 .thenReturn(new ResponseEntity(DIRTY_NS8_ORDER, HttpStatus.OK));
 
-        testObj.getNs8Order(orderMock);
+        testObj.fetchAndSaveNs8OrderPayload(orderMock);
 
         verify(orderMock).setNs8OrderPayload(DIRTY_NS8_ORDER);
         verify(modelServiceMock).save(orderMock);
@@ -546,16 +649,25 @@ public class DefaultNs8ApiServiceTest {
         headers.put(HttpHeaders.AUTHORIZATION, singletonList(BEARER + API_KEY));
         final HttpEntity request = new HttpEntity(headers);
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Could not retrieve order information from Ns8. URL: [%s], orderId[%s], status code [%s], error body: [%s].",
+                BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()),
+                ORDER_ID_PARAM,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(orderMock.getCode()).thenReturn(ORDER_ID_PARAM);
         when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
                 .thenThrow(clientException);
 
-        final Throwable thrown = catchThrowable(() -> testObj.getNs8Order(orderMock));
+        final Throwable thrown = catchThrowable(() -> testObj.fetchAndSaveNs8OrderPayload(orderMock));
 
         assertThat(thrown)
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_NS8_ORDER_VALUE, errorStackMessage);
     }
 
     @Test
@@ -567,7 +679,7 @@ public class DefaultNs8ApiServiceTest {
         when(restTemplateMock.exchange(BASE_CLIENT_URL + API_ORDER_URL + Base64.getEncoder().encodeToString(ORDER_ID_PARAM.getBytes()), HttpMethod.GET, request, String.class))
                 .thenThrow(ResourceAccessException.class);
 
-        final Throwable thrown = catchThrowable(() -> testObj.getNs8Order(orderMock));
+        final Throwable thrown = catchThrowable(() -> testObj.fetchAndSaveNs8OrderPayload(orderMock));
 
         assertThat(thrown)
                 .isInstanceOf(Ns8IntegrationException.class)
@@ -605,6 +717,13 @@ public class DefaultNs8ApiServiceTest {
     @Test
     public void triggerMerchantReinstallEvent_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
+        final String errorStackMessage = String.format("Reactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                BASE_BACKEND_URL + PROTECT_PLATFORM_REINSTALL_URL + PLATFORM_NAME_VALUE,
+                HttpStatus.I_AM_A_TEAPOT,
+                StringUtils.EMPTY);
+
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         when(restTemplateMock.postForEntity(stringCaptor.capture(), httpEntityCaptor.capture(), eq(MerchantReactivateResponseData.class)))
                 .thenThrow(clientException);
 
@@ -616,7 +735,30 @@ public class DefaultNs8ApiServiceTest {
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(clientException)
                 .hasFieldOrPropertyWithValue("httpStatus", HttpStatus.I_AM_A_TEAPOT);
+        verify(testObj).sendErrorLogging(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL_VALUE, errorStackMessage);
     }
+
+    @Test
+    public void sendErrorToNs8Platform_WhenLogIsSuccesfullySent_ShouldReturnTrue() {
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
+
+        final Boolean result = testObj.sendErrorLogging(ERROR_MESSAGE, STACK_TRACE_MESSAGE);
+
+        assertThat(result).isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    public void sendErrorToNs8Platform_WhenNs8ReurnsAnError_ShouldReturnFalse() {
+        when(responseEntityMock.getBody().getLogged()).thenReturn(Boolean.FALSE);
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
+
+        final Boolean result = testObj.sendErrorLogging(ERROR_MESSAGE, STACK_TRACE_MESSAGE);
+
+        assertThat(result).isEqualTo(Boolean.FALSE);
+    }
+
 
     private void assertUrlForUriValues(final String uri) {
         final UriComponents components = UriComponentsBuilder.fromUriString(uri).build();

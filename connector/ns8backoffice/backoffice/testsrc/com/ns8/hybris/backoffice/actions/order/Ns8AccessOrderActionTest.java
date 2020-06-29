@@ -62,10 +62,11 @@ public class Ns8AccessOrderActionTest {
         when(orderMock.getSite()).thenReturn(baseSiteMock);
         when(baseSiteMock.getNs8Merchant()).thenReturn(ns8MerchantMock);
         when(ns8MerchantMock.getEnabled()).thenReturn(true);
+        when(orderMock.getMerchantEnabled()).thenReturn(Boolean.TRUE);
     }
 
     @Test
-    public void canPerform_WhenMerchantIsActive_ShouldReturnTrue() {
+    public void canPerform_WhenOrderWasDoneWithAMerchantActive_ShouldReturnTrue() {
         final boolean result = testObj.canPerform(actionContextMock);
 
         assertThat(result).isTrue();
@@ -81,30 +82,21 @@ public class Ns8AccessOrderActionTest {
     }
 
     @Test
-    public void canPerform_WhenBaseSiteIsMissing_ShouldReturnFalse() {
-        when(orderMock.getSite()).thenReturn(null);
-
-        final boolean result = testObj.canPerform(actionContextMock);
-
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    public void canPerform_WhenNS8MerchantIsMissing_ShouldReturnFalse() {
+    public void canPerform_WhenNS8MerchantIsMissing_ShouldReturnMerchantStatusWhenOrderWasPlaced() {
         when(baseSiteMock.getNs8Merchant()).thenReturn(null);
 
         final boolean result = testObj.canPerform(actionContextMock);
 
-        assertThat(result).isFalse();
+        assertThat(result).isEqualTo(orderMock.getMerchantEnabled());
     }
 
     @Test
-    public void canPerform_WhenNS8MerchantIsNotEnabled_ShouldReturnFalse() {
+    public void canPerform_WhenNS8MerchantIsNotEnabled_ShouldReturnMerchantStatusWhenOrderWasPlaced() {
         when(ns8MerchantMock.getEnabled()).thenReturn(false);
 
         boolean result = testObj.canPerform(actionContextMock);
 
-        assertThat(result).isFalse();
+        assertThat(result).isEqualTo(orderMock.getMerchantEnabled());
     }
 
     @Test
@@ -148,7 +140,7 @@ public class Ns8AccessOrderActionTest {
 
         assertThat(result.getResultCode()).isEqualTo(ACTION_RESULT_SUCCESS_CODE);
         verify(testObj).sendOutput(CURRENT_ORDER_OUTPUT, orderMock);
-        verify(ns8ApiServiceMock).getNs8Order(orderMock);
+        verify(ns8ApiServiceMock).fetchAndSaveNs8OrderPayload(orderMock);
         verify(businessProcessServiceMock).triggerEvent(orderMock.getCode() + NS8_SCORE_RECEIVED_EVENT);
         verify(cockpitEventQueueMock).publishEvent(defaultCockpitEventCaptor.capture());
 

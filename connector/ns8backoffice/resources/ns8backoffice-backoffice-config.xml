@@ -49,6 +49,7 @@
                         <editorArea:attribute qualifier="score"/>
                         <editorArea:attribute qualifier="ns8Status"/>
                         <editorArea:attribute qualifier="sendOrderToNs8" readonly="true"/>
+                        <editorArea:attribute qualifier="merchantEnabled" readonly="true"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>

@@ -46,6 +46,8 @@ public class Ns8ScoreOrderAction extends AbstractOrderAction<OrderProcessModel> 
         if (!ns8MerchantService.isMerchantActive(ns8Merchant)) {
             LOG.warn("Ns8 Merchant [{}] of the order [{}] is disabled", ns8Merchant::getEmail, order::getCode);
             return OK;
+        } else {
+            order.setMerchantEnabled(Boolean.TRUE);
         }
         if (ns8FraudService.hasOrderBeenScored(order)) {
             setOrderStatus(order, OrderStatus.FRAUD_SCORED);

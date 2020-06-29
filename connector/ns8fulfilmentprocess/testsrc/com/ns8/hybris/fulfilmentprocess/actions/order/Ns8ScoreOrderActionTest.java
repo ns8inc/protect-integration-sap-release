@@ -81,6 +81,32 @@ public class Ns8ScoreOrderActionTest {
     }
 
     @Test
+    public void execute_WhenMerchantIsActive_ShouldSaveMerchantEnabledAsTrue() {
+        when(ns8FraudServiceMock.hasOrderBeenScored(orderMock)).thenReturn(false);
+
+        final String result = testObj.execute(orderProcessMock);
+
+        verify(ns8ApiServiceMock).triggerCreateOrderActionEvent(orderMock);
+        verify(orderMock).setStatus(OrderStatus.FRAUD_SCORE_PENDING);
+        verify(orderMock).setMerchantEnabled(Boolean.TRUE);
+        verify(modelServiceMock).save(orderMock);
+        assertThat(result).isEqualTo(WAIT);
+
+    }
+
+    @Test
+    public void execute_WhenMerchantIsInactive_ShouldSaveMerchantEnabledAsFalse() {
+        when(ns8FraudServiceMock.hasOrderBeenScored(orderMock)).thenReturn(false);
+        when(ns8MerchantServiceMock.isMerchantActive(ns8MerchantMock)).thenReturn(Boolean.FALSE);
+
+        final String result = testObj.execute(orderProcessMock);
+
+        verifyZeroInteractions(ns8ApiServiceMock);
+        assertThat(result).isEqualTo(OK);
+        assertThat(orderMock.getMerchantEnabled()).isEqualTo(Boolean.FALSE);
+    }
+
+    @Test
     public void execute_When500ErrorWhenSendingOrder_ShouldThrowRetryLaterException() {
         final Ns8IntegrationException ns8IntegrationException = new Ns8IntegrationException("message", HttpStatus.INTERNAL_SERVER_ERROR);
         doThrow(ns8IntegrationException).when(ns8ApiServiceMock).triggerCreateOrderActionEvent(orderMock);
@@ -91,6 +117,7 @@ public class Ns8ScoreOrderActionTest {
         assertThat(thrown)
                 .isInstanceOf(RetryLaterException.class)
                 .hasCause(ns8IntegrationException);
+        assertThat(orderMock.getMerchantEnabled()).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -103,6 +130,7 @@ public class Ns8ScoreOrderActionTest {
 
         assertThat(orderMock.getStatus()).isEqualTo(OrderStatus.PAYMENT_AMOUNT_RESERVED);
         assertThat(result).isEqualTo(NOK);
+        assertThat(orderMock.getMerchantEnabled()).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -113,6 +141,7 @@ public class Ns8ScoreOrderActionTest {
 
         verifyZeroInteractions(ns8ApiServiceMock);
         verify(orderMock).setStatus(OrderStatus.FRAUD_SCORED);
+        verify(orderMock).setMerchantEnabled(Boolean.TRUE);
         verify(modelServiceMock).save(orderMock);
         assertThat(result).isEqualTo(OK);
     }
@@ -125,6 +154,7 @@ public class Ns8ScoreOrderActionTest {
 
         verifyZeroInteractions(ns8ApiServiceMock);
         assertThat(result).isEqualTo(OK);
+        assertThat(orderMock.getMerchantEnabled()).isEqualTo(Boolean.FALSE);
     }
 
     @Test

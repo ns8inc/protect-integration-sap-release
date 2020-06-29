@@ -1,11 +1,15 @@
 package com.ns8.hybris.notifications.services.impl;
 
+import com.ns8.hybris.core.data.Ns8PlatformErrorResponse;
 import com.ns8.hybris.core.integration.exceptions.Ns8IntegrationException;
+import com.ns8.hybris.core.services.api.Ns8ApiService;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageResponse;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageWrapper;
 import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +30,7 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -34,9 +39,13 @@ import static org.mockito.Mockito.*;
 public class DefaultNs8QueueServiceTest {
 
     private static final String QUEUE_URL = "queueUrl";
+    private static final String BASE_CLIENT_URL = "baseClientURL";
+    private static final String PLATFORM_ERROR_URL = "/api/util/log-platform-error";
     private static final String RECEIPT_HANDLE = "receiptHandle";
     private static final String BASE_CLIENT_API_URL = "https://client-url.me";
     private static final String MERCHANT_API_KEY = "merchantApiKey";
+    private static final String NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES_KEY = "ns8notifications.error.receiveMessages";
+    private static final String NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES_VALUE = "Error receiving messages from Ns8";
 
     @Spy
     @InjectMocks
@@ -58,6 +67,12 @@ public class DefaultNs8QueueServiceTest {
     private Ns8QueueMessage ns8QueueMessageMock;
     @Mock
     private Ns8EndpointService ns8EndpointServiceMock;
+    @Mock(answer = RETURNS_DEEP_STUBS)
+    private ConfigurationService configurationServiceMock;
+    @Mock
+    private Ns8ApiService ns8ApiServiceMock;
+    @Mock
+    private ResponseEntity<Ns8PlatformErrorResponse> responseEntityMock;
     @Mock
     private Map<String, Object> deleteMessageResponseMock;
     @Mock
@@ -75,6 +90,7 @@ public class DefaultNs8QueueServiceTest {
         when(deleteMessageResponseEntityMock.getBody()).thenReturn(deleteMessageResponseMock);
         when(getQueueUrlResponseEntityMock.getBody()).thenReturn(getQueueUrlResponseMock);
         when(receiveMessageWrapperMock.getReceiveMessageResponse()).thenReturn(receiveMessageResponseMock);
+        when(configurationServiceMock.getConfiguration().getString(NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES_KEY)).thenReturn(NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES_VALUE);
     }
 
     @Test
@@ -95,7 +111,12 @@ public class DefaultNs8QueueServiceTest {
     @Test
     public void receiveMessage_WhenHttpStatusCodeException_ShouldThrowNs8IntegrationException() {
         final HttpClientErrorException exception = new HttpClientErrorException(HttpStatus.BAD_REQUEST, "exception");
+        final String errorStackMessage = String.format("Receiving of messages failed. Status code [%s], error body: [%s].",
+                HttpStatus.BAD_REQUEST,
+                StringUtils.EMPTY);
 
+        when(restTemplateMock.postForEntity(eq(BASE_CLIENT_URL + PLATFORM_ERROR_URL), any(HttpEntity.class), eq(Ns8PlatformErrorResponse.class)))
+                .thenReturn(responseEntityMock);
         doReturn(QUEUE_URL).when(testObj).getQueueUrl(MERCHANT_API_KEY);
         doThrow(exception).when(restTemplateMock).exchange(eq(URI.create(QUEUE_URL)), eq(HttpMethod.GET), httpEntityArgumentCaptor.capture(), eq(Ns8ReceiveMessageWrapper.class));
 
@@ -104,6 +125,7 @@ public class DefaultNs8QueueServiceTest {
         assertThat(thrown)
                 .isInstanceOf(Ns8IntegrationException.class)
                 .hasCause(exception);
+        verify(ns8ApiServiceMock).sendErrorLogging(NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES_VALUE, errorStackMessage);
     }
 
     @Test
