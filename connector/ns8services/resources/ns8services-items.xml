@@ -163,6 +163,11 @@
                     <persistence type="property"/>
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
+                <attribute qualifier="merchantEnabled" type="java.lang.Boolean">
+                    <modifiers write="true" read="true" unique="false" optional="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
             </attributes>
         </itemtype>
 

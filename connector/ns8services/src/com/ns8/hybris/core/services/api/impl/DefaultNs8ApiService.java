@@ -37,6 +37,15 @@ public class DefaultNs8ApiService implements Ns8ApiService {
 
     protected static final Logger LOG = LogManager.getLogger(DefaultNs8ApiService.class);
 
+    protected static final String NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL = "ns8services.error.triggerPluginInstallEvent";
+    protected static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL = "ns8services.error.triggerMerchantUninstallEvent";
+    protected static final String NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL = "ns8services.error.triggerMerchantReinstallEvent";
+    protected static final String NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT = "ns8services.error.fetchTrueStatsScript";
+    protected static final String NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER = "ns8services.error.triggerCreateOrderActionEvent";
+    protected static final String NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS = "ns8services.error.triggerUpdateOrderStatusAction";
+    protected static final String NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE = "ns8services.error.getVerificationTemplate";
+    protected static final String NS_8_SERVICES_ERROR_SEND_VERIFICATION = "ns8services.error.sendVerification";
+    protected static final String NS_8_SERVICES_ERROR_NS8_ORDER = "ns8services.error.getNs8Order";
     protected static final String NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY = "ns8services.platform.name";
     protected static final String ERROR_KEY = "error";
     protected static final String BEARER = "Bearer ";
@@ -82,7 +91,14 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity(ns8PluginInstallRequest), PluginInstallResponseData.class);
             updateMerchantFromNS8Response(ns8Merchant, responseEntity.getBody());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Installation of NS8 Merchant failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", () -> requestUrl, () -> prettyPrint(ns8PluginInstallRequest), e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_PLUGIN_INSTALL);
+            final String errorStackMessage = String.format("Installation of NS8 Merchant failed. URL: [%s], payload: [%s], status code [%s], error body: [%s].",
+                    requestUrl,
+                    prettyPrint(ns8PluginInstallRequest),
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             final String errorDetails = getErrorDetails(e);
             throw new Ns8IntegrationException("Installation of NS8 Merchant failed. " + errorDetails, e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
@@ -105,7 +121,13 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(requestUrl, new HttpEntity<>(headers), Void.class);
             LOG.debug("Merchant [{}] is deactivated successfully - Response code: [{}]", ns8Merchant.getEmail(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Deactivation of NS8 Merchant failed. URL: [{}], status code [{}], error body: [{}].", () -> requestUrl, e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_UNINSTALL);
+            final String errorStackMessage = String.format("Deactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                    requestUrl,
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("NS8 merchant uninstall failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Deactivation of NS8 Merchant failed due to connection issues. URL: [{}], status code [{}], error body: [{}].",
@@ -131,7 +153,13 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             responseEntity = restTemplate.postForEntity(requestUrl, request, MerchantReactivateResponseData.class);
             LOG.debug("Merchant [{}] is reactivated successfully - Response code: [{}]", ns8Merchant.getEmail(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Reactivation of NS8 Merchant failed. URL: [{}], status code [{}], error body: [{}].", () -> requestUrl, e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_MERCHANT_REINSTALL);
+            final String errorStackMessage = String.format("Reactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                    requestUrl,
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("NS8 merchant reinstall failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Reactivation of NS8 Merchant failed due to connection issues. URL: [{}], status code [{}], error body: [{}].",
@@ -154,7 +182,13 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             final String response = restTemplate.postForObject(clientAPIURL + "/api/init/script/", entity, String.class);
             return this.sanitiseTrueStatsScript(response);
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Fetching true stats failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_FETCH_TRUE_STATS_SCRIPT);
+            final String errorStackMessage = String.format("Reactivation of NS8 Merchant failed. URL: [%s], status code [%s], error body: [%s].",
+                    clientAPIURL + "/api/init/script/",
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("Fetching true stats failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Fetching true stats failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
@@ -179,7 +213,14 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(uri.toString(), request, Void.class);
             LOG.debug("Order [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Sending order to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8OrderData), e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_CREATE_ORDER);
+            final String errorStackMessage = String.format("Sending order to NS8 failed. URL: [%s], payload: [%s], status code [%s], error body: [%s].",
+                    uri.toString(),
+                    prettyPrint(ns8OrderData),
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("Installation of NS8 Merchant failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Sending order to NS8 failed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
@@ -206,7 +247,14 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             final ResponseEntity<Void> responseEntity = restTemplate.postForEntity(uri.toString(), request, Void.class);
             LOG.debug("Order status update [{}] sent successfully - Response code: [{}]", order.getCode(), responseEntity.getStatusCode());
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].", uri::toString, () -> prettyPrint(ns8UpdateOrderStatus), e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_TRIGGER_UPDATE_ORDER_STATUS);
+            final String errorStackMessage = String.format("Sending order status update to NS8 failed. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
+                    uri.toString(),
+                    prettyPrint(ns8UpdateOrderStatus),
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("NS8 order status update failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Update status event could not be completed due to connection issues. URL: [{}], payload: [{}], status code [{}], error body: [{}].",
@@ -229,7 +277,14 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             final ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri.toString(), String.class, headers);
             return getNs8OrderVerificationContent(responseEntity);
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_VERIFICATION_TEMPLATE);
+            final String errorStackMessage = String.format("Could not retrieve template [%s]. URL: [%s], status code [%s], error body: [%s].",
+                    template,
+                    uri.toString(),
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
@@ -253,10 +308,17 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             LOG.debug("Template [{}] retrieved successfully - Response code: [{}]", template, responseEntity.getStatusCode());
             return new GsonBuilder().create().fromJson(responseEntity.getBody(), Ns8OrderVerificationResponse.class);
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Could not retrieve template [{}]. URL: [{}], status code [{}], error body: [{}].", () -> template, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
-            throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_SEND_VERIFICATION);
+            final String errorStackMessage = String.format("Could not send verification template [%s]. URL: [%s], status code [%s], error body: [%s].",
+                    template,
+                    uri.toString(),
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
+            throw new Ns8IntegrationException("Could not send verification template", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
-            LOG.error("Could not retrieve template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+            LOG.error("Could not send verification template [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
                     () -> template, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
             throw new Ns8IntegrationException("Could not retrieve template from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
         }
@@ -391,7 +453,7 @@ public class DefaultNs8ApiService implements Ns8ApiService {
      * {@inheritDoc}
      */
     @Override
-    public void getNs8Order(final OrderModel orderModel) {
+    public void fetchAndSaveNs8OrderPayload(final OrderModel orderModel) {
 
         final String orderCode = orderModel.getCode();
         final UriComponents uri = getGetOrderUriComponents(Base64.getEncoder().encodeToString(orderCode.getBytes()));
@@ -406,12 +468,49 @@ public class DefaultNs8ApiService implements Ns8ApiService {
             orderModel.setNs8OrderPayload(responseEntity.getBody());
             modelService.save(orderModel);
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Could not retrieve order [{}]. URL: [{}], status code [{}], error body: [{}].", () -> orderCode, uri::toString, e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_SERVICES_ERROR_NS8_ORDER);
+            final String errorStackMessage = String.format("Could not retrieve order information from Ns8. URL: [%s], orderId[%s], status code [%s], error body: [%s].",
+                    uri.toString(),
+                    orderCode,
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("Could not retrieve verification template", e.getStatusCode(), e);
         } catch (final ResourceAccessException ex) {
             LOG.error("Could not retrieve order [{}] due to connection issues. URL: [{}], status code [{}], error body: [{}].",
                     () -> orderCode, uri::toString, () -> HttpStatus.SERVICE_UNAVAILABLE, ex::getMessage);
             throw new Ns8IntegrationException("Could not retrieve order from NS8 due to connection issues.", HttpStatus.SERVICE_UNAVAILABLE, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean sendErrorLogging(final String errorMessage, final String stackTrace) {
+        final UriComponents requestUrl = getNs8PlatformErrorUri();
+        final HttpEntity<Ns8PlatformErrorRequest> headers = buildHeadersForNs8PlatformError(errorMessage, stackTrace);
+        final ResponseEntity<Ns8PlatformErrorResponse> responseEntity;
+
+        try {
+            responseEntity = restTemplate.postForEntity(requestUrl.toString(), headers, Ns8PlatformErrorResponse.class);
+            if (responseEntity.hasBody() && Boolean.TRUE.equals(responseEntity.getBody().getLogged())){
+                LOG.debug("Error [{}] sent to Ns8 Platform successfully. Details: [{}], Response code: [{}]", errorMessage, stackTrace, responseEntity.getStatusCode());
+                return Boolean.TRUE;
+            }
+            else
+            {
+                LOG.error("There was an error reporting the issue to Ns8 Platform Error. URL: [{}], response body: [%s].", () -> requestUrl,  prettyPrint(responseEntity.getBody())::toString);
+                return Boolean.FALSE;
+            }
+        } catch (final HttpStatusCodeException e) {
+            LOG.error("Error couldn't be sent to Ns8 Platform. URL: [{}]. ErrorMessage: [{}], ErrorDetails: [{}], status code [{}], error body: [{}].", () -> requestUrl, errorMessage::toString, stackTrace::toString, e::getStatusCode, e::getResponseBodyAsString);
+            throw new Ns8IntegrationException("The error couldn't be sent to Ns8 Platform", e.getStatusCode(), e);
+        } catch (final ResourceAccessException e) {
+            LOG.error("The error occurred couldn't be sent to Ns8 Platform due to connection issues. URL: [{}], status code [{}], error body: [{}].",
+                    () -> requestUrl, () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);
+            throw new Ns8IntegrationException("The error couldn't be sent to Ns8 Platform", HttpStatus.SERVICE_UNAVAILABLE, e);
         }
     }
 
@@ -425,4 +524,31 @@ public class DefaultNs8ApiService implements Ns8ApiService {
                 .path(API_ORDER_URL + orderId)
                 .build();
     }
+
+    /**
+     * Generates the Ns8 URI to connect to Ns8 Error Platform
+     */
+    protected UriComponents getNs8PlatformErrorUri() {
+        return UriComponentsBuilder.fromUriString(ns8EndpointService.getBaseClientURL())
+                .path(PLATFORM_ERROR_URL)
+                .build();
+    }
+
+    /**
+     * Creates HTTP headers containing the information needed to be logged in Ns8 Error Platform
+     *
+     * @param errorMessage the error title
+     * @param stackTrace error details
+     */
+    protected HttpEntity<Ns8PlatformErrorRequest> buildHeadersForNs8PlatformError(final String errorMessage, final String stackTrace) {
+        final Ns8PlatformErrorRequest platformErrorRequest= new Ns8PlatformErrorRequest();
+        final String platform = configurationService.getConfiguration().getString(NS_8_SERVICES_PLATFORM_NAME_CONFIGURATION_KEY);
+
+        platformErrorRequest.setErrString(errorMessage);
+        platformErrorRequest.setStackTrace(stackTrace);
+        platformErrorRequest.setPlatformName(platform);
+
+        return new HttpEntity<>(platformErrorRequest);
+    }
+
 }

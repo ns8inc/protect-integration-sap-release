@@ -6,6 +6,7 @@ import com.ns8.hybris.core.services.api.Ns8EndpointService;
 import com.ns8.hybris.notifications.services.Ns8QueueService;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8QueueMessage;
 import com.ns8.hybris.ns8notifications.data.queue.Ns8ReceiveMessageWrapper;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.logging.log4j.LogManager;
@@ -37,16 +38,20 @@ public class DefaultNs8QueueService implements Ns8QueueService {
 
     protected static final String API_POLLING_GET_QUEUE_URL = "/api/polling/GetQueueUrl";
     protected static final String API_POLLING_DELETE_QUEUE_MESSAGE = "/api/polling/DeleteQueueMessage";
+    protected static final String NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES = "ns8notifications.error.receiveMessages";
 
     protected final RestTemplate restTemplate;
+    protected final ConfigurationService configurationService;
     protected final Ns8ApiService ns8ApiService;
     protected final Ns8EndpointService ns8EndpointService;
 
     public DefaultNs8QueueService(final Ns8ApiService ns8ApiService,
                                   final RestTemplate restTemplate,
+                                  final ConfigurationService configurationService,
                                   final Ns8EndpointService ns8EndpointService) {
         this.ns8ApiService = ns8ApiService;
         this.restTemplate = restTemplate;
+        this.configurationService = configurationService;
         this.ns8EndpointService = ns8EndpointService;
     }
 
@@ -74,7 +79,12 @@ public class DefaultNs8QueueService implements Ns8QueueService {
             LOG.info("[{}] messages found.", messages::size);
             return messages;
         } catch (final HttpStatusCodeException e) {
-            LOG.error("Receiving of messages failed. Status code [{}], error body: [{}].", e::getStatusCode, e::getResponseBodyAsString);
+            final String errorMessage = configurationService.getConfiguration().getString(NS_8_NOTIFICATIONS_ERROR_RECEIVING_MESSAGES);
+            final String errorStackMessage = String.format("Receiving of messages failed. Status code [%s], error body: [%s].",
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString());
+            LOG.error(errorStackMessage);
+            ns8ApiService.sendErrorLogging(errorMessage, errorStackMessage);
             throw new Ns8IntegrationException("Receiving messages failed.", e.getStatusCode(), e);
         } catch (final ResourceAccessException e) {
             LOG.error("Receiving of messages failed due to connection issues. Status code [{}], error body: [{}].", () -> HttpStatus.SERVICE_UNAVAILABLE, e::getMessage);

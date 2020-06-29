@@ -140,6 +140,16 @@
         <property name="location" type="java.lang.String"/>
     </bean>
 
+    <bean class="com.ns8.hybris.core.data.Ns8PlatformErrorRequest">
+        <property name="errString" type="java.lang.String"/>
+        <property name="stackTrace" type="java.lang.String"/>
+        <property name="platformName" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.ns8.hybris.core.data.Ns8PlatformErrorResponse">
+        <property name="logged" type="java.lang.Boolean"/>
+    </bean>
+
     <enum class="com.ns8.hybris.core.data.Ns8AddressType">
         <value>BILLING</value>
         <value>SHIPPING</value>

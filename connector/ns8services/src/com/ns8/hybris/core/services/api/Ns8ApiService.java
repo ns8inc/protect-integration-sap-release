@@ -92,6 +92,15 @@ public interface Ns8ApiService {
      *
      * @param orderModel the order we want to get info from Ns8
      */
-    void getNs8Order(final OrderModel orderModel);
+    void fetchAndSaveNs8OrderPayload(final OrderModel orderModel);
+
+    /**
+     * Send an error to NS8 platform
+     *
+     * @param errorMessage the error title
+     * @param stackTrace error details
+    * @return TRUE if error was succesfully sent. Otherwise, returns FALSE.
+     */
+    boolean sendErrorLogging(final String errorMessage, final String stackTrace);
 
 }
