@@ -29,7 +29,8 @@ public class Ns8ScoreRendererTest {
     private static final String SCORE_KEY = "score";
     private static final String NOT_AVAILABLE_MESSAGE = "N/A";
     private static final Double SCORE_VALUE = 100d;
-    private static final String SCORE_VALUE_LABEL = String.valueOf(SCORE_VALUE);
+    private static final Integer SCORE_INTEGER_VALUE = SCORE_VALUE.intValue();
+    private static final String SCORE_VALUE_LABEL = String.valueOf(SCORE_INTEGER_VALUE);
     private static final String ORDER_TYPE = "order";
 
     @InjectMocks

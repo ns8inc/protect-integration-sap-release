@@ -148,7 +148,7 @@ public class Ns8NavigationContextControllerTest {
 
         testObj.updateCmsSite(ns8NavigationContextMock);
 
-        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(null, cmsSite1Mock, cmsSite2Mock));
+        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(cmsSite1Mock, cmsSite2Mock));
         verify(testObj, never()).sendCmsSiteUId(ns8NavigationContextMock);
     }
 
@@ -156,7 +156,7 @@ public class Ns8NavigationContextControllerTest {
     public void updateCmsSite_WhenSystemSitesAndListSitesAreSameButNotSelection_ShouldDoNothing() {
         testObj.updateCmsSite(ns8NavigationContextMock);
 
-        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(null, cmsSite1Mock, cmsSite2Mock));
+        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(cmsSite1Mock, cmsSite2Mock));
         verify(testObj, never()).sendCmsSiteUId(ns8NavigationContextMock);
     }
 
@@ -167,7 +167,7 @@ public class Ns8NavigationContextControllerTest {
 
         testObj.updateCmsSite(ns8NavigationContextMock);
 
-        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(null, cmsSite1Mock));
+        assertThat(testObj.getCmsSiteModels()).isEqualTo(asList(cmsSite1Mock));
         verify(ns8NavigationContextMock).setCmsSite(APPAREL_UK_SITE_ID);
         verify(cmsSiteSelectorMock).setDisabled(false);
     }
@@ -179,7 +179,7 @@ public class Ns8NavigationContextControllerTest {
 
         testObj.updateCmsSite(ns8NavigationContextMock);
 
-        assertThat(testObj.getCmsSiteModels()).isEqualTo(Collections.singletonList(null));
+        assertThat(testObj.getCmsSiteModels()).isEqualTo(Collections.emptyList());
         verify(cmsSiteSelectorMock).setDisabled(true);
     }
 }

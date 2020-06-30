@@ -44,7 +44,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
     protected static final String NS8_MERCHANT_ACTIVATION_SUCCESS_MESSAGE = "ns8.merchant.activation.success";
     protected static final String NS8_MERCHANT_ACTIVATION_ERROR_TITLE = "ns8.merchant.activation.title.error";
     protected static final String NS8_MANDATORY_FIELD_VALIDATION_ERROR = "ns8.merchant.activation.field.mandatory.validation.error";
-    protected static final String NS8_FILED_LENGTH_VALIDATION_ERROR = "ns8.merchant.activation.field.length.validation.error";
+    protected static final String NS8_FIELD_LENGTH_VALIDATION_ERROR = "ns8.merchant.activation.field.length.validation.error";
     protected static final String NS8_STORE_URL_VALIDATION_ERROR = "ns8.merchant.activation.storeUrl.validation.error";
     protected static final String NS8_EMAIL_VALIDATION_ERROR = "ns8.merchant.activation.email.validation.error";
     protected static final String NS8_MERCHANT_EMAIL_REGEX = "ns8.merchant.email.regex";
@@ -165,7 +165,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
             throw new WrongValueException(this.email, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
         }
         if (isFiledLengthInvalid(emailValue)) {
-            throw new WrongValueException(this.email, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
+            throw new WrongValueException(this.email, getLabel(NS8_FIELD_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
         if (!isEmailAddressValid(emailValue)) {
             throw new WrongValueException(this.email, getLabel(NS8_EMAIL_VALIDATION_ERROR));
@@ -183,7 +183,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
             throw new WrongValueException(this.storeUrl, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
         }
         if (isFiledLengthInvalid(storeUrlValue)) {
-            throw new WrongValueException(this.storeUrl, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
+            throw new WrongValueException(this.storeUrl, getLabel(NS8_FIELD_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
         if (!isStoreUrlValid(storeUrlValue)) {
             throw new WrongValueException(this.storeUrl, getLabel(NS8_STORE_URL_VALIDATION_ERROR));
@@ -201,7 +201,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
             throw new WrongValueException(this.merchantFirstName, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
         }
         if (isFiledLengthInvalid(merchantFirstNameValue)) {
-            throw new WrongValueException(this.merchantFirstName, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
+            throw new WrongValueException(this.merchantFirstName, getLabel(NS8_FIELD_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
     }
 
@@ -216,7 +216,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
             throw new WrongValueException(this.merchantLastName, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
         }
         if (isFiledLengthInvalid(merchantLastNameValue)) {
-            throw new WrongValueException(this.merchantLastName, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
+            throw new WrongValueException(this.merchantLastName, getLabel(NS8_FIELD_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
     }
 
@@ -231,7 +231,7 @@ public class Ns8MerchantActivationController extends DefaultWidgetController {
             throw new WrongValueException(this.phoneNumber, getLabel(NS8_MANDATORY_FIELD_VALIDATION_ERROR));
         }
         if (isFiledLengthInvalid(this.phoneNumber.getValue())) {
-            throw new WrongValueException(this.phoneNumber, getLabel(NS8_FILED_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
+            throw new WrongValueException(this.phoneNumber, getLabel(NS8_FIELD_LENGTH_VALIDATION_ERROR, new String[]{String.valueOf(MAX_FIELD_LENGTH)}));
         }
     }
 
