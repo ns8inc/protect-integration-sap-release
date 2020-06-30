@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd" sclass="yas-navigationcontext">
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd" sclass="yas-navigationcontext">
 
     <div sclass="yas-ns8navigationcontext-element">
         <label value="${labels.ns8NavigationContext.website}" />
@@ -11,6 +11,21 @@
             </template>
         </combobox>
     </div>
+
+    <script type="text/javascript">
+        zk.afterMount(function () {
+            $('.yas-ns8navigationcontext-element input').attr("placeholder", "${labels.ns8NavigationContext.selectWebsite}");
+
+            $('body').on("click", 'tr[ytestid="ns8BackofficePerspective"]', function() {
+                window.checkForDropdown = setInterval(function(){
+                    if($('.yas-ns8navigationcontext-element input').length) {
+                        $('.yas-ns8navigationcontext-element input').attr("placeholder", "${labels.ns8NavigationContext.selectWebsite}");
+                        clearInterval(window.checkForDropdown);
+                    }
+                }, 1);
+            });
+        });
+    </script>
 
 </widget>
 

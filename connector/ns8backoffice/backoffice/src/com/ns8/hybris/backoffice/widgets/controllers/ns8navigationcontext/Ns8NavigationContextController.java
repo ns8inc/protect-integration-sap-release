@@ -113,7 +113,6 @@ public class Ns8NavigationContextController extends DefaultWidgetController {
         final Set<CMSSiteModel> selectedSite = this.cmsSiteModels.getSelection();
         final CMSSiteModel selectedCmsSite = selectedSite.isEmpty() ? null : selectedSite.iterator().next();
         final List<CMSSiteModel> allSystemCmsSites = cmsSiteService.getSites().stream().collect(toList());
-        allSystemCmsSites.add(0, null);
         if (!CollectionUtils.isEqualCollection(this.cmsSiteModels.getInnerList(), allSystemCmsSites)) {
             this.cmsSiteModels.clear();
             this.cmsSiteModels.addAll(allSystemCmsSites);
